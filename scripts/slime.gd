@@ -8,7 +8,7 @@ var direction = 1
 @onready var ray_cast_left = $RayCastLeft
 @onready var animated_sprite = $AnimatedSprite2D
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+# 每一帧都会调用此函数。'delta' 是自上一帧以来的经过时间。
 func _process(delta):
 	if ray_cast_right.is_colliding():
 		direction = -1
