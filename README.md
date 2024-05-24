@@ -6,3 +6,4 @@
 
 这是一个基于Brackeys教程制作的游戏demo项目。通过该项目，你可以学习如何使用Godot引擎创建简单的游戏。教程地址提供了详细的教学视频，帮助你逐步完成游戏的制作过程。
 
+![nyFavE](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/uPic/nyFavE.png)
