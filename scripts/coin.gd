@@ -8,4 +8,3 @@ extends Area2D
 func _on_body_shape_entered(body_id, body, body_shape, local_shape):
 	game_manager.add_point()  # 在GameManager中增加分数
 	animation_player.play("pickup")  # 播放"pickup"动画
-
