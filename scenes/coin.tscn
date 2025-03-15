@@ -200,6 +200,7 @@ collision_mask = 2
 script = ExtResource("1_rgwj2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_ixnqm")
 autoplay = "default"
 frame_progress = 0.0
