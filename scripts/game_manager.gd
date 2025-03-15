@@ -1,15 +1,27 @@
 extends Node
 
-# 初始化分数为0
+# 游戏状态
 var score = 0
 
-# 获取UI节点
+# 组件引用
 @onready var ui = get_node_or_null("/root/Game/UI")
+
+# 信号
+signal score_changed(new_score)
 
 # 定义一个函数，用于增加分数并更新分数显示
 func add_point():
-	score += 1  # 分数增加1
+	score += 1
+	emit_signal("score_changed", score)
 	
-	# 如果UI节点存在，调用其add_coin方法
+	# 更新UI
 	if ui:
 		ui.add_coin()
+
+# 重置游戏分数
+func reset_score():
+	score = 0
+	emit_signal("score_changed", score)
+	
+	if ui:
+		ui.update_coin_count(0)
