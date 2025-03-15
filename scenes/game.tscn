@@ -234,6 +234,8 @@ unique_name_in_owner = true
 script = ExtResource("2_1g0jo")
 
 [node name="UI" parent="." instance=ExtResource("7_ui")]
+margin_left = 80
+margin_top = 15
 
 [node name="Player" parent="." instance=ExtResource("1_skq5t")]
 
