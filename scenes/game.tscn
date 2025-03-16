@@ -233,7 +233,6 @@ unique_name_in_owner = true
 script = ExtResource("2_1g0jo")
 
 [node name="UI" parent="." instance=ExtResource("7_ui")]
-visible = false
 margin_left = 80
 margin_top = 15
 
