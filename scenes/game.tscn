@@ -312,3 +312,9 @@ text = "按空格键跳"
 
 [node name="Slime" parent="Monster" instance=ExtResource("6_dnqob")]
 position = Vector2(168, -12)
+
+[node name="Slime2" parent="Monster" instance=ExtResource("6_dnqob")]
+position = Vector2(520, -91)
+
+[node name="Slime3" parent="Monster" instance=ExtResource("6_dnqob")]
+position = Vector2(664, -75)

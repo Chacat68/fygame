@@ -2,12 +2,14 @@ extends Node
 
 # 游戏状态
 var score = 0
+var kill_count = 0
 
 # 组件引用
 @onready var ui = get_node_or_null("/root/Game/UI")
 
 # 信号
 signal score_changed(new_score)
+signal kill_count_changed(new_count)
 
 # 定义一个函数，用于增加分数并更新分数显示
 func add_point():
