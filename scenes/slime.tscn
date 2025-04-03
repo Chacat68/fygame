@@ -63,7 +63,9 @@ shape = SubResource("RectangleShape2D_ch3wh")
 [node name="RayCastRight" type="RayCast2D" parent="."]
 position = Vector2(0, 6)
 target_position = Vector2(12, 0)
+enabled = true
 
 [node name="RayCastLeft" type="RayCast2D" parent="."]
 position = Vector2(0, 6)
 target_position = Vector2(-12, 0)
+enabled = true
