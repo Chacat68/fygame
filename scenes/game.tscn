@@ -308,5 +308,7 @@ theme_override_fonts/font = ExtResource("7_cldnw")
 theme_override_font_sizes/font_size = 12
 text = "按空格键跳"
 
-[node name="Slime" parent="." instance=ExtResource("6_dnqob")]
-position = Vector2(136, -8)
+[node name="Monster" type="Node" parent="."]
+
+[node name="Slime" parent="Monster" instance=ExtResource("6_dnqob")]
+position = Vector2(168, -12)
