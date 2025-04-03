@@ -48,7 +48,6 @@ position = Vector2(0, -12)
 script = ExtResource("1_xv5of")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-texture_filter = 0
 sprite_frames = SubResource("SpriteFrames_44ih8")
 autoplay = "default"
 frame_progress = 0.410102
@@ -63,9 +62,7 @@ shape = SubResource("RectangleShape2D_ch3wh")
 [node name="RayCastRight" type="RayCast2D" parent="."]
 position = Vector2(0, 6)
 target_position = Vector2(12, 0)
-enabled = true
 
 [node name="RayCastLeft" type="RayCast2D" parent="."]
 position = Vector2(0, 6)
 target_position = Vector2(-12, 0)
-enabled = true
