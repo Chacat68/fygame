@@ -40,3 +40,40 @@ theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 38
 text = "0"
 vertical_alignment = 1
+
+[node name="KillCounter" type="HBoxContainer" parent="."]
+offset_top = 60.0
+offset_right = 290.0
+offset_bottom = 170.0
+theme_override_constants/separation = 10
+
+[node name="KillIcon" type="Label" parent="KillCounter"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_ixnqm")
+theme_override_font_sizes/font_size = 38
+text = "⚔"
+vertical_alignment = 1
+
+[node name="KillText" type="Label" parent="KillCounter"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_ixnqm")
+theme_override_font_sizes/font_size = 38
+text = "击杀："
+vertical_alignment = 1
+
+[node name="KillCount" type="Label" parent="KillCounter"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_ixnqm")
+theme_override_font_sizes/font_size = 38
+text = "0"
+vertical_alignment = 1
