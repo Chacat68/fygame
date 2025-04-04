@@ -149,8 +149,5 @@ func _check_fall_death():
 		is_falling_to_death = true
 		# 直接调用_die()函数，不经过take_damage()函数
 		print("Player fell off cliff - instant death!")
-		# 禁用碰撞，防止触发其他killzone - 使用set_deferred避免在物理查询刷新时修改状态
-		if has_node("CollisionShape2D"):
-			get_node("CollisionShape2D").set_deferred("disabled", true)
-		# 直接调用死亡函数
+		# 直接调用死亡函数，碰撞形状的禁用会在_die()函数中处理
 		_die()
