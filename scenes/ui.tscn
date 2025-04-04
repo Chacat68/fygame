@@ -10,6 +10,8 @@ margin_left = 10
 margin_top = 10
 
 [node name="CoinCounter" type="HBoxContainer" parent="."]
+offset_left = 10.0
+offset_top = 10.0
 offset_right = 290.0
 offset_bottom = 110.0
 theme_override_constants/separation = 10
@@ -43,6 +45,7 @@ text = "0"
 vertical_alignment = 1
 
 [node name="KillCounter" type="HBoxContainer" parent="."]
+offset_left = 10.0
 offset_top = 60.0
 offset_right = 290.0
 offset_bottom = 170.0
@@ -81,6 +84,7 @@ text = "0"
 vertical_alignment = 1
 
 [node name="HealthBar" type="HBoxContainer" parent="."]
+offset_left = 10.0
 offset_top = 120.0
 offset_right = 290.0
 offset_bottom = 230.0

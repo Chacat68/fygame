@@ -146,10 +146,10 @@ func _die(player):
 	# 播放死亡动画（如果有的话）
 	# 这里可以添加死亡动画播放代码
 	
-	# 禁用碰撞区域
+	# 禁用碰撞区域 - 使用set_deferred避免在物理查询刷新时修改状态
 	var killzone = get_node_or_null("Killzone")
 	if killzone and killzone.has_node("CollisionShape2D"):
-		killzone.get_node("CollisionShape2D").disabled = true
+		killzone.get_node("CollisionShape2D").set_deferred("disabled", true)
 	
 	# 延迟移除怪物
 	var tween = create_tween()

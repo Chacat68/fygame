@@ -81,13 +81,20 @@ func add_kill(amount = 1):
 
 # 更新UI元素的位置
 func update_position():
-	coin_counter.position.x = margin_left
-	coin_counter.position.y = margin_top
+	# 使用position.x和position.y可能会覆盖布局容器的对齐设置
+	# 改为使用offset_left和offset_top属性
+	coin_counter.offset_left = margin_left
+	coin_counter.offset_top = margin_top
 	
 	# 设置击杀计数器位置在金币计数器下方
 	if kill_counter:
-		kill_counter.position.x = margin_left
-		kill_counter.position.y = margin_top + 50
+		kill_counter.offset_left = margin_left
+		kill_counter.offset_top = margin_top + 50
+		
+	# 设置血量条位置
+	if health_bar:
+		health_bar.offset_left = margin_left
+		health_bar.offset_top = margin_top + 100
 	
 # 当位置参数改变时调用此函数
 func set_margins(left: int, top: int):

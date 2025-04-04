@@ -14,6 +14,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var current_health = MAX_HEALTH  # 当前血量
 var is_invincible = false  # 是否处于无敌状态
 var is_hurt = false  # 是否处于受伤状态
+var is_falling_to_death = false  # 是否正在掉落死亡
 
 # 组件引用
 @onready var animated_sprite = $AnimatedSprite2D
@@ -122,9 +123,9 @@ func take_damage(amount = DAMAGE_AMOUNT):
 
 # 处理死亡
 func _die():
-	# 禁用碰撞
+	# 禁用碰撞 - 使用set_deferred避免在物理查询刷新时修改状态
 	if has_node("CollisionShape2D"):
-		get_node("CollisionShape2D").disabled = true
+		get_node("CollisionShape2D").set_deferred("disabled", true)
 	
 	# 播放死亡动画
 	animated_sprite.play("death")
@@ -135,10 +136,21 @@ func _die():
 
 # 检测角色是否掉落到悬崖下
 func _check_fall_death():
+	# 如果已经在掉落死亡过程中，不再重复处理
+	if is_falling_to_death:
+		return
+	
 	# 定义屏幕边界值，当角色Y坐标超过此值时视为掉落到悬崖下
 	var fall_death_y_threshold = 1000  # 根据游戏实际情况调整此值
 	
 	# 检查角色是否掉落到悬崖下
 	if global_position.y > fall_death_y_threshold:
-		# 直接调用_die()函数，绕过take_damage()函数，避免扣血逻辑
+		# 设置掉落死亡标志，防止重复触发
+		is_falling_to_death = true
+		# 直接调用_die()函数，不经过take_damage()函数
+		print("Player fell off cliff - instant death!")
+		# 禁用碰撞，防止触发其他killzone - 使用set_deferred避免在物理查询刷新时修改状态
+		if has_node("CollisionShape2D"):
+			get_node("CollisionShape2D").set_deferred("disabled", true)
+		# 直接调用死亡函数
 		_die()
