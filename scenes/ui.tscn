@@ -13,6 +13,7 @@ margin_top = 10
 offset_right = 290.0
 offset_bottom = 110.0
 theme_override_constants/separation = 10
+alignment = 0
 
 [node name="CoinIcon" type="TextureRect" parent="CoinCounter"]
 custom_minimum_size = Vector2(40, 40)
@@ -46,6 +47,7 @@ offset_top = 60.0
 offset_right = 290.0
 offset_bottom = 170.0
 theme_override_constants/separation = 10
+alignment = 0
 
 [node name="KillIcon" type="Label" parent="KillCounter"]
 custom_minimum_size = Vector2(40, 40)
@@ -76,4 +78,42 @@ theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 38
 text = "0"
+vertical_alignment = 1
+
+[node name="HealthBar" type="HBoxContainer" parent="."]
+offset_top = 120.0
+offset_right = 290.0
+offset_bottom = 230.0
+theme_override_constants/separation = 10
+alignment = 0
+
+[node name="HealthIcon" type="Label" parent="HealthBar"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.2, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_ixnqm")
+theme_override_font_sizes/font_size = 38
+text = "♥"
+vertical_alignment = 1
+
+[node name="HealthText" type="Label" parent="HealthBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_ixnqm")
+theme_override_font_sizes/font_size = 38
+text = "血量："
+vertical_alignment = 1
+
+[node name="HealthCount" type="Label" parent="HealthBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/font = ExtResource("3_ixnqm")
+theme_override_font_sizes/font_size = 38
+text = "100/100"
 vertical_alignment = 1
