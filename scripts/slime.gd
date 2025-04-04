@@ -1,7 +1,7 @@
 extends Node2D
 
 # 移动属性
-const SPEED = 60
+const SPEED = 45
 
 # 状态变量
 var direction = 1
