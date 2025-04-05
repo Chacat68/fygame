@@ -25,6 +25,21 @@ var hurt_sound = preload("res://assets/sounds/hurt.wav")
 # 信号
 signal health_changed(new_health)
 
+# 复活效果标志 - 使用AutoLoad模式在场景重载后保持
+var should_apply_respawn_effect = false
+
+# 初始化函数
+func _ready():
+	# 将玩家添加到player组，便于后续查找
+	add_to_group("player")
+	
+	# 检查是否需要应用复活效果
+	if Engine.has_singleton("GameState") and Engine.get_singleton("GameState").player_respawning:
+		print("检测到玩家正在复活，应用复活效果")
+		_apply_respawn_effect()
+		# 重置复活标志
+		Engine.get_singleton("GameState").set_player_respawning(false)
+
 func _physics_process(delta):
 	_apply_gravity(delta)
 	_handle_jump()
@@ -130,9 +145,43 @@ func _die():
 	# 播放死亡动画
 	animated_sprite.play("death")
 	
+	# 设置复活标志，以便在场景重新加载后应用复活效果
+	if Engine.has_singleton("GameState"):
+		Engine.get_singleton("GameState").set_player_respawning(true)
+	
 	# 延迟重新加载场景
 	await get_tree().create_timer(1.0).timeout
+	_respawn()
+
+# 处理复活
+func _respawn():
+	# 重新加载当前场景
 	get_tree().reload_current_scene()
+
+# 应用复活效果
+func _apply_respawn_effect():
+	print("开始应用复活效果")
+	
+	# 初始设置为完全透明
+	modulate.a = 0.0
+	print("初始透明度设置为: " + str(modulate.a))
+	
+	# 设置无敌状态
+	is_invincible = true
+	invincibility_timer = INVINCIBILITY_TIME * 2  # 给予更长的无敌时间
+	
+	# 创建从透明到不透明的渐变效果
+	var tween = create_tween()
+	tween.set_ease(Tween.EASE_IN)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(self, "modulate:a", 1.0, 1.5)  # 1.5秒内从透明变为不透明
+	
+	# 添加完成回调
+	tween.finished.connect(func():
+		print("玩家复活完成，当前透明度: " + str(modulate.a))
+		# 确保完全不透明
+		modulate.a = 1.0
+	)
 
 # 检测角色是否掉落到悬崖下
 func _check_fall_death():

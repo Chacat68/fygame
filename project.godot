@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Music="*res://scenes/music.tscn"
+GameState="*res://scenes/game_state.tscn"
 
 [display]
 
