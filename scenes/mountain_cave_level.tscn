@@ -96,8 +96,8 @@ script = ExtResource("2_1g0jo")
 [node name="Player" parent="." instance=ExtResource("1_skq5t")]
 position = Vector2(100, 300)
 
-[node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2(0, -50)
+[node name="LevelCamera" type="Camera2D" parent="."]
+position = Vector2(100, 250)
 limit_left = 0
 limit_top = -300
 limit_right = 1500

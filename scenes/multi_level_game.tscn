@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/multi_level_manager.gd" id="1_mlmgr"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2_plyr"]
+[ext_resource type="PackedScene" path="res://scenes/ui.tscn" id="3_ui"]
+[ext_resource type="PackedScene" path="res://scenes/game_manager.tscn" id="4_gmngr"]
+
+[node name="MultiLevelGame" type="Node2D"]
+script = ExtResource("1_mlmgr")
+
+[node name="Player" parent="." instance=ExtResource("2_plyr")]
+position = Vector2(50, 300)
+
+[node name="MultiLevelCamera" type="Camera2D" parent="."]
+position = Vector2(50, 250)
+limit_left = 0
+limit_top = -300
+limit_right = 1500
+limit_bottom = 400
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+
+[node name="UI" parent="." instance=ExtResource("3_ui")]
+
+[node name="GameManager" parent="." instance=ExtResource("4_gmngr")]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Ground"]
+polygon = PackedVector2Array(0, 350, 1500, 350, 1500, 400, 0, 400)
+
+[node name="Polygon2D" type="Polygon2D" parent="Ground"]
+color = Color(0.4, 0.25, 0.15, 1)
+polygon = PackedVector2Array(0, 350, 1500, 350, 1500, 400, 0, 400)
+
+[node name="Background" type="ColorRect" parent="."]
+z_index = -10
+offset_right = 1500.0
+offset_bottom = 400.0
+color = Color(0.2, 0.3, 0.4, 1)
+
+[node name="LevelInfo" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 60.0
+text = "关卡: 1/10"
+
+[node name="Instructions" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 300.0
+offset_bottom = 110.0
+text = "按空格键跳跃\n按左右方向键移动\n到达关卡尽头的传送门进入下一关"

@@ -1,11 +1,12 @@
-extends Node2D
+extends CharacterBody2D
 
 # 移动属性
-const SPEED = 45
+var SPEED = 45 # 改为变量，使其可以被修改
 
 # 状态变量
 var direction = 1
 var is_dead = false
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 # 组件引用
 @onready var ray_cast_right = $RayCastRight
@@ -90,7 +91,15 @@ func _check_direction():
 
 # 根据当前方向移动
 func _move(delta):
-	position.x += direction * SPEED * delta
+	# 应用重力
+	if not is_on_floor():
+		velocity.y += gravity * delta
+	
+	# 设置水平速度
+	velocity.x = direction * SPEED
+	
+	# 移动并滑动
+	move_and_slide()
 
 # 创建头部碰撞检测区域
 func _create_head_hitbox():
@@ -126,9 +135,20 @@ func _on_head_hitbox_body_entered(body):
 		return
 		
 	# 确保碰撞的是玩家
-	if body is CharacterBody2D:
-		# 检查玩家是否从上方踩踏（通过比较y轴速度）
-		if body.velocity.y > 0:
+	if body.is_in_group("player"):
+		# 更精确地检查玩家是否从上方踩踏
+		# 比较玩家底部和怪物头部的相对位置
+		var player_bottom = body.global_position.y
+		if body.has_node("CollisionShape2D"):
+			var collision = body.get_node("CollisionShape2D")
+			if collision.shape is CircleShape2D:
+				player_bottom += collision.shape.radius
+			elif collision.shape is RectangleShape2D:
+				player_bottom += collision.shape.size.y / 2
+		
+		var slime_top = global_position.y - 6 # 头部位置
+		
+		if player_bottom < slime_top + 2 and body.velocity.y > 0:
 			# 击杀怪物
 			_die(body)
 			

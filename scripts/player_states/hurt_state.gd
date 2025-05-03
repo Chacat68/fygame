@@ -8,7 +8,14 @@ const ResourceManagerClass = preload("res://scripts/resource_manager.gd")
 var hurt_timer = 0.0
 
 func enter():
-    player.animated_sprite.play("death")  # 使用死亡动画表示受伤状态
+    # 使用闪烁效果区分受伤状态，而不是使用死亡动画
+    player.animated_sprite.play("idle")  # 使用闲置动画作为基础
+    
+    # 添加闪烁效果
+    var tween = player.create_tween()
+    tween.tween_property(player.animated_sprite, "modulate", Color(1, 0.5, 0.5, 0.7), 0.1)
+    tween.tween_property(player.animated_sprite, "modulate", Color(1, 1, 1, 1), 0.1)
+    
     hurt_timer = 0.0
     
     # 播放受伤音效

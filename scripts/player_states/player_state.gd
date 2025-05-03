@@ -7,24 +7,24 @@ var player: CharacterBody2D
 
 # 构造函数
 func _init(player_ref: CharacterBody2D):
-    self.player = player_ref
+	self.player = player_ref
 
 # 进入状态时调用
 func enter():
-    pass
+	pass
 
 # 退出状态时调用
 func exit():
-    pass
+	pass
 
 # 处理物理更新
-func physics_process(delta: float):
-    pass
+func physics_process(_delta: float):
+	pass
 
 # 处理输入
 func handle_input():
-    pass
+	pass
 
 # 更新动画
 func update_animation():
-    pass
+	pass

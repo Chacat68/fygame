@@ -238,7 +238,7 @@ margin_top = 15
 
 [node name="Player" parent="." instance=ExtResource("1_skq5t")]
 
-[node name="Camera2D" type="Camera2D" parent="Player"]
+[node name="GameCamera" type="Camera2D" parent="."]
 position = Vector2(0, -6)
 zoom = Vector2(4, 4)
 limit_left = -200

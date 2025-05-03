@@ -14,10 +14,11 @@ func _ready():
 	_create_treasure_area()
 	
 	# 设置相机限制
-	$Player/Camera2D.limit_left = 0
-	$Player/Camera2D.limit_right = 1500
-	$Player/Camera2D.limit_top = -300
-	$Player/Camera2D.limit_bottom = 400
+	if has_node("Player") and $Player.has_node("Camera2D"):
+		$Player/Camera2D.limit_left = 0
+		$Player/Camera2D.limit_right = 1500
+		$Player/Camera2D.limit_top = -300
+		$Player/Camera2D.limit_bottom = 400
 
 # 创建入口区域（教学区）
 func _create_entrance_area():
@@ -118,8 +119,10 @@ func _create_platform(pos, is_moving = false):
 		animation.set_loop_mode(Animation.LOOP_PINGPONG)
 		
 		# 将动画添加到播放器
-		anim_player.add_animation("move", animation)
-		anim_player.play("move")
+		var anim_lib = AnimationLibrary.new()
+		anim_lib.add_animation("move", animation)
+		anim_player.add_animation_library("default", anim_lib)
+		anim_player.play("default/move")
 	
 	# 添加到场景
 	if not has_node("Platforms"):

@@ -33,3 +33,22 @@ func reset_score():
 	if ui:
 		ui.update_coin_count(0)
 		ui.update_kill_count(0)
+
+# 获取当前关卡的死亡高度
+func get_death_height():
+	# 默认死亡高度
+	var default_height = 500
+	
+	# 获取当前场景名称
+	var current_scene = get_tree().get_current_scene().name
+	
+	# 根据不同关卡返回不同的死亡高度
+	match current_scene:
+		"Game":
+			return 500
+		"RandomLevel":
+			return 600
+		"MountainCaveLevel":
+			return 800
+		_:
+			return default_height
