@@ -4,7 +4,7 @@ extends Area2D
 # 用于在关卡之间传送玩家
 
 # 信号
-signal body_entered(body)
+signal portal_body_entered(body)
 
 # 传送门参数
 var next_level = -1 # -1表示自动进入下一关
@@ -75,6 +75,17 @@ func _on_body_entered(body):
 	if body.is_in_group("player") and is_active:
 		# 发出信号
 		emit_signal("body_entered", body)
+		
+		# 防止玩家多次触发传送门
+		is_active = false
+		
+		# 添加视觉反馈
+		for child in get_children():
+			if child is Sprite2D:
+				# 创建闪烁动画
+				var tween = create_tween()
+				tween.tween_property(child, "modulate", Color(1, 1, 1, 0), 0.5)
+				tween.tween_property(child, "modulate", Color(1, 1, 1, 1), 0.5)
 
 # 设置下一关卡
 func set_next_level(level):
