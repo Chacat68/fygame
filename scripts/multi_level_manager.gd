@@ -279,12 +279,12 @@ func _place_coins_on_platforms(platforms, coin_chance):
 			))
 
 # 在平台上放置史莱姆
-func _place_slimes_on_platforms(platforms, slime_chance, purple_chance):
+func _place_slimes_on_platforms(platforms, slime_spawn_chance, purple_spawn_chance):
 	for platform in platforms:
 		# 随机决定是否在此平台上放置史莱姆
-		if randf() < slime_chance:
+		if randf() < slime_spawn_chance:
 			# 随机决定是否为紫色史莱姆
-			var is_purple = randf() < purple_chance
+			var is_purple = randf() < purple_spawn_chance
 			
 			_create_slime(Vector2(
 				platform.position.x,
