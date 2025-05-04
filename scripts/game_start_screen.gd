@@ -20,8 +20,9 @@ func _on_start_button_pressed():
 	# 重置游戏进度并开始新游戏
 	
 	# 如果存在游戏状态管理器，重置关卡进度
-	if get_node_or_null("/root/GameState") != null:
-		get_node("/root/GameState").reset_game_progress()
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state != null:
+		game_state.reset_game_progress()
 	
 	# 切换到随机关卡场景，并确保从第1关开始
 	var params = {
@@ -40,8 +41,9 @@ func _on_continue_button_pressed():
 	# 加载存档并继续游戏
 	
 	# 如果存在游戏状态管理器，加载存档
-	if get_node_or_null("/root/GameState") != null:
-		get_node("/root/GameState").load_game_progress()
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state != null:
+		game_state.load_game_progress()
 	
 	# 切换到随机关卡场景，并使用已保存的关卡进度
 	var params = {
@@ -61,10 +63,19 @@ func _on_quit_button_pressed():
 
 # 设置关卡参数的辅助函数
 func _set_level_params(params):
+	# 检查 SceneTree 是否可用
+	if get_tree() == null:
+		print("错误：无法获取场景树，可能是在场景切换过程中")
+		return
+	
+	# 等待一帧确保场景已完全加载
+	await get_tree().process_frame
+	
 	# 获取随机关卡生成器节点
-	var level_generator = get_node_or_null("/root/RandomLevel")
-	if level_generator == null:
-		level_generator = get_node_or_null("/root/random_level")
+	var level_generator = get_tree().current_scene
+	if not level_generator or not level_generator.has_method("generate_level_by_number"):
+		print("警告：当前场景不是随机关卡生成器")
+		return
 	
 	# 如果找到了随机关卡生成器节点
 	if level_generator != null:

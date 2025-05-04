@@ -3,7 +3,10 @@ extends Node
 # 程序化地形生成和房间系统
 # 用于在随机关卡生成器中实现《缺氧》风格的房间和走廊系统
 
-# 房间类型
+# 预加载房间配置资源
+var room_config = preload("res://scripts/room_config.gd").new()
+
+# 房间类型枚举 - 从配置文件中导入以保持一致性
 enum RoomType {
 	ENTRANCE = 0,  # 入口房间
 	CORRIDOR = 1,  # 走廊房间
@@ -128,38 +131,22 @@ func _generate_room_based_level(biome_type):
 
 # 创建单个房间
 func _create_room(rect, room_type, biome_type):
+	# 获取房间配置
+	var config = room_config.get_room_config(room_type, biome_type)
+	
 	# 创建房间节点
 	var room = ColorRect.new()
 	room.name = "Room_" + str(room_type)
 	room.position = rect.position
 	room.size = rect.size
 	
-	# 根据房间类型设置颜色
-	var room_color
-	if room_type == RoomType.ENTRANCE:
-		room_color = Color(0.2, 0.7, 0.3, 0.3)  # 绿色半透明
-	elif room_type == RoomType.CORRIDOR:
-		room_color = Color(0.5, 0.5, 0.5, 0.3)  # 灰色半透明
-	elif room_type == RoomType.STORAGE:
-		room_color = Color(0.7, 0.7, 0.2, 0.3)  # 黄色半透明
-	elif room_type == RoomType.OXYGEN:
-		room_color = Color(0.2, 0.6, 0.8, 0.3)  # 蓝色半透明
-	elif room_type == RoomType.CHALLENGE:
-		room_color = Color(0.8, 0.3, 0.3, 0.3)  # 红色半透明
-	elif room_type == RoomType.TREASURE:
-		room_color = Color(0.8, 0.6, 0.2, 0.3)  # 金色半透明
-	
-	# 根据生物群系调整颜色
-	if biome_type == "CAVE":
-		room_color = room_color.darkened(0.2)
-	elif biome_type == "SWAMP":
-		room_color = room_color.blend(Color(0.3, 0.3, 0.1, 0.3))
-	
-	room.color = room_color
+	# 设置房间颜色（已应用生物群系修改）
+	room.color = config.color
 	
 	# 设置元数据
 	room.set_meta("type", room_type)
 	room.set_meta("rect", rect)
+	room.set_meta("config", config)
 	
 	# 添加到房间组
 	room.add_to_group("rooms")
@@ -169,21 +156,7 @@ func _create_room(rect, room_type, biome_type):
 	
 	# 添加房间标签
 	var label = Label.new()
-	var room_name = ""
-	if room_type == RoomType.ENTRANCE:
-		room_name = "入口"
-	elif room_type == RoomType.CORRIDOR:
-		room_name = "走廊"
-	elif room_type == RoomType.STORAGE:
-		room_name = "储藏室"
-	elif room_type == RoomType.OXYGEN:
-		room_name = "氧气室"
-	elif room_type == RoomType.CHALLENGE:
-		room_name = "挑战室"
-	elif room_type == RoomType.TREASURE:
-		room_name = "宝藏室"
-	
-	label.text = room_name
+	label.text = config.name
 	label.position = Vector2(rect.size.x / 2 - 20, rect.size.y / 2 - 10)
 	room.add_child(label)
 	
@@ -281,41 +254,16 @@ func _populate_rooms(rooms, room_rects, biome_type):
 		var rect = room_rects[i]
 		var room_type = room.get_meta("type")
 		
-		# 根据房间类型决定平台数量
-		var platform_count = 0
-		var coin_chance = 0.0
-		var slime_chance = 0.0
+		# 使用配置系统获取平台数量
+		var platform_count = room_config.get_platform_count(room_type, biome_type)
 		
-		if room_type == RoomType.ENTRANCE:
-			platform_count = 3 + randi() % 3  # 3-5个平台
-			coin_chance = 0.3
-			slime_chance = 0.1
-		elif room_type == RoomType.CORRIDOR:
-			platform_count = 2 + randi() % 2  # 2-3个平台
-			coin_chance = 0.2
-			slime_chance = 0.1
-		elif room_type == RoomType.STORAGE:
-			platform_count = 4 + randi() % 3  # 4-6个平台
-			coin_chance = 0.7  # 更多金币
-			slime_chance = 0.2
-		elif room_type == RoomType.OXYGEN:
-			platform_count = 3 + randi() % 3  # 3-5个平台
-			coin_chance = 0.3
-			slime_chance = 0.1
-			# 在氧气室放置额外的氧气发生器
+		# 如果是氧气室，放置氧气发生器
+		if room_config.should_place_oxygen_generator(room_type, biome_type):
 			var generator_pos = Vector2(
 				rect.position.x + rect.size.x / 2,
 				rect.position.y + rect.size.y / 2
 			)
 			_create_oxygen_generator(generator_pos, biome_type)
-		elif room_type == RoomType.CHALLENGE:
-			platform_count = 5 + randi() % 3  # 5-7个平台
-			coin_chance = 0.4
-			slime_chance = 0.6  # 更多敌人
-		elif room_type == RoomType.TREASURE:
-			platform_count = 3 + randi() % 2  # 3-4个平台
-			coin_chance = 0.9  # 大量金币
-			slime_chance = 0.3
 		
 		# 在房间内放置平台
 		for j in range(platform_count):
@@ -324,50 +272,160 @@ func _populate_rooms(rooms, room_rects, biome_type):
 			var platform_y = rect.position.y + randf_range(50, rect.size.y - 50)
 			var platform_pos = Vector2(platform_x, platform_y)
 			
-			# 创建平台
-			var is_moving = false
-			if room_type == RoomType.CHALLENGE:
-				is_moving = randf() < 0.4  # 挑战室中40%的平台是移动的
-			elif room_type == RoomType.CORRIDOR:
-				is_moving = randf() < 0.3  # 走廊中30%的平台是移动的
-			else:
-				is_moving = randf() < 0.2  # 其他房间20%的平台是移动的
+			# 使用配置系统决定是否为移动平台
+			var is_moving = room_config.should_use_moving_platform(room_type, biome_type)
 			
+			# 创建平台
 			var platform_scale = Vector2(1.0 + randf() * 0.5, 0.5 + randf() * 0.2)
 			var platform = _create_platform(platform_pos, platform_scale, biome_type, is_moving)
 			
-			# 在平台上放置金币
-			if randf() < coin_chance:
+			# 使用配置系统决定是否放置金币
+			if room_config.should_place_coin(room_type, biome_type):
 				var coin_pos = Vector2(platform_pos.x, platform_pos.y - 30)
 				_create_coin(coin_pos, 1, biome_type)
 			
-			# 在平台上放置史莱姆
-			if randf() < slime_chance:
+			# 使用配置系统决定是否放置史莱姆
+			if room_config.should_place_enemy(room_type, biome_type):
 				var slime_pos = Vector2(platform_pos.x, platform_pos.y - 20)
-				var slime_type = 0  # 绿色史莱姆
 				
-				# 在挑战室和沼泽生物群系中增加紫色史莱姆的概率
-				if room_type == RoomType.CHALLENGE or biome_type == "SWAMP":
-					if randf() < 0.6:
-						slime_type = 1  # 紫色史莱姆
+				# 使用配置系统决定是否使用紫色史莱姆
+				var is_purple = room_config.should_use_purple_slime(room_type, biome_type)
+				var slime_type = 1 if is_purple else 0  # 1=紫色, 0=绿色
 				
 				_create_slime(slime_pos, slime_type, biome_type, Vector2(1.0, 1.0))
 
-# 这些函数需要在随机关卡生成器中实现
-# 以下是函数签名，实际实现应该使用现有的函数
+# 从随机关卡生成器中实现的函数
 
-# func _create_platform(position, scale, biome_type, is_moving):
-#     # 实现平台创建逻辑
-#     pass
+func _create_platform(position, scale, biome_type, is_moving):
+	# 创建平台
+	var platform = preload("res://scenes/platform.tscn").instantiate()
+	platform.position = position
+	platform.scale = scale
+	
+	# 根据生物群系设置平台颜色
+	var sprite = platform.get_node("Sprite2D")
+	if biome_type == "FOREST":
+		sprite.modulate = Color(0.2, 0.8, 0.2)  # 绿色平台
+	elif biome_type == "CAVE":
+		sprite.modulate = Color(0.6, 0.6, 0.6)  # 灰色平台
+	elif biome_type == "SWAMP":
+		sprite.modulate = Color(0.5, 0.4, 0.1)  # 棕色平台
+	
+	# 设置是否为移动平台
+	if is_moving:
+		platform.is_moving = true
+		platform.move_speed = 50  # 默认移动速度
+		platform.move_distance = 100  # 默认移动距离
+	
+	# 添加到场景
+	if not has_node("Platforms"):
+		var platforms = Node2D.new()
+		platforms.name = "Platforms"
+		add_child(platforms)
+	
+	$Platforms.add_child(platform)
+	return platform
 
-# func _create_coin(position, value, biome_type):
-#     # 实现金币创建逻辑
-#     pass
+func _create_coin(position, value, biome_type):
+	# 创建金币
+	var coin = preload("res://scenes/coin.tscn").instantiate()
+	coin.position = position
+	
+	# 添加到场景
+	if not has_node("Coins"):
+		var coins = Node2D.new()
+		coins.name = "Coins"
+		add_child(coins)
+	
+	$Coins.add_child(coin)
+	return coin
 
-# func _create_slime(position, slime_type, biome_type, scale):
-#     # 实现史莱姆创建逻辑
-#     pass
+func _create_slime(position, slime_type, biome_type, scale):
+	# 创建史莱姆敌人
+	var slime = preload("res://scenes/slime.tscn").instantiate()
+	slime.position = position
+	slime.scale = scale
+	
+	# 如果是紫色史莱姆，修改精灵图像和速度
+	if slime_type == 1:  # 1=紫色, 0=绿色
+		var animated_sprite = slime.get_node("AnimatedSprite2D")
+		animated_sprite.sprite_frames.set_animation_speed("default", 10) # 增加动画速度
+		
+		# 加载紫色史莱姆纹理
+		var texture = load("res://assets/sprites/slime_purple.png")
+		for i in range(animated_sprite.sprite_frames.get_frame_count("default")):
+			var atlas_texture = animated_sprite.sprite_frames.get_frame_texture("default", i)
+			var new_atlas_texture = AtlasTexture.new()
+			new_atlas_texture.atlas = texture
+			new_atlas_texture.region = atlas_texture.region
+			animated_sprite.sprite_frames.set_frame("default", i, new_atlas_texture)
+		
+		# 增加移动速度
+		slime.SPEED = 60 # 比普通史莱姆快
+	
+	# 添加到场景
+	if not has_node("Monsters"):
+		var monsters = Node2D.new()
+		monsters.name = "Monsters"
+		add_child(monsters)
+	
+	$Monsters.add_child(slime)
+	return slime
 
-# func _create_oxygen_generator(position, biome_type):
-#     # 实现氧气发生器创建逻辑
-#     pass
+func _create_oxygen_generator(position, biome_type):
+	# 创建氧气发生器节点
+	var generator = Sprite2D.new()
+	generator.position = position
+	generator.name = "OxygenGenerator"
+	
+	# 设置纹理（使用金币纹理作为临时替代）
+	var texture = load("res://assets/sprites/coin.png")
+	generator.texture = texture
+	
+	# 根据生物群系设置颜色
+	if biome_type == "FOREST":
+		generator.modulate = Color(0.3, 0.9, 1.0)  # 蓝色
+	elif biome_type == "CAVE":
+		generator.modulate = Color(0.5, 0.8, 1.0)  # 淡蓝色
+	elif biome_type == "SWAMP":
+		generator.modulate = Color(0.2, 0.6, 0.8)  # 深蓝色
+	
+	# 设置缩放
+	generator.scale = Vector2(0.8, 0.8)
+	
+	# 添加到场景
+	if not has_node("OxygenGenerators"):
+		var generators = Node2D.new()
+		generators.name = "OxygenGenerators"
+		add_child(generators)
+	
+	$OxygenGenerators.add_child(generator)
+	
+	# 添加发光效果
+	var light = PointLight2D.new()
+	light.texture = texture
+	light.color = Color(0.3, 0.7, 1.0, 0.5)  # 蓝色半透明
+	light.energy = 0.8
+	light.texture_scale = 3.0
+	generator.add_child(light)
+	
+	# 添加动画
+	var anim_player = AnimationPlayer.new()
+	generator.add_child(anim_player)
+	
+	# 创建脉动动画
+	var animation = Animation.new()
+	var track_index = animation.add_track(Animation.TYPE_VALUE)
+	animation.track_set_path(track_index, ":scale")
+	animation.track_insert_key(track_index, 0.0, Vector2(0.8, 0.8))
+	animation.track_insert_key(track_index, 1.0, Vector2(1.0, 1.0))
+	animation.set_length(2.0)
+	animation.set_loop_mode(Animation.LOOP_PINGPONG)
+	
+	# 将动画添加到播放器
+	var anim_lib = AnimationLibrary.new()
+	anim_lib.add_animation("pulse", animation)
+	anim_player.add_animation_library("default", anim_lib)
+	anim_player.play("default/pulse")
+	
+	return generator

@@ -1,10 +1,21 @@
 extends CharacterBody2D
 
+# 敌人状态枚举
+enum EnemyState {
+	IDLE,
+	PATROL,
+	CHASE,
+	ATTACK,
+	HURT,
+	DEAD
+}
+
 # 移动属性
 var SPEED = 45 # 改为变量，使其可以被修改
 
 # 状态变量
 var direction = 1
+var current_state = EnemyState.PATROL
 var is_dead = false
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
@@ -23,6 +34,9 @@ func _ready():
 	
 	# 创建头部碰撞检测区域（如果不存在）
 	_create_head_hitbox()
+	
+	# 设置初始状态
+	_change_state(EnemyState.PATROL)
 	
 	# 设置射线可见，便于调试
 	# 注意：debug_shape_thickness在某些Godot版本中不可用
@@ -54,12 +68,34 @@ func _create_floor_checks():
 
 # 每一帧都会调用此函数。'delta' 是自上一帧以来的经过时间。
 func _process(delta):
-	# 如果怪物已死亡，不再处理移动逻辑
-	if is_dead:
-		return
-		
-	_check_direction()
-	_move(delta)
+	# 根据当前状态执行不同的行为
+	match current_state:
+		EnemyState.IDLE:
+			# 待机状态，可以添加计时器在一段时间后切换到巡逻状态
+			pass
+			
+		EnemyState.PATROL:
+			# 巡逻状态，检查方向并移动
+			_check_direction()
+			_move(delta)
+			
+		EnemyState.CHASE:
+			# 追逐状态，可以实现追逐玩家的逻辑
+			# 暂时使用巡逻逻辑
+			_check_direction()
+			_move(delta)
+			
+		EnemyState.ATTACK:
+			# 攻击状态，可以实现攻击玩家的逻辑
+			pass
+			
+		EnemyState.HURT:
+			# 受伤状态，可以实现受伤动画和短暂无敌时间
+			pass
+			
+		EnemyState.DEAD:
+			# 死亡状态，不执行任何行为
+			pass
 
 # 检查并更新移动方向
 func _check_direction():
@@ -128,10 +164,53 @@ func _create_head_hitbox():
 		# 连接信号
 		head_hitbox.connect("body_entered", _on_head_hitbox_body_entered)
 
+# 状态切换函数
+func _change_state(new_state):
+	# 退出当前状态
+	match current_state:
+		EnemyState.IDLE:
+			pass
+		EnemyState.PATROL:
+			pass
+		EnemyState.CHASE:
+			pass
+		EnemyState.ATTACK:
+			pass
+		EnemyState.HURT:
+			pass
+		EnemyState.DEAD:
+			# 如果已经死亡，不允许切换到其他状态
+			return
+	
+	# 更新当前状态
+	current_state = new_state
+	
+	# 进入新状态
+	match current_state:
+		EnemyState.IDLE:
+			velocity.x = 0
+			# 可以在这里播放待机动画
+		EnemyState.PATROL:
+			# 可以在这里播放行走动画
+			pass
+		EnemyState.CHASE:
+			# 追逐状态可以增加移动速度
+			SPEED = 65
+			# 可以在这里播放追逐动画
+		EnemyState.ATTACK:
+			velocity.x = 0
+			# 可以在这里播放攻击动画
+		EnemyState.HURT:
+			velocity.x = 0
+			# 可以在这里播放受伤动画
+		EnemyState.DEAD:
+			velocity.x = 0
+			# 可以在这里播放死亡动画
+
 # 当玩家踩到怪物头顶时调用
 func _on_head_hitbox_body_entered(body):
-	# 确保怪物还活着
-	if is_dead:
+	# 确保怪物还没有死亡
+	if current_state == EnemyState.DEAD:
 		return
 		
 	# 确保碰撞的是玩家
@@ -157,7 +236,9 @@ func _on_head_hitbox_body_entered(body):
 
 # 怪物死亡处理
 func _die(player):
-	# 标记为已死亡
+	# 切换到死亡状态
+	current_state = EnemyState.DEAD
+	# 标记为已死亡（保留兼容性）
 	is_dead = true
 	
 	# 显示击杀得分文本
