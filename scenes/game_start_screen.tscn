@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/game_start_screen.gd" id="1_start"]
 [ext_resource type="FontFile" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
+[ext_resource type="Texture2D" path="res://assets/images/beijing.png" id="3_bg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1s3a"]
 content_margin_left = 10.0
@@ -112,14 +113,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_start")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.1, 0.2, 0.4, 1)
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="GameTitle" type="Label" parent="."]
 layout_mode = 1
