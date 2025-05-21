@@ -8,28 +8,41 @@ var room_config = preload("res://scripts/room_config.gd").new()
 
 # 房间类型枚举 - 从配置文件中导入以保持一致性
 enum RoomType {
-	ENTRANCE = 0,  # 入口房间
-	CORRIDOR = 1,  # 走廊房间
-	STORAGE = 2,   # 储藏室
-	OXYGEN = 3,    # 氧气房间
-	CHALLENGE = 4, # 挑战房间
-	TREASURE = 5   # 宝藏房间
+	ENTRANCE = 0,    # 入口房间
+	CORRIDOR = 1,    # 走廊
+	LIVING = 2,      # 生活区
+	FARM = 3,        # 农场
+	POWER = 4,       # 发电站
+	RESEARCH = 5,    # 研究站
+	STORAGE = 6,     # 储藏室
+	MEDICAL = 7,     # 医疗站
+	INDUSTRIAL = 8,  # 工业区
+	RECREATION = 9,  # 娱乐区
+	WATER = 10,      # 水处理
+	OXYGEN = 11      # 制氧站
 }
 
 # 房间参数
-var min_room_size = Vector2(150, 150)
-var max_room_size = Vector2(300, 300)
-var min_corridor_width = 80
-var max_corridor_width = 120
-var min_corridor_length = 100
-var max_corridor_length = 250
-var room_spacing = 50
+var grid_size = 32  # 每个格子的像素大小
+var min_room_size = Vector2(4, 4)  # 最小房间大小（格子数）
+var max_room_size = Vector2(8, 8)  # 最大房间大小（格子数）
+var min_corridor_width = 2  # 最小走廊宽度（格子数）
+var max_corridor_width = 3  # 最大走廊宽度（格子数）
+var room_spacing = 2  # 房间间距（格子数）
 
 # 房间布局参数
-var level_width = 1500
-var level_height = 600
-var max_rooms = 8
-var min_rooms = 5
+var level_width = 50  # 关卡宽度（格子数）
+var level_height = 30  # 关卡高度（格子数）
+var max_rooms = 15  # 最大房间数
+var min_rooms = 10  # 最小房间数
+
+# 房间布局模式
+enum LayoutMode {
+	LINEAR = 0,    # 线性布局
+	BRANCHING = 1, # 分支布局
+	MAZE = 2,      # 迷宫布局
+	OPEN = 3       # 开放布局
+}
 
 # 生成基于房间的关卡
 func _generate_room_based_level(biome_type):
@@ -48,86 +61,608 @@ func _generate_room_based_level(biome_type):
 	# 确定房间数量（根据关卡难度调整）
 	var room_count = min_rooms + randi() % (max_rooms - min_rooms + 1)
 	
+	# 选择布局模式
+	var layout_mode = _select_layout_mode(biome_type)
+	
 	# 生成房间
 	var rooms = []
 	var room_rects = []
 	
-	# 首先创建入口房间（左侧）
+	# 根据布局模式生成房间
+	match layout_mode:
+		LayoutMode.LINEAR:
+			_generate_linear_layout(rooms, room_rects, room_count, biome_type)
+		LayoutMode.BRANCHING:
+			_generate_branching_layout(rooms, room_rects, room_count, biome_type)
+		LayoutMode.MAZE:
+			_generate_maze_layout(rooms, room_rects, room_count, biome_type)
+		LayoutMode.OPEN:
+			_generate_open_layout(rooms, room_rects, room_count, biome_type)
+	
+	# 连接房间
+	_connect_rooms(rooms, room_rects, layout_mode, biome_type)
+	
+	# 填充房间内容
+	_populate_rooms(rooms, room_rects, biome_type)
+
+# 选择布局模式
+func _select_layout_mode(biome_type):
+	# 根据生物群系和关卡难度选择布局模式
+	var mode_roll = randf()
+	
+	match biome_type:
+		"FOREST":
+			# 森林倾向于分支布局
+			if mode_roll < 0.4:
+				return LayoutMode.BRANCHING
+			elif mode_roll < 0.7:
+				return LayoutMode.LINEAR
+			else:
+				return LayoutMode.OPEN
+		"CAVE":
+			# 洞穴倾向于迷宫布局
+			if mode_roll < 0.5:
+				return LayoutMode.MAZE
+			elif mode_roll < 0.8:
+				return LayoutMode.BRANCHING
+			else:
+				return LayoutMode.LINEAR
+		"SWAMP":
+			# 沼泽倾向于开放布局
+			if mode_roll < 0.4:
+				return LayoutMode.OPEN
+			elif mode_roll < 0.7:
+				return LayoutMode.BRANCHING
+			else:
+				return LayoutMode.MAZE
+		_:
+			return LayoutMode.LINEAR
+
+# 生成线性布局
+func _generate_linear_layout(rooms, room_rects, room_count, biome_type):
+	# 创建入口房间（左侧）
 	var entrance_room = _create_room(
-		Rect2(100, 200, 200, 200),
+		Rect2(2, level_height/2 - 2, 4, 4),
 		RoomType.ENTRANCE,
 		biome_type
 	)
 	rooms.append(entrance_room)
-	room_rects.append(Rect2(100, 200, 200, 200))
-	
-	# 最后创建宝藏房间（右侧）
-	var treasure_room = _create_room(
-		Rect2(level_width - 300, 200, 200, 200),
-		RoomType.TREASURE,
-		biome_type
-	)
-	rooms.append(treasure_room)
-	room_rects.append(Rect2(level_width - 300, 200, 200, 200))
+	room_rects.append(Rect2(2, level_height/2 - 2, 4, 4))
 	
 	# 创建中间房间
+	var current_x = 8
 	for i in range(room_count - 2):
-		# 尝试放置房间，确保不重叠
-		var attempts = 0
-		var room_placed = false
+		var room_width = min_room_size.x + randi() % int(max_room_size.x - min_room_size.x)
+		var room_height = min_room_size.y + randi() % int(max_room_size.y - min_room_size.y)
+		var room_y = 2 + randi() % int(level_height - room_height - 4)
 		
-		while attempts < 20 and not room_placed:
-			# 随机房间大小
-			var room_width = min_room_size.x + randi() % int(max_room_size.x - min_room_size.x)
-			var room_height = min_room_size.y + randi() % int(max_room_size.y - min_room_size.y)
-			
-			# 随机位置（确保在关卡范围内）
-			var x = 300 + randi() % int(level_width - 600 - room_width)
-			var y = 100 + randi() % int(level_height - 200 - room_height)
-			
-			# 创建房间矩形
-			var new_rect = Rect2(x, y, room_width, room_height)
-			
-			# 检查是否与现有房间重叠
-			var overlaps = false
-			for existing_rect in room_rects:
-				# 扩展现有矩形以考虑间距
-				var expanded_rect = Rect2(
-					existing_rect.position.x - room_spacing,
-					existing_rect.position.y - room_spacing,
-					existing_rect.size.x + room_spacing * 2,
-					existing_rect.size.y + room_spacing * 2
-				)
-				
-				if expanded_rect.intersects(new_rect):
-					overlaps = true
-					break
-			
-			if not overlaps:
-				# 确定房间类型
-				var room_type
-				var type_roll = randi() % 10
-				
-				if type_roll < 3:
-					room_type = RoomType.STORAGE
-				elif type_roll < 6:
-					room_type = RoomType.OXYGEN
-				else:
-					room_type = RoomType.CHALLENGE
-				
-				# 创建房间
-				var room = _create_room(new_rect, room_type, biome_type)
-				rooms.append(room)
-				room_rects.append(new_rect)
-				room_placed = true
-			
-			attempts += 1
+		var room_type = _select_room_type(i, room_count - 2)
+		var room = _create_room(
+			Rect2(current_x, room_y, room_width, room_height),
+			room_type,
+			biome_type
+		)
+		rooms.append(room)
+		room_rects.append(Rect2(current_x, room_y, room_width, room_height))
+		
+		current_x += room_width + room_spacing
 	
-	# 连接房间（创建走廊）
-	_connect_rooms(rooms, room_rects, biome_type)
+	# 创建制氧站（右侧）
+	var oxygen_room = _create_room(
+		Rect2(level_width - 6, level_height/2 - 2, 4, 4),
+		RoomType.OXYGEN,
+		biome_type
+	)
+	rooms.append(oxygen_room)
+	room_rects.append(Rect2(level_width - 6, level_height/2 - 2, 4, 4))
+
+# 生成分支布局
+func _generate_branching_layout(rooms, room_rects, room_count, biome_type):
+	# 创建入口房间（左侧）
+	var entrance_room = _create_room(
+		Rect2(2, level_height/2 - 2, 4, 4),
+		RoomType.ENTRANCE,
+		biome_type
+	)
+	rooms.append(entrance_room)
+	room_rects.append(Rect2(2, level_height/2 - 2, 4, 4))
 	
-	# 在房间内放置平台、金币和敌人
-	_populate_rooms(rooms, room_rects, biome_type)
+	# 创建分支房间
+	var main_path_rooms = []
+	var branch_rooms = []
+	
+	# 生成主路径房间
+	var current_x = 8
+	for i in range(room_count / 2):
+		var room_width = min_room_size.x + randi() % int(max_room_size.x - min_room_size.x)
+		var room_height = min_room_size.y + randi() % int(max_room_size.y - min_room_size.y)
+		var room_y = 2 + randi() % int(level_height - room_height - 4)
+		
+		var room_type = _select_room_type(i, room_count / 2)
+		var room = _create_room(
+			Rect2(current_x, room_y, room_width, room_height),
+			room_type,
+			biome_type
+		)
+		main_path_rooms.append(room)
+		room_rects.append(Rect2(current_x, room_y, room_width, room_height))
+		
+		current_x += room_width + room_spacing
+	
+	# 生成分支房间
+	for i in range(room_count / 2):
+		var parent_room = main_path_rooms[randi() % main_path_rooms.size()]
+		var parent_rect = room_rects[rooms.find(parent_room)]
+		
+		var room_width = min_room_size.x + randi() % int(max_room_size.x - min_room_size.x)
+		var room_height = min_room_size.y + randi() % int(max_room_size.y - min_room_size.y)
+		
+		# 随机选择分支方向（上、下、左、右）
+		var direction = randi() % 4
+		var room_x = parent_rect.position.x
+		var room_y = parent_rect.position.y
+		
+		match direction:
+			0: # 上
+				room_y = parent_rect.position.y - room_height - room_spacing
+			1: # 下
+				room_y = parent_rect.position.y + parent_rect.size.y + room_spacing
+			2: # 左
+				room_x = parent_rect.position.x - room_width - room_spacing
+			3: # 右
+				room_x = parent_rect.position.x + parent_rect.size.x + room_spacing
+		
+		var room_type = _select_room_type(i, room_count / 2, true)
+		var room = _create_room(
+			Rect2(room_x, room_y, room_width, room_height),
+			room_type,
+			biome_type
+		)
+		branch_rooms.append(room)
+		room_rects.append(Rect2(room_x, room_y, room_width, room_height))
+	
+	# 合并房间列表
+	rooms.append_array(main_path_rooms)
+	rooms.append_array(branch_rooms)
+	
+	# 创建制氧站（右侧）
+	var oxygen_room = _create_room(
+		Rect2(level_width - 6, level_height/2 - 2, 4, 4),
+		RoomType.OXYGEN,
+		biome_type
+	)
+	rooms.append(oxygen_room)
+	room_rects.append(Rect2(level_width - 6, level_height/2 - 2, 4, 4))
+
+# 生成迷宫布局
+func _generate_maze_layout(rooms, room_rects, room_count, biome_type):
+	# 创建入口房间（左侧）
+	var entrance_room = _create_room(
+		Rect2(2, level_height/2 - 2, 4, 4),
+		RoomType.ENTRANCE,
+		biome_type
+	)
+	rooms.append(entrance_room)
+	room_rects.append(Rect2(2, level_height/2 - 2, 4, 4))
+	
+	# 创建迷宫房间
+	var grid_size = ceil(sqrt(room_count - 2))
+	var cell_width = (level_width - 8) / grid_size
+	var cell_height = (level_height - 4) / grid_size
+	
+	for y in range(grid_size):
+		for x in range(grid_size):
+			if rooms.size() >= room_count - 1:
+				break
+			
+			var room_width = cell_width * 0.8
+			var room_height = cell_height * 0.8
+			var room_x = 4 + x * cell_width + (cell_width - room_width) / 2
+			var room_y = 2 + y * cell_height + (cell_height - room_height) / 2
+			
+			var room_type = _select_room_type(rooms.size() - 1, room_count - 2)
+			var room = _create_room(
+				Rect2(room_x, room_y, room_width, room_height),
+				room_type,
+				biome_type
+			)
+			rooms.append(room)
+			room_rects.append(Rect2(room_x, room_y, room_width, room_height))
+	
+	# 创建制氧站（右侧）
+	var oxygen_room = _create_room(
+		Rect2(level_width - 6, level_height/2 - 2, 4, 4),
+		RoomType.OXYGEN,
+		biome_type
+	)
+	rooms.append(oxygen_room)
+	room_rects.append(Rect2(level_width - 6, level_height/2 - 2, 4, 4))
+
+# 生成开放布局
+func _generate_open_layout(rooms, room_rects, room_count, biome_type):
+	# 创建入口房间（左侧）
+	var entrance_room = _create_room(
+		Rect2(2, level_height/2 - 2, 4, 4),
+		RoomType.ENTRANCE,
+		biome_type
+	)
+	rooms.append(entrance_room)
+	room_rects.append(Rect2(2, level_height/2 - 2, 4, 4))
+	
+	# 创建开放区域房间
+	var center_x = level_width / 2
+	var center_y = level_height / 2
+	var radius = min(level_width, level_height) / 3
+	
+	for i in range(room_count - 2):
+		var angle = randf() * PI * 2
+		var distance = randf() * radius
+		var room_width = min_room_size.x + randi() % int(max_room_size.x - min_room_size.x)
+		var room_height = min_room_size.y + randi() % int(max_room_size.y - min_room_size.y)
+		
+		var room_x = center_x + cos(angle) * distance - room_width / 2
+		var room_y = center_y + sin(angle) * distance - room_height / 2
+		
+		var room_type = _select_room_type(i, room_count - 2)
+		var room = _create_room(
+			Rect2(room_x, room_y, room_width, room_height),
+			room_type,
+			biome_type
+		)
+		rooms.append(room)
+		room_rects.append(Rect2(room_x, room_y, room_width, room_height))
+	
+	# 创建制氧站（右侧）
+	var oxygen_room = _create_room(
+		Rect2(level_width - 6, level_height/2 - 2, 4, 4),
+		RoomType.OXYGEN,
+		biome_type
+	)
+	rooms.append(oxygen_room)
+	room_rects.append(Rect2(level_width - 6, level_height/2 - 2, 4, 4))
+
+# 选择房间类型
+func _select_room_type(index, total_rooms, is_branch = false):
+	var type_roll = randf()
+	
+	if is_branch:
+		# 分支房间更可能是特殊房间
+		if type_roll < 0.2:
+			return RoomType.FARM
+		elif type_roll < 0.4:
+			return RoomType.POWER
+		elif type_roll < 0.6:
+			return RoomType.STORAGE
+		elif type_roll < 0.8:
+			return RoomType.RECREATION
+		else:
+			return RoomType.CORRIDOR
+	else:
+		# 主路径房间
+		if index == 0:
+			return RoomType.ENTRANCE
+		elif index == total_rooms - 1:
+			return RoomType.OXYGEN
+		else:
+			if type_roll < 0.2:
+				return RoomType.LIVING
+			elif type_roll < 0.4:
+				return RoomType.RESEARCH
+			elif type_roll < 0.6:
+				return RoomType.MEDICAL
+			elif type_roll < 0.8:
+				return RoomType.WATER
+			else:
+				return RoomType.INDUSTRIAL
+
+# 连接房间
+func _connect_rooms(rooms, room_rects, layout_mode, biome_type):
+	match layout_mode:
+		LayoutMode.LINEAR:
+			_connect_linear_rooms(rooms, room_rects, biome_type)
+		LayoutMode.BRANCHING:
+			_connect_branching_rooms(rooms, room_rects, biome_type)
+		LayoutMode.MAZE:
+			_connect_maze_rooms(rooms, room_rects, biome_type)
+		LayoutMode.OPEN:
+			_connect_open_rooms(rooms, room_rects, biome_type)
+
+# 连接线性布局的房间
+func _connect_linear_rooms(rooms, room_rects, biome_type):
+	for i in range(rooms.size() - 1):
+		_create_corridor(room_rects[i], room_rects[i + 1], biome_type)
+
+# 连接分支布局的房间
+func _connect_branching_rooms(rooms, room_rects, biome_type):
+	# 连接主路径房间
+	for i in range(rooms.size() - 1):
+		if _should_connect_rooms(rooms[i], rooms[i + 1]):
+			_create_corridor(room_rects[i], room_rects[i + 1], biome_type)
+	
+	# 连接分支房间
+	for i in range(rooms.size()):
+		for j in range(i + 1, rooms.size()):
+			if _should_connect_rooms(rooms[i], rooms[j]):
+				_create_corridor(room_rects[i], room_rects[j], biome_type)
+
+# 连接迷宫布局的房间
+func _connect_maze_rooms(rooms, room_rects, biome_type):
+	# 使用Prim算法生成最小生成树
+	var connected = [0]  # 从入口房间开始
+	var unconnected = range(1, rooms.size())
+	
+	while unconnected.size() > 0:
+		var min_dist = INF
+		var connect_from = -1
+		var connect_to = -1
+		
+		for i in connected:
+			for j in unconnected:
+				var dist = room_rects[i].position.distance_to(room_rects[j].position)
+				if dist < min_dist:
+					min_dist = dist
+					connect_from = i
+					connect_to = j
+		
+		if connect_from != -1 and connect_to != -1:
+			_create_corridor(room_rects[connect_from], room_rects[connect_to], biome_type)
+			connected.append(connect_to)
+			unconnected.erase(connect_to)
+	
+	# 添加一些额外的随机连接
+	for i in range(rooms.size() / 4):
+		var from_idx = randi() % rooms.size()
+		var to_idx = randi() % rooms.size()
+		if from_idx != to_idx:
+			_create_corridor(room_rects[from_idx], room_rects[to_idx], biome_type)
+
+# 连接开放布局的房间
+func _connect_open_rooms(rooms, room_rects, biome_type):
+	# 连接所有相邻的房间
+	for i in range(rooms.size()):
+		for j in range(i + 1, rooms.size()):
+			var dist = room_rects[i].position.distance_to(room_rects[j].position)
+			if dist < max_room_size.x * 1.5:
+				_create_corridor(room_rects[i], room_rects[j], biome_type)
+
+# 判断是否应该连接两个房间
+func _should_connect_rooms(room1, room2):
+	var type1 = room1.get_meta("type")
+	var type2 = room2.get_meta("type")
+	
+	# 入口房间和制氧站必须连接
+	if type1 == RoomType.ENTRANCE or type2 == RoomType.ENTRANCE:
+		return true
+	if type1 == RoomType.OXYGEN or type2 == RoomType.OXYGEN:
+		return true
+	
+	# 特殊房间的连接规则
+	if type1 == RoomType.POWER or type2 == RoomType.POWER:
+		return randf() < 0.8  # 80%概率连接发电站
+	if type1 == RoomType.WATER or type2 == RoomType.WATER:
+		return randf() < 0.7  # 70%概率连接水处理
+	
+	# 其他房间的连接规则
+	return randf() < 0.6  # 60%概率连接其他房间
+
+# 创建走廊
+func _create_corridor(rect1, rect2, biome_type):
+	var corridor_width = min_corridor_width + randi() % int(max_corridor_width - min_corridor_width)
+	
+	# 计算走廊位置和方向
+	var start_pos = rect1.position + rect1.size / 2
+	var end_pos = rect2.position + rect2.size / 2
+	var direction = (end_pos - start_pos).normalized()
+	
+	# 创建走廊
+	var corridor = ColorRect.new()
+	corridor.position = start_pos
+	corridor.size = Vector2(
+		start_pos.distance_to(end_pos),
+		corridor_width * grid_size
+	)
+	corridor.color = Color(0.3, 0.3, 0.3, 0.5)
+	corridor.rotation = direction.angle()
+	
+	# 添加到走廊容器
+	$Corridors.add_child(corridor)
+	
+	# 在走廊中放置管道
+	_place_pipes_in_corridor(corridor, biome_type)
+
+# 在走廊中放置管道
+func _place_pipes_in_corridor(corridor, biome_type):
+	var pipe_spacing = 4 * grid_size  # 每4格放置一个管道
+	
+	for i in range(corridor.size.x / pipe_spacing):
+		var pipe_pos = Vector2(
+			corridor.position.x + i * pipe_spacing,
+			corridor.position.y
+		)
+		
+		_create_pipe(pipe_pos, biome_type)
+
+# 填充房间内容
+func _populate_rooms(rooms, room_rects, biome_type):
+	for i in range(rooms.size()):
+		var room = rooms[i]
+		var rect = room_rects[i]
+		var room_type = room.get_meta("type")
+		
+		# 根据房间类型放置特殊物品
+		match room_type:
+			RoomType.LIVING:
+				_create_living_room_items(rect, biome_type)
+			RoomType.FARM:
+				_create_farm_items(rect, biome_type)
+			RoomType.POWER:
+				_create_power_items(rect, biome_type)
+			RoomType.RESEARCH:
+				_create_research_items(rect, biome_type)
+			RoomType.MEDICAL:
+				_create_medical_items(rect, biome_type)
+			RoomType.INDUSTRIAL:
+				_create_industrial_items(rect, biome_type)
+			RoomType.RECREATION:
+				_create_recreation_items(rect, biome_type)
+			RoomType.WATER:
+				_create_water_items(rect, biome_type)
+			RoomType.OXYGEN:
+				_create_oxygen_items(rect, biome_type)
+
+# 创建生活区物品
+func _create_living_room_items(rect, biome_type):
+	# 创建床铺
+	for i in range(2):
+		var bed_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 2
+		)
+		_create_bed(bed_pos, biome_type)
+	
+	# 创建餐桌
+	var table_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 4
+	)
+	_create_table(table_pos, biome_type)
+
+# 创建农场物品
+func _create_farm_items(rect, biome_type):
+	# 创建种植区
+	for i in range(4):
+		for j in range(2):
+			var plot_pos = Vector2(
+				rect.position.x + (i + 1) * rect.size.x / 5,
+				rect.position.y + (j + 1) * rect.size.y / 3
+			)
+			_create_farm_plot(plot_pos, biome_type)
+	
+	# 创建灌溉系统
+	var irrigation_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y - grid_size
+	)
+	_create_irrigation_system(irrigation_pos, biome_type)
+
+# 创建发电站物品
+func _create_power_items(rect, biome_type):
+	# 创建发电机
+	var generator_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 2
+	)
+	_create_generator(generator_pos, biome_type)
+	
+	# 创建电池组
+	for i in range(2):
+		var battery_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 4
+		)
+		_create_battery(battery_pos, biome_type)
+
+# 创建研究站物品
+func _create_research_items(rect, biome_type):
+	# 创建研究台
+	var research_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 2
+	)
+	_create_research_station(research_pos, biome_type)
+	
+	# 创建书架
+	for i in range(2):
+		var shelf_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 4
+		)
+		_create_bookshelf(shelf_pos, biome_type)
+
+# 创建医疗站物品
+func _create_medical_items(rect, biome_type):
+	# 创建医疗床
+	var bed_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 2
+	)
+	_create_medical_bed(bed_pos, biome_type)
+	
+	# 创建医疗设备
+	for i in range(2):
+		var device_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 4
+		)
+		_create_medical_device(device_pos, biome_type)
+
+# 创建工业区物品
+func _create_industrial_items(rect, biome_type):
+	# 创建工作台
+	for i in range(2):
+		var workbench_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 2
+		)
+		_create_workbench(workbench_pos, biome_type)
+	
+	# 创建储物柜
+	var storage_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 4
+	)
+	_create_storage_cabinet(storage_pos, biome_type)
+
+# 创建娱乐区物品
+func _create_recreation_items(rect, biome_type):
+	# 创建娱乐设施
+	for i in range(2):
+		var recreation_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 2
+		)
+		_create_recreation_facility(recreation_pos, biome_type)
+	
+	# 创建休息区
+	var rest_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 4
+	)
+	_create_rest_area(rest_pos, biome_type)
+
+# 创建水处理物品
+func _create_water_items(rect, biome_type):
+	# 创建水处理器
+	var processor_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 2
+	)
+	_create_water_processor(processor_pos, biome_type)
+	
+	# 创建储水罐
+	for i in range(2):
+		var tank_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 4
+		)
+		_create_water_tank(tank_pos, biome_type)
+
+# 创建制氧站物品
+func _create_oxygen_items(rect, biome_type):
+	# 创建制氧机
+	var generator_pos = Vector2(
+		rect.position.x + rect.size.x / 2,
+		rect.position.y + rect.size.y / 2
+	)
+	_create_oxygen_generator(generator_pos, biome_type)
+	
+	# 创建氧气罐
+	for i in range(2):
+		var tank_pos = Vector2(
+			rect.position.x + (i + 1) * rect.size.x / 3,
+			rect.position.y + rect.size.y / 4
+		)
+		_create_oxygen_tank(tank_pos, biome_type)
 
 # 创建单个房间
 func _create_room(rect, room_type, biome_type):
@@ -137,8 +672,8 @@ func _create_room(rect, room_type, biome_type):
 	# 创建房间节点
 	var room = ColorRect.new()
 	room.name = "Room_" + str(room_type)
-	room.position = rect.position
-	room.size = rect.size
+	room.position = rect.position * grid_size
+	room.size = rect.size * grid_size
 	
 	# 设置房间颜色（已应用生物群系修改）
 	room.color = config.color
@@ -157,275 +692,141 @@ func _create_room(rect, room_type, biome_type):
 	# 添加房间标签
 	var label = Label.new()
 	label.text = config.name
-	label.position = Vector2(rect.size.x / 2 - 20, rect.size.y / 2 - 10)
+	label.position = Vector2(rect.size.x * grid_size / 2 - 20, rect.size.y * grid_size / 2 - 10)
 	room.add_child(label)
 	
 	return room
 
-# 连接房间（创建走廊）
-func _connect_rooms(rooms, room_rects, biome_type):
-	# 使用最小生成树算法连接所有房间
-	var connected = [0]  # 从第一个房间开始
-	var unconnected = []
-	
-	# 初始化未连接房间列表
-	for i in range(1, rooms.size()):
-		unconnected.append(i)
-	
-	# 连接所有房间
-	while unconnected.size() > 0:
-		var min_dist = INF
-		var closest_connected = -1
-		var closest_unconnected = -1
-		
-		# 找到最近的未连接房间
-		for c in connected:
-			for u in unconnected:
-				# 计算房间中心点之间的距离
-				var center1 = room_rects[c].position + room_rects[c].size / 2
-				var center2 = room_rects[u].position + room_rects[u].size / 2
-				var dist = center1.distance_to(center2)
-				
-				if dist < min_dist:
-					min_dist = dist
-					closest_connected = c
-					closest_unconnected = u
-		
-		# 创建走廊连接这两个房间
-		_create_corridor(room_rects[closest_connected], room_rects[closest_unconnected], closest_connected, closest_unconnected, biome_type)
-		
-		# 更新连接状态
-		connected.append(closest_unconnected)
-		unconnected.erase(closest_unconnected)
-	
-	# 添加一些额外的走廊以创建循环（增加探索性）
-	var extra_corridors = randi() % 3  # 0-2个额外走廊
-	for i in range(extra_corridors):
-		var room1 = randi() % rooms.size()
-		var room2 = randi() % rooms.size()
-		
-		# 确保选择不同的房间
-		if room1 != room2:
-			_create_corridor(room_rects[room1], room_rects[room2], room1, room2, biome_type)
+# 创建各种设施的函数
+func _create_bed(pos, biome_type):
+	var bed = ColorRect.new()
+	bed.position = pos * grid_size
+	bed.size = Vector2(2, 1) * grid_size
+	bed.color = Color(0.8, 0.6, 0.4, 0.8)
+	$Rooms.add_child(bed)
 
-# 创建走廊
-func _create_corridor(rect1, rect2, room1_index, room2_index, biome_type):
-	# 计算两个房间的中心点
-	var center1 = rect1.position + rect1.size / 2
-	var center2 = rect2.position + rect2.size / 2
-	
-	# 确定走廊宽度
-	var corridor_width = min_corridor_width + randi() % int(max_corridor_width - min_corridor_width)
-	
-	# 创建L形走廊（水平然后垂直）
-	var horizontal_corridor
-	var vertical_corridor
-	
-	# 水平走廊
-	var h_rect
-	if center1.x < center2.x:
-		h_rect = Rect2(center1.x, center1.y - corridor_width / 2, center2.x - center1.x, corridor_width)
-	else:
-		h_rect = Rect2(center2.x, center1.y - corridor_width / 2, center1.x - center2.x, corridor_width)
-	
-	horizontal_corridor = _create_room(h_rect, RoomType.CORRIDOR, biome_type)
-	horizontal_corridor.set_meta("start_room", room1_index)
-	horizontal_corridor.set_meta("end_room", room2_index)
-	
-	# 垂直走廊
-	var v_rect
-	if center1.y < center2.y:
-		v_rect = Rect2(center2.x - corridor_width / 2, center1.y, corridor_width, center2.y - center1.y)
-	else:
-		v_rect = Rect2(center2.x - corridor_width / 2, center2.y, corridor_width, center1.y - center2.y)
-	
-	vertical_corridor = _create_room(v_rect, RoomType.CORRIDOR, biome_type)
-	vertical_corridor.set_meta("start_room", room1_index)
-	vertical_corridor.set_meta("end_room", room2_index)
-	
-	# 将走廊添加到走廊组
-	horizontal_corridor.add_to_group("corridors")
-	vertical_corridor.add_to_group("corridors")
+func _create_table(pos, biome_type):
+	var table = ColorRect.new()
+	table.position = pos * grid_size
+	table.size = Vector2(3, 2) * grid_size
+	table.color = Color(0.6, 0.4, 0.2, 0.8)
+	$Rooms.add_child(table)
 
-# 在房间内放置平台、金币和敌人
-func _populate_rooms(rooms, room_rects, biome_type):
-	for i in range(rooms.size()):
-		var room = rooms[i]
-		var rect = room_rects[i]
-		var room_type = room.get_meta("type")
-		
-		# 使用配置系统获取平台数量
-		var platform_count = room_config.get_platform_count(room_type, biome_type)
-		
-		# 如果是氧气室，放置氧气发生器
-		if room_config.should_place_oxygen_generator(room_type, biome_type):
-			var generator_pos = Vector2(
-				rect.position.x + rect.size.x / 2,
-				rect.position.y + rect.size.y / 2
-			)
-			_create_oxygen_generator(generator_pos, biome_type)
-		
-		# 在房间内放置平台
-		for j in range(platform_count):
-			# 计算平台位置
-			var platform_x = rect.position.x + randf_range(50, rect.size.x - 50)
-			var platform_y = rect.position.y + randf_range(50, rect.size.y - 50)
-			var platform_pos = Vector2(platform_x, platform_y)
-			
-			# 使用配置系统决定是否为移动平台
-			var is_moving = room_config.should_use_moving_platform(room_type, biome_type)
-			
-			# 创建平台
-			var platform_scale = Vector2(1.0 + randf() * 0.5, 0.5 + randf() * 0.2)
-			var platform = _create_platform(platform_pos, platform_scale, biome_type, is_moving)
-			
-			# 使用配置系统决定是否放置金币
-			if room_config.should_place_coin(room_type, biome_type):
-				var coin_pos = Vector2(platform_pos.x, platform_pos.y - 30)
-				_create_coin(coin_pos, 1, biome_type)
-			
-			# 使用配置系统决定是否放置史莱姆
-			if room_config.should_place_enemy(room_type, biome_type):
-				var slime_pos = Vector2(platform_pos.x, platform_pos.y - 20)
-				
-				# 使用配置系统决定是否使用紫色史莱姆
-				var is_purple = room_config.should_use_purple_slime(room_type, biome_type)
-				var slime_type = 1 if is_purple else 0  # 1=紫色, 0=绿色
-				
-				_create_slime(slime_pos, slime_type, biome_type, Vector2(1.0, 1.0))
+func _create_farm_plot(pos, biome_type):
+	var plot = ColorRect.new()
+	plot.position = pos * grid_size
+	plot.size = Vector2(2, 2) * grid_size
+	plot.color = Color(0.4, 0.6, 0.2, 0.8)
+	$Rooms.add_child(plot)
 
-# 从随机关卡生成器中实现的函数
+func _create_irrigation_system(pos, biome_type):
+	var system = ColorRect.new()
+	system.position = pos * grid_size
+	system.size = Vector2(4, 1) * grid_size
+	system.color = Color(0.2, 0.4, 0.8, 0.8)
+	$Rooms.add_child(system)
 
-func _create_platform(position, scale, biome_type, is_moving):
-	# 创建平台
-	var platform = preload("res://scenes/platform.tscn").instantiate()
-	platform.position = position
-	platform.scale = scale
-	
-	# 根据生物群系设置平台颜色
-	var sprite = platform.get_node("Sprite2D")
-	if biome_type == "FOREST":
-		sprite.modulate = Color(0.2, 0.8, 0.2)  # 绿色平台
-	elif biome_type == "CAVE":
-		sprite.modulate = Color(0.6, 0.6, 0.6)  # 灰色平台
-	elif biome_type == "SWAMP":
-		sprite.modulate = Color(0.5, 0.4, 0.1)  # 棕色平台
-	
-	# 设置是否为移动平台
-	if is_moving:
-		platform.is_moving = true
-		platform.move_speed = 50  # 默认移动速度
-		platform.move_distance = 100  # 默认移动距离
-	
-	# 添加到场景
-	if not has_node("Platforms"):
-		var platforms = Node2D.new()
-		platforms.name = "Platforms"
-		add_child(platforms)
-	
-	$Platforms.add_child(platform)
-	return platform
+func _create_generator(pos, biome_type):
+	var generator = ColorRect.new()
+	generator.position = pos * grid_size
+	generator.size = Vector2(3, 3) * grid_size
+	generator.color = Color(0.8, 0.2, 0.2, 0.8)
+	$Rooms.add_child(generator)
 
-func _create_coin(position, value, biome_type):
-	# 创建金币
-	var coin = preload("res://scenes/coin.tscn").instantiate()
-	coin.position = position
-	
-	# 添加到场景
-	if not has_node("Coins"):
-		var coins = Node2D.new()
-		coins.name = "Coins"
-		add_child(coins)
-	
-	$Coins.add_child(coin)
-	return coin
+func _create_battery(pos, biome_type):
+	var battery = ColorRect.new()
+	battery.position = pos * grid_size
+	battery.size = Vector2(2, 2) * grid_size
+	battery.color = Color(0.8, 0.8, 0.2, 0.8)
+	$Rooms.add_child(battery)
 
-func _create_slime(position, slime_type, biome_type, scale):
-	# 创建史莱姆敌人
-	var slime = preload("res://scenes/slime.tscn").instantiate()
-	slime.position = position
-	slime.scale = scale
-	
-	# 如果是紫色史莱姆，修改精灵图像和速度
-	if slime_type == 1:  # 1=紫色, 0=绿色
-		var animated_sprite = slime.get_node("AnimatedSprite2D")
-		animated_sprite.sprite_frames.set_animation_speed("default", 10) # 增加动画速度
-		
-		# 加载紫色史莱姆纹理
-		var texture = load("res://assets/sprites/slime_purple.png")
-		for i in range(animated_sprite.sprite_frames.get_frame_count("default")):
-			var atlas_texture = animated_sprite.sprite_frames.get_frame_texture("default", i)
-			var new_atlas_texture = AtlasTexture.new()
-			new_atlas_texture.atlas = texture
-			new_atlas_texture.region = atlas_texture.region
-			animated_sprite.sprite_frames.set_frame("default", i, new_atlas_texture)
-		
-		# 增加移动速度
-		slime.SPEED = 60 # 比普通史莱姆快
-	
-	# 添加到场景
-	if not has_node("Monsters"):
-		var monsters = Node2D.new()
-		monsters.name = "Monsters"
-		add_child(monsters)
-	
-	$Monsters.add_child(slime)
-	return slime
+func _create_research_station(pos, biome_type):
+	var station = ColorRect.new()
+	station.position = pos * grid_size
+	station.size = Vector2(3, 2) * grid_size
+	station.color = Color(0.6, 0.2, 0.8, 0.8)
+	$Rooms.add_child(station)
 
-func _create_oxygen_generator(position, biome_type):
-	# 创建氧气发生器节点
-	var generator = Sprite2D.new()
-	generator.position = position
-	generator.name = "OxygenGenerator"
-	
-	# 设置纹理（使用金币纹理作为临时替代）
-	var texture = load("res://assets/sprites/coin.png")
-	generator.texture = texture
-	
-	# 根据生物群系设置颜色
-	if biome_type == "FOREST":
-		generator.modulate = Color(0.3, 0.9, 1.0)  # 蓝色
-	elif biome_type == "CAVE":
-		generator.modulate = Color(0.5, 0.8, 1.0)  # 淡蓝色
-	elif biome_type == "SWAMP":
-		generator.modulate = Color(0.2, 0.6, 0.8)  # 深蓝色
-	
-	# 设置缩放
-	generator.scale = Vector2(0.8, 0.8)
-	
-	# 添加到场景
-	if not has_node("OxygenGenerators"):
-		var generators = Node2D.new()
-		generators.name = "OxygenGenerators"
-		add_child(generators)
-	
-	$OxygenGenerators.add_child(generator)
-	
-	# 添加发光效果
-	var light = PointLight2D.new()
-	light.texture = texture
-	light.color = Color(0.3, 0.7, 1.0, 0.5)  # 蓝色半透明
-	light.energy = 0.8
-	light.texture_scale = 3.0
-	generator.add_child(light)
-	
-	# 添加动画
-	var anim_player = AnimationPlayer.new()
-	generator.add_child(anim_player)
-	
-	# 创建脉动动画
-	var animation = Animation.new()
-	var track_index = animation.add_track(Animation.TYPE_VALUE)
-	animation.track_set_path(track_index, ":scale")
-	animation.track_insert_key(track_index, 0.0, Vector2(0.8, 0.8))
-	animation.track_insert_key(track_index, 1.0, Vector2(1.0, 1.0))
-	animation.set_length(2.0)
-	animation.set_loop_mode(Animation.LOOP_PINGPONG)
-	
-	# 将动画添加到播放器
-	var anim_lib = AnimationLibrary.new()
-	anim_lib.add_animation("pulse", animation)
-	anim_player.add_animation_library("default", anim_lib)
-	anim_player.play("default/pulse")
-	
-	return generator
+func _create_bookshelf(pos, biome_type):
+	var shelf = ColorRect.new()
+	shelf.position = pos * grid_size
+	shelf.size = Vector2(2, 3) * grid_size
+	shelf.color = Color(0.4, 0.2, 0.0, 0.8)
+	$Rooms.add_child(shelf)
+
+func _create_medical_bed(pos, biome_type):
+	var bed = ColorRect.new()
+	bed.position = pos * grid_size
+	bed.size = Vector2(2, 1) * grid_size
+	bed.color = Color(1.0, 0.8, 0.8, 0.8)
+	$Rooms.add_child(bed)
+
+func _create_medical_device(pos, biome_type):
+	var device = ColorRect.new()
+	device.position = pos * grid_size
+	device.size = Vector2(2, 2) * grid_size
+	device.color = Color(0.8, 0.8, 1.0, 0.8)
+	$Rooms.add_child(device)
+
+func _create_workbench(pos, biome_type):
+	var bench = ColorRect.new()
+	bench.position = pos * grid_size
+	bench.size = Vector2(3, 2) * grid_size
+	bench.color = Color(0.4, 0.4, 0.4, 0.8)
+	$Rooms.add_child(bench)
+
+func _create_storage_cabinet(pos, biome_type):
+	var cabinet = ColorRect.new()
+	cabinet.position = pos * grid_size
+	cabinet.size = Vector2(2, 3) * grid_size
+	cabinet.color = Color(0.5, 0.3, 0.0, 0.8)
+	$Rooms.add_child(cabinet)
+
+func _create_recreation_facility(pos, biome_type):
+	var facility = ColorRect.new()
+	facility.position = pos * grid_size
+	facility.size = Vector2(2, 2) * grid_size
+	facility.color = Color(0.8, 0.8, 0.2, 0.8)
+	$Rooms.add_child(facility)
+
+func _create_rest_area(pos, biome_type):
+	var area = ColorRect.new()
+	area.position = pos * grid_size
+	area.size = Vector2(3, 2) * grid_size
+	area.color = Color(0.6, 0.8, 0.8, 0.8)
+	$Rooms.add_child(area)
+
+func _create_water_processor(pos, biome_type):
+	var processor = ColorRect.new()
+	processor.position = pos * grid_size
+	processor.size = Vector2(3, 3) * grid_size
+	processor.color = Color(0.2, 0.4, 0.8, 0.8)
+	$Rooms.add_child(processor)
+
+func _create_water_tank(pos, biome_type):
+	var tank = ColorRect.new()
+	tank.position = pos * grid_size
+	tank.size = Vector2(2, 3) * grid_size
+	tank.color = Color(0.2, 0.6, 1.0, 0.8)
+	$Rooms.add_child(tank)
+
+func _create_oxygen_generator(pos, biome_type):
+	var generator = ColorRect.new()
+	generator.position = pos * grid_size
+	generator.size = Vector2(3, 3) * grid_size
+	generator.color = Color(0.2, 0.8, 0.8, 0.8)
+	$Rooms.add_child(generator)
+
+func _create_oxygen_tank(pos, biome_type):
+	var tank = ColorRect.new()
+	tank.position = pos * grid_size
+	tank.size = Vector2(2, 3) * grid_size
+	tank.color = Color(0.4, 0.8, 1.0, 0.8)
+	$Rooms.add_child(tank)
+
+func _create_pipe(pos, biome_type):
+	var pipe = ColorRect.new()
+	pipe.position = pos * grid_size
+	pipe.size = Vector2(1, 1) * grid_size
+	pipe.color = Color(0.6, 0.6, 0.6, 0.8)
+	$Corridors.add_child(pipe)

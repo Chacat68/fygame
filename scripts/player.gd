@@ -25,6 +25,7 @@ var states = {}
 # 音效引用 - 通过资源管理器获取
 var hurt_sound = null
 var jump_sound = null
+var attack_sound = null  # 添加攻击音效引用
 
 # 预加载ResourceManager类
 const ResourceManagerClass = preload("res://scripts/resource_manager.gd")
@@ -35,10 +36,12 @@ func _init_sounds():
 	if Engine.has_singleton("ResourceManager"):
 		hurt_sound = Engine.get_singleton("ResourceManager").get_sound("hurt")
 		jump_sound = Engine.get_singleton("ResourceManager").get_sound("jump")
+		attack_sound = Engine.get_singleton("ResourceManager").get_sound("attack")  # 添加攻击音效
 	else:
 		# 如果ResourceManager未注册为自动加载，使用单例模式
 		hurt_sound = ResourceManagerClass.instance().get_sound("hurt")
 		jump_sound = ResourceManagerClass.instance().get_sound("jump")
+		attack_sound = ResourceManagerClass.instance().get_sound("attack")  # 添加攻击音效
 
 # 信号
 signal health_changed(new_health)
@@ -73,7 +76,8 @@ func _init_states():
 		"Jump": JumpState.new(self),
 		"Fall": FallState.new(self),
 		"Hurt": HurtState.new(self),
-		"Death": DeathState.new(self)
+		"Death": DeathState.new(self),
+		"Attack": AttackState.new(self)  # 添加攻击状态
 	}
 	
 	# 设置初始状态
@@ -94,6 +98,14 @@ func _physics_process(delta):
 	
 	# 检查掉落死亡
 	_check_fall_death()
+	
+	# 处理攻击输入
+	if Input.is_action_just_pressed("attack") and current_state.name != "Attack":
+		_change_state("Attack")
+		# 播放攻击音效
+		if Engine.has_singleton("ResourceManager"):
+			Engine.get_singleton("ResourceManager").play_sound("attack", self)
+		return
 	
 	# 使用当前状态处理物理更新
 	var new_state_name = current_state.physics_process(delta)

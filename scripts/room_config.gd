@@ -1,144 +1,284 @@
-extends Resource
+extends Node
 
-# 房间配置资源
-# 用于存储不同房间类型的配置数据
+# 房间配置系统
+# 用于管理不同类型房间的配置参数，基于《缺氧》风格
 
-# 房间类型枚举（与room_system.gd保持一致）
+# 房间类型枚举
 enum RoomType {
-	ENTRANCE = 0,  # 入口房间
-	CORRIDOR = 1,  # 走廊房间
-	STORAGE = 2,   # 储藏室
-	OXYGEN = 3,    # 氧气房间
-	CHALLENGE = 4, # 挑战房间
-	TREASURE = 5   # 宝藏房间
+	ENTRANCE = 0,    # 入口房间
+	CORRIDOR = 1,    # 走廊
+	LIVING = 2,      # 生活区
+	FARM = 3,        # 农场
+	POWER = 4,       # 发电站
+	RESEARCH = 5,    # 研究站
+	STORAGE = 6,     # 储藏室
+	MEDICAL = 7,     # 医疗站
+	INDUSTRIAL = 8,  # 工业区
+	RECREATION = 9,  # 娱乐区
+	WATER = 10,      # 水处理
+	OXYGEN = 11      # 制氧站
 }
 
 # 房间配置数据
 var room_configs = {
 	RoomType.ENTRANCE: {
 		"name": "入口",
-		"color": Color(0.2, 0.7, 0.3, 0.3),  # 绿色半透明
-		"platform_count": [3, 5],  # 最小值和最大值
-		"coin_chance": 0.3,
-		"enemy_chance": 0.1,
-		"moving_platform_chance": 0.1,
-		"purple_slime_chance": 0.0
+		"color": Color(0.2, 0.6, 0.8, 0.5),  # 蓝色
+		"size": Vector2(8, 4),  # 以格子为单位
+		"required_resources": {
+			"metal": 100,
+			"plastic": 50
+		},
+		"power_consumption": 0,
+		"oxygen_production": 0,
+		"heat_production": 0,
+		"water_consumption": 0,
+		"priority": 1
 	},
 	RoomType.CORRIDOR: {
 		"name": "走廊",
-		"color": Color(0.5, 0.5, 0.5, 0.3),  # 灰色半透明
-		"platform_count": [2, 3],  # 最小值和最大值
-		"coin_chance": 0.2,
-		"enemy_chance": 0.1,
-		"moving_platform_chance": 0.3,
-		"purple_slime_chance": 0.2
+		"color": Color(0.4, 0.4, 0.4, 0.5),  # 灰色
+		"size": Vector2(4, 2),
+		"required_resources": {
+			"metal": 20
+		},
+		"power_consumption": 0,
+		"oxygen_production": 0,
+		"heat_production": 0,
+		"water_consumption": 0,
+		"priority": 0
+	},
+	RoomType.LIVING: {
+		"name": "生活区",
+		"color": Color(0.8, 0.6, 0.4, 0.5),  # 橙色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 150,
+			"plastic": 100
+		},
+		"power_consumption": 100,
+		"oxygen_production": 0,
+		"heat_production": 100,
+		"water_consumption": 50,
+		"priority": 2
+	},
+	RoomType.FARM: {
+		"name": "农场",
+		"color": Color(0.2, 0.8, 0.2, 0.5),  # 绿色
+		"size": Vector2(8, 4),
+		"required_resources": {
+			"metal": 200,
+			"plastic": 150,
+			"dirt": 100
+		},
+		"power_consumption": 200,
+		"oxygen_production": 50,
+		"heat_production": 200,
+		"water_consumption": 200,
+		"priority": 3
+	},
+	RoomType.POWER: {
+		"name": "发电站",
+		"color": Color(0.8, 0.2, 0.2, 0.5),  # 红色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 300,
+			"plastic": 200
+		},
+		"power_consumption": 0,
+		"oxygen_production": 0,
+		"heat_production": 500,
+		"water_consumption": 100,
+		"priority": 2
+	},
+	RoomType.RESEARCH: {
+		"name": "研究站",
+		"color": Color(0.6, 0.2, 0.8, 0.5),  # 紫色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 200,
+			"plastic": 150,
+			"glass": 100
+		},
+		"power_consumption": 150,
+		"oxygen_production": 0,
+		"heat_production": 150,
+		"water_consumption": 50,
+		"priority": 2
 	},
 	RoomType.STORAGE: {
 		"name": "储藏室",
-		"color": Color(0.7, 0.7, 0.2, 0.3),  # 黄色半透明
-		"platform_count": [4, 6],  # 最小值和最大值
-		"coin_chance": 0.7,
-		"enemy_chance": 0.2,
-		"moving_platform_chance": 0.2,
-		"purple_slime_chance": 0.3
+		"color": Color(0.5, 0.3, 0.0, 0.5),  # 棕色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 100,
+			"plastic": 50
+		},
+		"power_consumption": 0,
+		"oxygen_production": 0,
+		"heat_production": 0,
+		"water_consumption": 0,
+		"priority": 1
+	},
+	RoomType.MEDICAL: {
+		"name": "医疗站",
+		"color": Color(1.0, 0.8, 0.8, 0.5),  # 粉色
+		"size": Vector2(4, 4),
+		"required_resources": {
+			"metal": 150,
+			"plastic": 200,
+			"glass": 100
+		},
+		"power_consumption": 100,
+		"oxygen_production": 0,
+		"heat_production": 50,
+		"water_consumption": 100,
+		"priority": 2
+	},
+	RoomType.INDUSTRIAL: {
+		"name": "工业区",
+		"color": Color(0.4, 0.4, 0.4, 0.5),  # 深灰色
+		"size": Vector2(8, 4),
+		"required_resources": {
+			"metal": 400,
+			"plastic": 200
+		},
+		"power_consumption": 300,
+		"oxygen_production": 0,
+		"heat_production": 400,
+		"water_consumption": 200,
+		"priority": 2
+	},
+	RoomType.RECREATION: {
+		"name": "娱乐区",
+		"color": Color(0.8, 0.8, 0.2, 0.5),  # 黄色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 100,
+			"plastic": 200
+		},
+		"power_consumption": 50,
+		"oxygen_production": 0,
+		"heat_production": 50,
+		"water_consumption": 50,
+		"priority": 1
+	},
+	RoomType.WATER: {
+		"name": "水处理",
+		"color": Color(0.2, 0.4, 0.8, 0.5),  # 蓝色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 250,
+			"plastic": 150,
+			"glass": 100
+		},
+		"power_consumption": 200,
+		"oxygen_production": 0,
+		"heat_production": 150,
+		"water_consumption": 0,
+		"priority": 2
 	},
 	RoomType.OXYGEN: {
-		"name": "氧气室",
-		"color": Color(0.2, 0.6, 0.8, 0.3),  # 蓝色半透明
-		"platform_count": [3, 5],  # 最小值和最大值
-		"coin_chance": 0.3,
-		"enemy_chance": 0.1,
-		"moving_platform_chance": 0.2,
-		"purple_slime_chance": 0.1,
-		"has_oxygen_generator": true
-	},
-	RoomType.CHALLENGE: {
-		"name": "挑战室",
-		"color": Color(0.8, 0.3, 0.3, 0.3),  # 红色半透明
-		"platform_count": [5, 7],  # 最小值和最大值
-		"coin_chance": 0.4,
-		"enemy_chance": 0.6,
-		"moving_platform_chance": 0.4,
-		"purple_slime_chance": 0.6
-	},
-	RoomType.TREASURE: {
-		"name": "宝藏室",
-		"color": Color(0.8, 0.6, 0.2, 0.3),  # 金色半透明
-		"platform_count": [3, 4],  # 最小值和最大值
-		"coin_chance": 0.9,
-		"enemy_chance": 0.3,
-		"moving_platform_chance": 0.2,
-		"purple_slime_chance": 0.5
+		"name": "制氧站",
+		"color": Color(0.2, 0.8, 0.8, 0.5),  # 青色
+		"size": Vector2(6, 4),
+		"required_resources": {
+			"metal": 200,
+			"plastic": 150,
+			"glass": 100
+		},
+		"power_consumption": 150,
+		"oxygen_production": 200,
+		"heat_production": 100,
+		"water_consumption": 150,
+		"priority": 2
 	}
 }
 
-# 生物群系对房间的影响
+# 生物群系修改器
 var biome_modifiers = {
 	"FOREST": {
-		"color_modifier": null,  # 不修改颜色
-		"enemy_chance_modifier": 0.0,
-		"purple_slime_chance_modifier": 0.0
+		"color_modifier": Color(0.2, 0.8, 0.2, 0.0),  # 绿色调
+		"resource_modifier": {
+			"dirt": 1.5,    # 增加50%泥土
+			"water": 1.2,   # 增加20%水
+			"oxygen": 1.2   # 增加20%氧气
+		},
+		"heat_modifier": 0.8,  # 减少20%热量
+		"power_modifier": 1.0  # 不变
 	},
 	"CAVE": {
-		"color_modifier": "darken",  # 使颜色变暗
-		"darken_amount": 0.2,
-		"enemy_chance_modifier": 0.1,  # 增加敌人出现概率
-		"purple_slime_chance_modifier": 0.1  # 增加紫色史莱姆概率
+		"color_modifier": Color(0.6, 0.6, 0.6, 0.0),  # 灰色调
+		"resource_modifier": {
+			"metal": 1.5,   # 增加50%金属
+			"water": 0.8,   # 减少20%水
+			"oxygen": 0.8   # 减少20%氧气
+		},
+		"heat_modifier": 1.2,  # 增加20%热量
+		"power_modifier": 1.2  # 增加20%电力
 	},
 	"SWAMP": {
-		"color_modifier": "blend",  # 混合颜色
-		"blend_color": Color(0.3, 0.3, 0.1, 0.3),
-		"enemy_chance_modifier": 0.2,  # 大幅增加敌人出现概率
-		"purple_slime_chance_modifier": 0.2  # 大幅增加紫色史莱姆概率
+		"color_modifier": Color(0.5, 0.4, 0.1, 0.0),  # 棕色调
+		"resource_modifier": {
+			"water": 1.5,   # 增加50%水
+			"dirt": 1.3,    # 增加30%泥土
+			"oxygen": 0.6   # 减少40%氧气
+		},
+		"heat_modifier": 1.5,  # 增加50%热量
+		"power_modifier": 0.8  # 减少20%电力
 	}
 }
 
 # 获取房间配置
 func get_room_config(room_type, biome_type = "FOREST"):
-	# 获取基础配置
-	var config = room_configs[room_type].duplicate(true)
-	
-	# 应用生物群系修改器
+	var config = room_configs[room_type].duplicate()
 	var modifier = biome_modifiers[biome_type]
 	
-	# 修改敌人和紫色史莱姆概率
-	config.enemy_chance += modifier.enemy_chance_modifier
-	config.purple_slime_chance += modifier.purple_slime_chance_modifier
+	# 应用生物群系修改
+	config.color = config.color + modifier.color_modifier
 	
-	# 修改颜色
-	if modifier.color_modifier == "darken":
-		config.color = config.color.darkened(modifier.darken_amount)
-	elif modifier.color_modifier == "blend":
-		config.color = config.color.blend(modifier.blend_color)
+	# 修改资源需求
+	for resource in config.required_resources:
+		if modifier.resource_modifier.has(resource):
+			config.required_resources[resource] = int(config.required_resources[resource] * modifier.resource_modifier[resource])
+	
+	# 修改其他参数
+	config.heat_production = int(config.heat_production * modifier.heat_modifier)
+	config.power_consumption = int(config.power_consumption * modifier.power_modifier)
 	
 	return config
 
-# 获取平台数量
-func get_platform_count(room_type, biome_type = "FOREST"):
+# 获取房间大小
+func get_room_size(room_type, biome_type = "FOREST"):
 	var config = get_room_config(room_type, biome_type)
-	return config.platform_count[0] + randi() % (config.platform_count[1] - config.platform_count[0] + 1)
+	return config.size
 
-# 判断是否应该放置金币
-func should_place_coin(room_type, biome_type = "FOREST"):
+# 获取资源需求
+func get_required_resources(room_type, biome_type = "FOREST"):
 	var config = get_room_config(room_type, biome_type)
-	return randf() < config.coin_chance
+	return config.required_resources
 
-# 判断是否应该放置敌人
-func should_place_enemy(room_type, biome_type = "FOREST"):
+# 获取电力消耗
+func get_power_consumption(room_type, biome_type = "FOREST"):
 	var config = get_room_config(room_type, biome_type)
-	return randf() < config.enemy_chance
+	return config.power_consumption
 
-# 判断是否应该使用移动平台
-func should_use_moving_platform(room_type, biome_type = "FOREST"):
+# 获取氧气产量
+func get_oxygen_production(room_type, biome_type = "FOREST"):
 	var config = get_room_config(room_type, biome_type)
-	return randf() < config.moving_platform_chance
+	return config.oxygen_production
 
-# 判断是否应该使用紫色史莱姆
-func should_use_purple_slime(room_type, biome_type = "FOREST"):
+# 获取热量产生
+func get_heat_production(room_type, biome_type = "FOREST"):
 	var config = get_room_config(room_type, biome_type)
-	return randf() < config.purple_slime_chance
+	return config.heat_production
 
-# 判断是否应该放置氧气发生器
-func should_place_oxygen_generator(room_type, biome_type = "FOREST"):
+# 获取水资源消耗
+func get_water_consumption(room_type, biome_type = "FOREST"):
 	var config = get_room_config(room_type, biome_type)
-	return config.has("has_oxygen_generator") and config.has_oxygen_generator
+	return config.water_consumption
+
+# 获取房间优先级
+func get_room_priority(room_type, biome_type = "FOREST"):
+	var config = get_room_config(room_type, biome_type)
+	return config.priority

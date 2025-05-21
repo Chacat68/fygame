@@ -41,7 +41,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ch3wh"]
-size = Vector2(10, 13)
+size = Vector2(20, 26)
 
 [node name="Slime" type="CharacterBody2D"]
 position = Vector2(0, -12)
@@ -58,6 +58,7 @@ sprite_frames = SubResource("SpriteFrames_44ih8")
 autoplay = "default"
 frame_progress = 0.410102
 flip_h = true
+scale = Vector2(2, 2)
 
 [node name="Killzone" parent="." instance=ExtResource("2_ftlty")]
 

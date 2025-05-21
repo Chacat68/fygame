@@ -35,7 +35,7 @@ polygon = PackedVector2Array(0, 350, 1500, 350, 1500, 400, 0, 400)
 [node name="Background" type="ColorRect" parent="."]
 z_index = -10
 offset_right = 1500.0
-offset_bottom = 400.0
+offset_bottom = 700.0
 color = Color(0.2, 0.3, 0.4, 1)
 
 

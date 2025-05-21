@@ -30,11 +30,19 @@ func _on_start_button_pressed():
 		"new_game": true   # 标记为新游戏
 	}
 	
-	# 使用SceneTree的change_scene_to_file方法切换场景
-	get_tree().change_scene_to_file("res://scenes/random_level.tscn")
+	# 保存参数到全局变量
+	if not Engine.has_singleton("GameState"):
+		var game_state_singleton = Node.new()
+		game_state_singleton.name = "GameState"
+		Engine.get_main_loop().root.add_child(game_state_singleton)
+		Engine.register_singleton("GameState", game_state_singleton)
 	
-	# 在下一帧设置关卡参数
-	call_deferred("_set_level_params", params)
+	Engine.get_singleton("GameState").set_meta("level_params", params)
+	
+	# 使用SceneTree的change_scene_to_file方法切换场景
+	var error = get_tree().change_scene_to_file("res://scenes/random_level.tscn")
+	if error != OK:
+		print("错误：无法切换到随机关卡场景")
 
 # 继续冒险按钮点击事件
 func _on_continue_button_pressed():
@@ -50,11 +58,19 @@ func _on_continue_button_pressed():
 		"continue_game": true  # 标记为继续游戏
 	}
 	
-	# 使用SceneTree的change_scene_to_file方法切换场景
-	get_tree().change_scene_to_file("res://scenes/random_level.tscn")
+	# 保存参数到全局变量
+	if not Engine.has_singleton("GameState"):
+		var game_state_singleton = Node.new()
+		game_state_singleton.name = "GameState"
+		Engine.get_main_loop().root.add_child(game_state_singleton)
+		Engine.register_singleton("GameState", game_state_singleton)
 	
-	# 在下一帧设置关卡参数
-	call_deferred("_set_level_params", params)
+	Engine.get_singleton("GameState").set_meta("level_params", params)
+	
+	# 使用SceneTree的change_scene_to_file方法切换场景
+	var error = get_tree().change_scene_to_file("res://scenes/random_level.tscn")
+	if error != OK:
+		print("错误：无法切换到随机关卡场景")
 
 # 结束游戏按钮点击事件
 func _on_quit_button_pressed():
@@ -63,13 +79,23 @@ func _on_quit_button_pressed():
 
 # 设置关卡参数的辅助函数
 func _set_level_params(params):
-	# 检查 SceneTree 是否可用
-	if get_tree() == null:
-		print("错误：无法获取场景树，可能是在场景切换过程中")
+	# 使用call_deferred确保在下一帧执行
+	call_deferred("_deferred_set_level_params", params)
+
+# 延迟设置关卡参数的辅助函数
+func _deferred_set_level_params(params):
+	# 检查场景树是否有效
+	if not is_instance_valid(get_tree()):
+		print("错误：无法获取场景树")
 		return
 	
-	# 等待一帧确保场景已完全加载
+	# 等待一帧以确保场景完全加载
 	await get_tree().process_frame
+	
+	# 再次检查场景树是否有效
+	if not is_instance_valid(get_tree()):
+		print("错误：场景树无效")
+		return
 	
 	# 获取随机关卡生成器节点
 	var level_generator = get_tree().current_scene

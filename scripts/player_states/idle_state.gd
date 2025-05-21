@@ -21,6 +21,10 @@ func physics_process(delta: float):
         player.jumps_made = 1
         return "Jump"
     
+    # 处理攻击
+    if Input.is_action_just_pressed("attack"):
+        return "Attack"
+    
     # 保持静止
     player.velocity.x = 0
     
