@@ -95,6 +95,9 @@ func _physics_process(delta):
 	# 检查掉落死亡
 	_check_fall_death()
 	
+	# 检查踩踏击杀
+	_check_stomp_kill()
+	
 	# 使用当前状态处理物理更新
 	var new_state_name = current_state.physics_process(delta)
 	if new_state_name:
@@ -182,5 +185,47 @@ func _apply_respawn_effect():
 # 注释：原有的重复函数已被移除，使用上面的take_damage函数实现
 
 # 注释：原有的重复_die函数已被移除，使用上面的_die函数实现
+
+# 检查踩踏击杀怪物
+func _check_stomp_kill():
+	# 只有在下落状态且向下移动时才能踩踏击杀
+	if velocity.y <= 0:
+		return
+	
+	# 获取所有怪物
+	var enemies = get_tree().get_nodes_in_group("enemy")
+	
+	for enemy in enemies:
+		# 检查怪物是否还活着
+		if not enemy.is_dead and enemy.current_state != enemy.EnemyState.DEAD:
+			# 计算距离
+			var distance = global_position.distance_to(enemy.global_position)
+			
+			# 如果距离足够近
+			if distance < 25:
+				# 检查玩家是否在怪物上方
+				var player_bottom = global_position.y + 8 # 玩家底部大概位置
+				var enemy_top = enemy.global_position.y - 8 # 怪物头顶大概位置
+				
+				# 如果玩家在怪物上方且正在下落
+				if player_bottom >= enemy_top - 5 and player_bottom <= enemy_top + 10:
+					# 执行踩踏击杀
+					_perform_stomp_kill(enemy)
+					break # 一次只击杀一个怪物
+
+# 执行踩踏击杀
+func _perform_stomp_kill(monster):
+	# 给玩家一个向上的反弹力
+	velocity.y = -250
+	
+	# 重置跳跃次数，允许玩家继续跳跃
+	jumps_made = 1 # 设为1而不是0，因为踩踏算作一次跳跃
+	
+	# 击杀怪物
+	monster._die(self)
+	
+	# 播放击杀音效（如果有的话）
+	if Engine.has_singleton("ResourceManager"):
+		Engine.get_singleton("ResourceManager").play_sound("power_up", self)
 
 # 注释：原有的重复_check_fall_death函数已被移除，使用上面的_check_fall_death函数实现

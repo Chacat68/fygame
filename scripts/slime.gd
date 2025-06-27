@@ -29,11 +29,11 @@ var floating_text_scene = preload("res://scenes/floating_text.tscn")
 
 # 在准备好时调用
 func _ready():
+	# 将怪物添加到enemy组，便于识别
+	add_to_group("enemy")
+	
 	# 创建地面检测射线（如果不存在）
 	_create_floor_checks()
-	
-	# 创建头部碰撞检测区域（如果不存在）
-	_create_head_hitbox()
 	
 	# 设置初始状态
 	_change_state(EnemyState.PATROL)
@@ -137,32 +137,7 @@ func _move(delta):
 	# 移动并滑动
 	move_and_slide()
 
-# 创建头部碰撞检测区域
-func _create_head_hitbox():
-	if not has_node("HeadHitbox"):
-		# 创建头部碰撞区域
-		var head_hitbox = Area2D.new()
-		head_hitbox.name = "HeadHitbox"
-		add_child(head_hitbox)
-		
-		# 创建碰撞形状
-		var collision_shape = CollisionShape2D.new()
-		collision_shape.name = "CollisionShape2D"
-		head_hitbox.add_child(collision_shape)
-		
-		# 创建矩形形状
-		var shape = RectangleShape2D.new()
-		shape.size = Vector2(16, 4) # 头部碰撞区域大小
-		collision_shape.shape = shape
-		
-		# 设置碰撞区域位置（在怪物头顶）
-		collision_shape.position = Vector2(0, -6)
-		
-		# 设置碰撞掩码，只检测玩家层（假设玩家在第2层，即掩码值为2）
-		head_hitbox.collision_mask = 2
-		
-		# 连接信号
-		head_hitbox.connect("body_entered", _on_head_hitbox_body_entered)
+# 注释：头部碰撞检测已移除，现在使用玩家端的踩踏检测
 
 # 状态切换函数
 func _change_state(new_state):
@@ -207,32 +182,7 @@ func _change_state(new_state):
 			velocity.x = 0
 			# 可以在这里播放死亡动画
 
-# 当玩家踩到怪物头顶时调用
-func _on_head_hitbox_body_entered(body):
-	# 确保怪物还没有死亡
-	if current_state == EnemyState.DEAD:
-		return
-		
-	# 确保碰撞的是玩家
-	if body.is_in_group("player"):
-		# 更精确地检查玩家是否从上方踩踏
-		# 比较玩家底部和怪物头部的相对位置
-		var player_bottom = body.global_position.y
-		if body.has_node("CollisionShape2D"):
-			var collision = body.get_node("CollisionShape2D")
-			if collision.shape is CircleShape2D:
-				player_bottom += collision.shape.radius
-			elif collision.shape is RectangleShape2D:
-				player_bottom += collision.shape.size.y / 2
-		
-		var slime_top = global_position.y - 6 # 头部位置
-		
-		if player_bottom < slime_top + 2 and body.velocity.y > 0:
-			# 击杀怪物
-			_die(body)
-			
-			# 让玩家弹跳
-			body.velocity.y = -300 # 给玩家一个向上的反弹力
+# 注释：旧的头部碰撞处理函数已移除，现在使用玩家端的踩踏检测
 
 # 怪物死亡处理
 func _die(player):
