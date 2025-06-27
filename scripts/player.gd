@@ -175,12 +175,29 @@ func _apply_respawn_effect():
 	current_health = MAX_HEALTH
 	emit_signal("health_changed", current_health)
 	
+	# 更新头顶血条
+	_update_health_bar()
+	
 	# 应用闪烁效果
 	var tween = create_tween()
 	tween.tween_property(animated_sprite, "modulate:a", 0.5, 0.2)
 	tween.tween_property(animated_sprite, "modulate:a", 1.0, 0.2)
 	tween.tween_property(animated_sprite, "modulate:a", 0.5, 0.2)
 	tween.tween_property(animated_sprite, "modulate:a", 1.0, 0.2)
+
+# 更新头顶血条显示
+func _update_health_bar():
+	if health_bar_fill:
+		var health_percentage = float(current_health) / float(MAX_HEALTH)
+		health_bar_fill.anchor_right = health_percentage
+		
+		# 根据血量百分比改变颜色
+		if health_percentage > 0.6:
+			health_bar_fill.color = Color(0.2, 0.8, 0.2, 1)  # 绿色
+		elif health_percentage > 0.3:
+			health_bar_fill.color = Color(0.8, 0.8, 0.2, 1)  # 黄色
+		else:
+			health_bar_fill.color = Color(0.8, 0.2, 0.2, 1)  # 红色
 
 # 注释：原有的重复函数已被移除，使用上面的take_damage函数实现
 
