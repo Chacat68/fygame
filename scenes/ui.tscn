@@ -12,22 +12,27 @@ script = ExtResource("1_ixnqm")
 margin_left = 10
 margin_top = 10
 
-[node name="CoinCounter" type="HBoxContainer" parent="."]
+[node name="TopBar" type="HBoxContainer" parent="."]
 offset_left = 15.0
 offset_top = 15.0
-offset_right = 300.0
+offset_right = 600.0
 offset_bottom = 55.0
+theme_override_constants/separation = 30
+alignment = 0
+
+[node name="CoinCounter" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 0
 
-[node name="CoinIcon" type="TextureRect" parent="CoinCounter"]
+[node name="CoinIcon" type="TextureRect" parent="TopBar/CoinCounter"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture = ExtResource("6_coin_enhanced")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CoinText" type="Label" parent="CoinCounter"]
+[node name="CoinText" type="Label" parent="TopBar/CoinCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.2, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -37,7 +42,7 @@ theme_override_font_sizes/font_size = 32
 text = "金币："
 vertical_alignment = 1
 
-[node name="CoinCount" type="Label" parent="CoinCounter"]
+[node name="CoinCount" type="Label" parent="TopBar/CoinCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -47,22 +52,19 @@ theme_override_font_sizes/font_size = 32
 text = "0"
 vertical_alignment = 1
 
-[node name="KillCounter" type="HBoxContainer" parent="."]
-offset_left = 15.0
-offset_top = 65.0
-offset_right = 300.0
-offset_bottom = 105.0
+[node name="KillCounter" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 0
 
-[node name="KillIcon" type="TextureRect" parent="KillCounter"]
+[node name="KillIcon" type="TextureRect" parent="TopBar/KillCounter"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture = ExtResource("5_sword")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="KillText" type="Label" parent="KillCounter"]
+[node name="KillText" type="Label" parent="TopBar/KillCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.6, 0.6, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -72,7 +74,7 @@ theme_override_font_sizes/font_size = 32
 text = "击杀："
 vertical_alignment = 1
 
-[node name="KillCount" type="Label" parent="KillCounter"]
+[node name="KillCount" type="Label" parent="TopBar/KillCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -80,39 +82,4 @@ theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
 text = "0"
-vertical_alignment = 1
-
-[node name="HealthBar" type="HBoxContainer" parent="."]
-offset_left = 15.0
-offset_top = 115.0
-offset_right = 300.0
-offset_bottom = 155.0
-theme_override_constants/separation = 8
-alignment = 0
-
-[node name="HealthIcon" type="TextureRect" parent="HealthBar"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-texture = ExtResource("4_heart")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="HealthText" type="Label" parent="HealthBar"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 32
-text = "血量："
-vertical_alignment = 1
-
-[node name="HealthCount" type="Label" parent="HealthBar"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 32
-text = "100/100"
 vertical_alignment = 1
