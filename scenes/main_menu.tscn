@@ -37,15 +37,8 @@ offset_right = 150.0
 offset_bottom = 100.0
 theme_override_constants/separation = 20
 
-[node name="RandomLevelButton" type="Button" parent="VBoxContainer"]
-offset_right = 300.0
-offset_bottom = 40.0
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
-text = "随机关卡模式"
-
 [node name="FixedLevelButton" type="Button" parent="VBoxContainer"]
-offset_top = 60.0
+offset_top = 0.0
 offset_right = 300.0
 offset_bottom = 100.0
 theme_override_fonts/font = ExtResource("2_font")
@@ -53,13 +46,12 @@ theme_override_font_sizes/font_size = 24
 text = "固定关卡模式"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
-offset_top = 120.0
+offset_top = 60.0
 offset_right = 300.0
 offset_bottom = 160.0
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
 text = "退出游戏"
 
-[connection signal="pressed" from="VBoxContainer/RandomLevelButton" to="." method="_on_random_level_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/FixedLevelButton" to="." method="_on_fixed_level_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

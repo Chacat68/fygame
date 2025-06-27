@@ -1,24 +1,10 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=12 format=3 uid="uid://r4mry36ygjrc"]
 
-[ext_resource type="Script" path="res://scripts/game_start_screen.gd" id="1_start"]
-[ext_resource type="FontFile" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
-[ext_resource type="Texture2D" path="res://assets/images/beijing.png" id="3_bg"]
+[ext_resource type="Script" uid="uid://brj8melw5o5hj" path="res://scripts/game_start_screen.gd" id="1_start"]
+[ext_resource type="FontFile" uid="uid://bdtg4xmvtjkd4" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://cdext6rti0bmr" path="res://assets/images/beijing.png" id="3_bg"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1s3a"]
-content_margin_left = 10.0
-content_margin_top = 5.0
-content_margin_right = 10.0
-content_margin_bottom = 5.0
-bg_color = Color(0.2, 0.3, 0.5, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.3, 0.4, 0.6, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f8d9e"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k2m4b"]
 content_margin_left = 10.0
@@ -52,9 +38,7 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f8d9e"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c1s3b"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1s3a"]
 content_margin_left = 10.0
 content_margin_top = 5.0
 content_margin_right = 10.0
@@ -69,6 +53,8 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g8d9f"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d2m4c"]
 content_margin_left = 10.0
@@ -102,7 +88,21 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g8d9f"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c1s3b"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2, 0.3, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.4, 0.6, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="GameStartScreen" type="Control"]
 layout_mode = 3
@@ -137,7 +137,6 @@ grow_horizontal = 2
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 96
 text = "群星"
-alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -158,41 +157,41 @@ theme_override_constants/separation = 20
 
 [node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_hover_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.9, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.2, 1)
-theme_override_colors/font_focus_color = Color(1, 0.9, 0.2, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_n1s3a")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_f8d9e")
 theme_override_styles/hover = SubResource("StyleBoxFlat_k2m4b")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_p5r7c")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_f8d9e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_n1s3a")
 text = "开始新游戏"
 
 [node name="ContinueButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_hover_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.9, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.2, 1)
-theme_override_colors/font_focus_color = Color(1, 0.9, 0.2, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_c1s3b")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_g8d9f")
 theme_override_styles/hover = SubResource("StyleBoxFlat_d2m4c")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_e5r7d")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_g8d9f")
+theme_override_styles/normal = SubResource("StyleBoxFlat_c1s3b")
 text = "继续冒险"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_hover_color = Color(1, 0.9, 0.2, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 0.9, 0.2, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 0.9, 0.2, 1)
-theme_override_colors/font_focus_color = Color(1, 0.9, 0.2, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_n1s3a")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_f8d9e")
 theme_override_styles/hover = SubResource("StyleBoxFlat_k2m4b")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_p5r7c")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_f8d9e")
+theme_override_styles/normal = SubResource("StyleBoxFlat_n1s3a")
 text = "结束游戏"
 
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]

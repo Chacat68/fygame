@@ -46,9 +46,7 @@ func get_death_height():
 	match current_scene:
 		"Game":
 			return 500
-		"RandomLevel":
-			return 600
 		"MountainCaveLevel":
-			return 800
+			return 600
 		_:
 			return default_height
