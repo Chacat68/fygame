@@ -240,6 +240,7 @@ margin_top = 15
 
 [node name="GameCamera" type="Camera2D" parent="."]
 position = Vector2(0, -6)
+enabled = false
 zoom = Vector2(4, 4)
 limit_left = -200
 limit_bottom = 120

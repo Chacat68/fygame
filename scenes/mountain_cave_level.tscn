@@ -98,6 +98,7 @@ position = Vector2(100, 300)
 
 [node name="LevelCamera" type="Camera2D" parent="."]
 position = Vector2(100, 250)
+enabled = false
 limit_left = 0
 limit_top = -300
 limit_right = 1500

@@ -13,12 +13,7 @@ func _ready():
 	_create_challenge_area()
 	_create_treasure_area()
 	
-	# 设置相机限制
-	if has_node("Player") and $Player.has_node("Camera2D"):
-		$Player/Camera2D.limit_left = 0
-		$Player/Camera2D.limit_right = 1500
-		$Player/Camera2D.limit_top = -300
-		$Player/Camera2D.limit_bottom = 400
+	# 相机限制已在player.tscn中设置，无需重复设置
 
 # 创建入口区域（教学区）
 func _create_entrance_area():

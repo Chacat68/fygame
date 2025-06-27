@@ -24,8 +24,8 @@ func _on_start_button_pressed():
 	if game_state != null:
 		game_state.reset_game_progress()
 	
-	# 切换到固定关卡场景（山洞探险）
-	get_tree().change_scene_to_file("res://scenes/mountain_cave_level.tscn")
+	# 切换到游戏场景
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 # 继续冒险按钮点击事件
 func _on_continue_button_pressed():
@@ -36,8 +36,8 @@ func _on_continue_button_pressed():
 	if game_state != null:
 		game_state.load_game_progress()
 	
-	# 切换到固定关卡场景（山洞探险）
-	get_tree().change_scene_to_file("res://scenes/mountain_cave_level.tscn")
+	# 切换到游戏场景
+	get_tree().change_scene_to_file("res://scenes/game.tscn")
 
 # 结束游戏按钮点击事件
 func _on_quit_button_pressed():

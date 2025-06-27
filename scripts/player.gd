@@ -122,7 +122,7 @@ func _handle_invincibility(delta):
 # 检查是否掉落死亡
 func _check_fall_death():
 	# 获取死亡高度
-	var death_height = 500 # 默认值
+	var death_height = 300 # 默认值
 	
 	# 尝试从游戏管理器获取关卡特定的死亡高度
 	var game_manager = get_tree().get_root().get_node_or_null("Game/GameManager")
