@@ -6,10 +6,23 @@ var kill_count = 0
 
 # 组件引用
 @onready var ui = get_node_or_null("/root/Game/UI")
+@onready var portal = get_node_or_null("/root/Game/Portal")
 
 # 信号
 signal score_changed(new_score)
 signal kill_count_changed(new_count)
+
+# 初始化
+func _ready():
+	# 连接传送门信号
+	if portal:
+		portal.connect("body_entered", _on_portal_entered)
+
+# 传送门触发处理
+func _on_portal_entered(body):
+	if body.is_in_group("player"):
+		# 切换到 level2 场景
+		get_tree().change_scene_to_file("res://scenes/levels/level2.tscn")
 
 # 定义一个函数，用于增加分数并更新分数显示
 func add_point():

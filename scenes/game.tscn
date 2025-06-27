@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://qaccrpcioxge"]
+[gd_scene load_steps=19 format=4 uid="uid://qaccrpcioxge"]
 
 [ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/game_manager.tscn" id="1_81ls0"]
 [ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/player.tscn" id="1_skq5t"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/slime.tscn" id="6_dnqob"]
 [ext_resource type="FontFile" uid="uid://c067lmwqsjkbk" path="res://assets/fonts/PixelOperator8.ttf" id="7_cldnw"]
 [ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui.tscn" id="7_ui"]
+[ext_resource type="PackedScene" path="res://scenes/portal.tscn" id="12_portal"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_jjg3b"]
 
@@ -226,6 +227,9 @@ _data = {
 &"move": SubResource("Animation_rxsgj")
 }
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kvpfn"]
+radius = 10.1
+
 [node name="Game" type="Node2D"]
 
 [node name="GameManager" parent="." instance=ExtResource("1_81ls0")]
@@ -319,3 +323,10 @@ position = Vector2(520, -91)
 
 [node name="Slime3" parent="Monster" instance=ExtResource("6_dnqob")]
 position = Vector2(664, -75)
+
+[node name="Portal" parent="." instance=ExtResource("12_portal")]
+position = Vector2(50, -90)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
+position = Vector2(1419, -24)
+shape = SubResource("CapsuleShape2D_kvpfn")

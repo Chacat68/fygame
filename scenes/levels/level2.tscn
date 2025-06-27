@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/slime.tscn" id="6_dnqob"]
 [ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui.tscn" id="7_ui"]
 [ext_resource type="Script" path="res://scripts/level2.gd" id="8_level2"]
+[ext_resource type="PackedScene" path="res://scenes/portal.tscn" id="9_portal"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_jjg3b"]
 
@@ -150,6 +151,9 @@ position = Vector2(-200, -20)
 
 [node name="Slime2" parent="Enemies" instance=ExtResource("6_dnqob")]
 position = Vector2(200, -20)
+
+[node name="Portal" parent="." instance=ExtResource("9_portal")]
+position = Vector2(50, -90)
 
 [node name="Labels" type="Node" parent="."]
 

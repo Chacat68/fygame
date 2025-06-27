@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TeleportConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/teleport_config.gd" id="1_0"]
+
+[resource]
+script = ExtResource("1_0")
+portal_offset = Vector2(-20, 0)
+safety_distance = 32.0
+max_teleport_distance = 500.0
+enable_teleport_effects = true
+teleport_duration = 0.0
+fade_out_duration = 0.2
+fade_in_duration = 0.2
+cooldown_time = 1.0
+log_teleport_events = true
+max_teleports_per_minute = 10
