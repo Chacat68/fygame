@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="LevelConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/level_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+levels = Array[Dictionary]([
+	{
+		"id": 1,
+		"name": "关卡1",
+		"scene_path": "res://scenes/levels/level1.tscn",
+		"script_path": "res://scripts/levels/level1.gd",
+		"theme": "基础教学",
+		"difficulty": "简单",
+		"status": "完成",
+		"description": "新关卡场景，包含基础游戏机制教学",
+		"unlock_condition": "",
+		"target_score": 100,
+		"time_limit": 0
+	},
+	{
+		"id": 2,
+		"name": "关卡2",
+		"scene_path": "res://scenes/levels/level2.tscn",
+		"script_path": "res://scripts/levels/level2.gd",
+		"theme": "进阶挑战",
+		"difficulty": "中等",
+		"status": "完成",
+		"description": "现有关卡，中等难度挑战",
+		"unlock_condition": "完成关卡1",
+		"target_score": 200,
+		"time_limit": 0
+	},
+	{
+		"id": 3,
+		"name": "关卡3",
+		"scene_path": "res://scenes/levels/level3.tscn",
+		"script_path": "res://scripts/levels/level3.gd",
+		"theme": "山洞探险",
+		"difficulty": "困难",
+		"status": "开发中",
+		"description": "山洞主题关卡，高难度挑战",
+		"unlock_condition": "完成关卡2",
+		"target_score": 300,
+		"time_limit": 0
+	}
+])
+max_levels = 10
+current_level = 1

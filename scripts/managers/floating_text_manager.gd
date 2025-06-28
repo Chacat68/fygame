@@ -36,7 +36,7 @@ func create_arranged_floating_text(base_position: Vector2, text: String, game_ro
 	
 	# 计算当前飘字在排列中的位置
 	var current_index = active_floating_texts.size()
-	var row = current_index / max_texts_per_row
+	var row = current_index / max_texts_per_row  # 使用整数除法操作符
 	var col = current_index % max_texts_per_row
 	
 	# 计算水平偏移（居中排列）

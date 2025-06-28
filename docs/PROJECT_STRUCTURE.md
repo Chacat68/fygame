@@ -1,154 +1,242 @@
 # 项目结构说明
 
-## 概述
+本文档详细说明了FyGame项目的目录结构和文件组织方式。
 
-本项目已经重新组织，采用更清晰的文件夹结构，便于开发和维护。
+## 总体结构
 
-## 文件夹结构
+```
+fygame/
+├── docs/                          # 项目文档目录
+├── scenes/                        # Godot场景文件
+├── scripts/                       # GDScript脚本文件
+├── resources/                     # Godot资源文件
+├── assets/                        # 原始资源文件
+├── project.godot                  # Godot项目配置文件
+└── README.md                      # 项目说明文档
+```
 
-### 根目录
-- `project.godot` - Godot项目配置文件
-- `icon.svg` - 项目图标
-- `README.md` - 项目说明文档
-- `export_presets.cfg` - 导出预设配置
-- `default_bus_layout.tres` - 音频总线布局
+## 详细目录说明
 
-### 主要文件夹
+### docs/ - 文档目录
 
-#### `/addons/`
-存放Godot插件
-- `teleport_system/` - 传送系统插件
+```
+docs/
+├── design/                        # 设计文档
+│   ├── integrated_level_design_guide.md  # 关卡设计指南
+│   └── level_index.md             # 关卡索引文档
+├── project_structure.md           # 项目结构说明（本文档）
+└── README.md                      # 文档目录说明
+```
 
-#### `/assets/`
-游戏资源文件
-- `fonts/` - 字体文件
-- `images/` - 图片资源
-- `music/` - 音乐文件
-- `sounds/` - 音效文件
-- `sprites/` - 精灵图片
+**用途说明：**
+- `design/` - 存放游戏设计相关文档
+- `integrated_level_design_guide.md` - 完整的关卡设计指南
+- `level_index.md` - 关卡列表和管理信息
 
-#### `/docs/`
-项目文档
-- `design/` - 设计文档
-  - `game_mechanics.md` - 游戏机制设计（已更新，包含完整系统描述）
-  - `player_state_machine.md` - 玩家状态机设计（已更新，包含实际实现）
-  - `game_config_system.md` - 游戏配置系统设计（新增）
-  - `teleport_system_design.md` - 传送系统设计文档（新增）
-  - `ui_design.md` - UI设计文档
-  - `level_design.md` - 关卡设计文档
-- `guides/` - 使用指南
-  - 浮动文本优化指南
-  - 传送系统变更日志
-  - 传送测试指南
-- `system/` - 系统文档
-  - 传送系统指南
-- `api/` - API文档
-  - `resource_manager_api.md` - 资源管理器API
-- `PROJECT_STRUCTURE.md` - 项目结构说明（本文档）
-- `README.md` - 项目说明文档
+### scenes/ - 场景目录
 
-#### `/scenes/`
-场景文件，按功能分类
-- `entities/` - 实体场景
-  - `coin.tscn` - 金币
-  - `player.tscn` - 玩家
-  - `slime.tscn` - 史莱姆敌人
-  - `platform.tscn` - 平台
-  - `portal.tscn` - 传送门
-  - `killzone.tscn` - 死亡区域
-- `levels/` - 关卡场景
-  - `level2.tscn` - 第二关
-  - `mountain_cave_level.tscn` - 山洞关卡
-- `managers/` - 管理器场景
-  - `game_manager.tscn` - 游戏管理器
-  - `game_state.tscn` - 游戏状态
-  - `floating_text.tscn` - 浮动文本
-  - `music.tscn` - 音乐管理器
-- `ui/` - 用户界面场景
-  - `main_menu.tscn` - 主菜单
-  - `game_start_screen.tscn` - 游戏开始界面
-  - `ui.tscn` - 游戏内UI
-- `game.tscn` - 主游戏场景
+```
+scenes/
+├── levels/                        # 关卡场景
+│   ├── level1.tscn               # 关卡1场景文件
+│   ├── level2.tscn               # 关卡2场景文件
+│   └── level3.tscn               # 关卡3场景文件
+├── player/                        # 玩家相关场景
+│   └── player.tscn               # 玩家角色场景
+├── enemies/                       # 敌人场景
+│   └── slime.tscn                # 史莱姆敌人场景
+├── ui/                           # 用户界面场景
+│   ├── main_menu.tscn            # 主菜单界面
+│   └── game_ui.tscn              # 游戏内UI
+├── collectibles/                  # 收集品场景
+│   └── coin.tscn                 # 金币场景
+├── environment/                   # 环境元素场景
+│   ├── platform.tscn             # 平台场景
+│   └── killzone.tscn             # 死亡区域场景
+└── main.tscn                     # 主场景文件
+```
 
-#### `/scripts/`
-脚本文件，按功能模块分类
-- `autoload/` - 自动加载脚本
-  - `resource_manager_autoload.gd` - 资源管理器自动加载（AutoLoad单例）
-- `entities/` - 实体脚本
-  - `player/` - 玩家相关脚本
-    - `player.gd` - 玩家主脚本（集成GameConfig配置系统）
-    - `player_states/` - 玩家状态机系统
-      - `player_state.gd` - 状态机基类
-      - `idle_state.gd` - 闲置状态
-      - `run_state.gd` - 奔跑状态
-      - `jump_state.gd` - 跳跃状态
-      - `fall_state.gd` - 下落状态
-      - `hurt_state.gd` - 受伤状态
-      - `death_state.gd` - 死亡状态
-  - `enemies/` - 敌人脚本
-    - `slime.gd` - 史莱姆脚本（包含完整状态机和AI系统）
-  - `items/` - 道具脚本
-    - `coin.gd` - 金币脚本（集成FloatingTextManager）
-    - `coin_counter.gd` - 金币计数器（集成传送系统）
-- `managers/` - 管理器脚本
-  - `game_manager.gd` - 游戏管理器
-  - `game_state.gd` - 游戏状态管理
-  - `floating_text_manager.gd` - 浮动文本管理器
-  - `resource_manager.gd` - 资源管理器（预加载所有游戏资源）
-- `ui/` - UI脚本
-  - `main_menu.gd` - 主菜单脚本
-  - `game_start_screen.gd` - 游戏开始界面脚本
-- `levels/` - 关卡脚本
-  - `level2.gd` - 第二关脚本
-  - `mountain_cave_level.gd` - 山洞关卡脚本
-  - `killzone.gd` - 死亡区域脚本
-  - `portal.gd` - 传送门脚本
-- `systems/` - 系统脚本
-  - `game_config.gd` - 游戏配置系统（核心配置管理）
-  - `teleport_config.gd` - 传送配置
-  - `teleport_manager.gd` - 传送管理器（完整传送系统）
-  - `floating_text.gd` - 浮动文本系统（支持动画和配置）
-- `utils/` - 工具脚本
-  - `config_hot_reload.gd` - 配置热重载
-  - `config_sync_tool.gd` - 配置同步工具
-  - `debug_config_overlay.gd` - 调试配置覆盖
-  - `room_config.gd` - 房间配置
+**命名规范：**
+- 关卡场景：`level{数字}.tscn`
+- 功能场景：使用描述性名称，小写字母+下划线
+- 组件场景：按功能分类存放
 
-#### `/resources/`
-资源配置文件
-- `default_teleport_config.tres` - 默认传送配置
-- `game_config.tres` - 游戏配置
+### scripts/ - 脚本目录
 
-#### `/shaders/`
-着色器文件
-- `pixelate.gdshader` - 像素化着色器
+```
+scripts/
+├── managers/                      # 管理器脚本
+│   ├── level_manager.gd          # 关卡管理器
+│   ├── game_manager.gd           # 游戏管理器
+│   └── audio_manager.gd          # 音频管理器
+├── systems/                       # 系统脚本
+│   ├── level_config.gd           # 关卡配置系统
+│   ├── save_system.gd            # 存档系统
+│   └── input_system.gd           # 输入系统
+├── player/                        # 玩家相关脚本
+│   ├── player.gd                 # 玩家控制脚本
+│   └── player_state.gd           # 玩家状态管理
+├── enemies/                       # 敌人脚本
+│   ├── slime.gd                  # 史莱姆敌人脚本
+│   └── enemy_base.gd             # 敌人基类
+├── ui/                           # UI脚本
+│   ├── main_menu.gd              # 主菜单脚本
+│   ├── game_ui.gd                # 游戏UI脚本
+│   └── coin_counter.gd           # 金币计数器脚本
+├── collectibles/                  # 收集品脚本
+│   └── coin.gd                   # 金币脚本
+├── environment/                   # 环境脚本
+│   ├── platform.gd               # 平台脚本
+│   ├── moving_platform.gd        # 移动平台脚本
+│   └── killzone.gd               # 死亡区域脚本
+├── utils/                        # 工具脚本
+│   ├── floating_text.gd          # 飘字效果脚本
+│   └── game_state.gd             # 游戏状态单例
+└── autoload/                     # 自动加载脚本
+    ├── global.gd                 # 全局脚本
+    └── scene_manager.gd          # 场景管理器
+```
 
-#### `/tests/`
-测试相关文件
-- `unit/` - 单元测试
-  - 各种测试脚本
-- `integration/` - 集成测试
-  - `teleport_test_scene.tscn` - 传送测试场景
-- `examples/` - 示例代码
-  - `floating_text_usage_example.gd` - 浮动文本使用示例
-  - `teleport_example.gd` - 传送系统示例
+**脚本组织原则：**
+- 按功能模块分类
+- 管理器类脚本放在 `managers/` 目录
+- 系统级脚本放在 `systems/` 目录
+- 游戏对象脚本按类型分类
+- 工具类脚本放在 `utils/` 目录
 
-#### `/tools/`
-开发工具
-- `scripts/` - 工具脚本
-  - `quick_test.sh` - 快速测试脚本
+### resources/ - 资源目录
 
-## 优势
+```
+resources/
+├── level_config.tres             # 关卡配置资源
+├── game_settings.tres            # 游戏设置资源
+├── textures/                     # 纹理资源
+│   ├── player/                   # 玩家纹理
+│   ├── enemies/                  # 敌人纹理
+│   ├── environment/              # 环境纹理
+│   └── ui/                       # UI纹理
+├── audio/                        # 音频资源
+│   ├── sfx/                      # 音效文件
+│   └── music/                    # 背景音乐
+├── fonts/                        # 字体资源
+├── materials/                    # 材质资源
+└── themes/                       # UI主题资源
+```
 
-1. **清晰的分类**: 文件按功能和类型分类，便于查找和维护
-2. **模块化**: 相关功能的文件放在一起，便于模块化开发
-3. **可扩展性**: 新功能可以轻松添加到相应的文件夹中
-4. **测试友好**: 测试文件单独组织，便于自动化测试
-5. **文档完整**: 所有文档集中管理，便于查阅
+**资源管理原则：**
+- 按类型和用途分类存放
+- 使用Godot原生资源格式（.tres, .res）
+- 保持资源文件的相对路径一致性
 
-## 注意事项
+### assets/ - 原始资源目录
 
-- 添加新功能时，请将文件放在相应的文件夹中
-- 保持文件命名的一致性
-- 更新文档时，请同时更新相关的设计文档
-- 测试文件应该与被测试的功能模块对应
+```
+assets/
+├── sprites/                      # 原始精灵图片
+│   ├── player/                   # 玩家精灵
+│   ├── enemies/                  # 敌人精灵
+│   ├── environment/              # 环境精灵
+│   └── ui/                       # UI精灵
+├── sounds/                       # 原始音效文件
+├── music/                        # 原始音乐文件
+├── fonts/                        # 原始字体文件
+└── source/                       # 源文件（PSD, AI等）
+```
+
+**原始资源管理：**
+- 存放未经Godot处理的原始文件
+- 保持源文件的完整性
+- 便于资源的更新和维护
+
+## 文件命名规范
+
+### 场景文件命名
+- 关卡场景：`level{数字}.tscn`
+- 功能场景：`功能名称.tscn`（小写字母+下划线）
+- 组件场景：`组件名称.tscn`
+
+### 脚本文件命名
+- 类脚本：`类名.gd`（小写字母+下划线）
+- 管理器：`功能_manager.gd`
+- 系统脚本：`功能_system.gd`
+
+### 资源文件命名
+- 配置资源：`配置名称.tres`
+- 纹理资源：`描述性名称.png/jpg`
+- 音频资源：`描述性名称.ogg/wav`
+
+## 路径引用规范
+
+### 绝对路径
+```gdscript
+# 推荐使用绝对路径引用资源
+var level_config = load("res://resources/level_config.tres")
+var player_scene = load("res://scenes/player/player.tscn")
+```
+
+### 相对路径
+```gdscript
+# 在同一目录下可使用相对路径
+var coin_scene = load("coin.tscn")  # 在同一目录下
+```
+
+### 节点路径
+```gdscript
+# 使用标准的节点路径
+@onready var level_manager = get_node("/root/LevelManager")
+@onready var player = $Player
+```
+
+## 版本控制
+
+### 忽略文件
+建议在 `.gitignore` 中添加：
+```
+# Godot 4+ specific ignores
+.godot/
+
+# Godot-specific ignores
+*.tmp
+*.import
+
+# 临时文件
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
+```
+
+### 提交规范
+- 场景文件和脚本文件一起提交
+- 资源文件变更需要说明
+- 配置文件变更需要详细说明
+
+## 扩展指南
+
+### 添加新关卡
+1. 在 `scenes/levels/` 创建 `level{数字}.tscn`
+2. 在 `scripts/levels/` 创建对应脚本（如需要）
+3. 更新 `resources/level_config.tres`
+4. 更新 `docs/design/level_index.md`
+
+### 添加新功能模块
+1. 在对应目录创建场景和脚本文件
+2. 遵循现有的命名规范
+3. 更新相关文档
+4. 考虑与现有系统的集成
+
+### 重构建议
+- 保持目录结构的一致性
+- 及时更新文档
+- 考虑向后兼容性
+- 进行充分的测试
+
+---
+
+**注意事项：**
+- 本文档需要随项目结构变化及时更新
+- 新加入的开发者应首先阅读本文档
+- 如有结构调整建议，请通过项目Issues提出

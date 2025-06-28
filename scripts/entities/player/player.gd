@@ -174,6 +174,17 @@ func _die():
 	# 切换到死亡状态
 	_change_state("Death")
 
+# 开始闪烁效果（受伤时使用）
+func start_blink():
+	if not animated_sprite:
+		return
+	
+	# 创建闪烁动画
+	var tween = create_tween()
+	tween.set_loops(3) # 闪烁3次
+	tween.tween_property(animated_sprite, "modulate:a", 0.3, 0.1)
+	tween.tween_property(animated_sprite, "modulate:a", 1.0, 0.1)
+
 # 应用复活效果
 func _apply_respawn_effect():
 	# 设置无敌状态
