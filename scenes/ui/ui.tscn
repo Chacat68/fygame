@@ -25,21 +25,6 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 0
 
-[node name="CoinBackground" type="Panel" parent="TopBar/CoinCounter"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-modulate = Color(0, 0, 0, 0.5)
-custom_minimum_size = Vector2(160, 50)
-z_index = -1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -10.0
-offset_top = -5.0
-offset_right = 10.0
-offset_bottom = 5.0
-
 [node name="CoinIcon" type="TextureRect" parent="TopBar/CoinCounter"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
@@ -66,6 +51,16 @@ theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
 text = "0"
 vertical_alignment = 1
+
+[node name="CoinBackground" type="Panel" parent="TopBar/CoinCounter"]
+layout_mode = 2
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+modulate = Color(0, 0, 0, 0.2)
+z_index = -1
 
 [node name="TestButton" type="Button" parent="."]
 anchors_preset = 1
@@ -108,21 +103,6 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 0
 
-[node name="KillBackground" type="Panel" parent="TopBar/KillCounter"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-modulate = Color(0, 0, 0, 0.5)
-custom_minimum_size = Vector2(160, 50)
-z_index = -1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -10.0
-offset_top = -5.0
-offset_right = 10.0
-offset_bottom = 5.0
-
 [node name="KillIcon" type="TextureRect" parent="TopBar/KillCounter"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
@@ -149,3 +129,13 @@ theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
 text = "0"
 vertical_alignment = 1
+
+[node name="KillBackground" type="Panel" parent="TopBar/KillCounter"]
+layout_mode = 2
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+modulate = Color(0, 0, 0, 0.2)
+z_index = -1

@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cmp5frv2l1xel"]
+[gd_scene load_steps=4 format=3 uid="uid://cmp5frv2l1xel"]
 
 [ext_resource type="Script" uid="uid://bdi6m6ebacb1i" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 [ext_resource type="FontFile" uid="uid://bdtg4xmvtjkd4" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://da37c6ceu3wms" path="res://assets/images/home1.png" id="3_bg"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -12,11 +13,13 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.1, 0.2, 0.3, 1)
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 0

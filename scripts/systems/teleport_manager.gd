@@ -237,3 +237,61 @@ func get_config() -> TeleportConfig:
 func reset_to_default():
 	config = TeleportConfig.new()
 	config.apply_preset(TeleportConfig.TeleportPreset.INSTANT)
+
+# 传送到指定场景
+func teleport_to_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZERO) -> bool:
+	# 检查场景路径是否有效
+	if scene_path == "" or not ResourceLoader.exists(scene_path):
+		teleport_failed.emit("场景路径无效或场景不存在：" + scene_path)
+		return false
+	
+	# 获取玩家节点
+	var player = _get_player()
+	if not player:
+		teleport_failed.emit("未找到玩家节点")
+		return false
+	
+	# 开始传送过程
+	is_teleporting = true
+	teleport_started.emit(player, spawn_position)
+	
+	# 播放传送特效
+	_play_teleport_effect(player.global_position, spawn_position)
+	
+	# 如果配置了淡出效果，先执行淡出
+	if config.enable_teleport_effects and config.fade_out_duration > 0:
+		tween = create_tween()
+		tween.tween_property(player, "modulate:a", 0.0, config.fade_out_duration)
+		await tween.finished
+	
+	# 切换场景
+	var result = get_tree().change_scene_to_file(scene_path)
+	if result != OK:
+		teleport_failed.emit("场景切换失败：" + scene_path)
+		is_teleporting = false
+		return false
+	
+	# 等待场景加载完成
+	await get_tree().process_frame
+	
+	# 在新场景中设置玩家位置
+	var new_player = _get_player()
+	if new_player and spawn_position != Vector2.ZERO:
+		new_player.global_position = spawn_position
+	
+	# 如果配置了淡入效果，执行淡入
+	if config.enable_teleport_effects and config.fade_in_duration > 0 and new_player:
+		new_player.modulate.a = 0.0
+		tween = create_tween()
+		tween.tween_property(new_player, "modulate:a", 1.0, config.fade_in_duration)
+		await tween.finished
+	
+	# 完成传送
+	is_teleporting = false
+	teleport_completed.emit(new_player, spawn_position)
+	
+	# 输出调试信息
+	if config.log_teleport_events:
+		print("[TeleportManager] 场景传送完成：", scene_path, " 位置：", spawn_position)
+	
+	return true

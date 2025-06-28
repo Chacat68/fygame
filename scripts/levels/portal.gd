@@ -6,11 +6,21 @@ extends Area2D
 # 传送门参数
 var next_level = -1 # -1表示自动进入下一关
 var is_active = true # 传送门是否激活
+var destination_scene: String = "" # 目标场景路径
+var teleport_position: Vector2 = Vector2.ZERO # 传送到目标场景的位置
+
+# 管理器引用
+var teleport_manager: TeleportManager
+var level_manager: LevelManager
+var game_manager: Node
 
 # 在准备好时调用
 func _ready():
 	# 将自己添加到传送门组
 	add_to_group("portal")
+	
+	# 初始化管理器引用
+	_initialize_managers()
 	
 	# 创建碰撞形状
 	var collision_shape = CollisionShape2D.new()
@@ -94,12 +104,59 @@ func _on_body_entered(body):
 		is_active = false
 		
 		# 添加视觉反馈
-		for child in get_children():
-			if child is ColorRect:
-				# 创建闪烁动画
-				var tween = create_tween()
-				tween.tween_property(child, "modulate", Color(2, 2, 2, 1), 0.2)
-				tween.tween_property(child, "modulate", Color(1, 1, 1, 1), 0.3)
+		_play_teleport_animation()
+		
+		# 执行传送逻辑
+		_perform_teleport(body)
+
+# 播放传送动画
+func _play_teleport_animation():
+	for child in get_children():
+		if child is ColorRect:
+			# 创建闪烁动画
+			var tween = create_tween()
+			tween.tween_property(child, "modulate", Color(2, 2, 2, 1), 0.2)
+			tween.tween_property(child, "modulate", Color(1, 1, 1, 1), 0.3)
+
+# 执行传送逻辑
+func _perform_teleport(body):
+	# 获取管理器引用
+	if not teleport_manager:
+		_initialize_managers()
+	
+	# 如果指定了目标场景，直接传送到该场景
+	if destination_scene != "":
+		if teleport_manager:
+			teleport_manager.teleport_to_scene(destination_scene, teleport_position)
+		return
+	
+	# 否则使用关卡管理器进入下一关
+	if level_manager:
+		if next_level == -1:
+			level_manager.next_level()
+		else:
+			level_manager.load_level(next_level)
+	else:
+		print("警告：无法找到关卡管理器")
+
+# 初始化管理器引用
+func _initialize_managers():
+	# 查找管理器节点
+	game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager:
+		teleport_manager = game_manager.get_node_or_null("TeleportManager")
+		level_manager = game_manager.get_node_or_null("LevelManager")
+	
+	# 如果在游戏管理器中找不到，尝试在场景树中查找
+	if not teleport_manager:
+		teleport_manager = get_tree().get_first_node_in_group("teleport_manager")
+	if not level_manager:
+		level_manager = get_tree().get_first_node_in_group("level_manager")
+
+# 设置目标场景
+func set_destination_scene(scene_path: String, position: Vector2 = Vector2.ZERO):
+	destination_scene = scene_path
+	teleport_position = position
 
 # 设置下一关卡
 func set_next_level(level):
@@ -115,3 +172,27 @@ func set_active(active):
 			child.modulate = Color(1, 1, 1, 1) if active else Color(0.5, 0.5, 0.5, 0.5)
 		elif child is CPUParticles2D:
 			child.emitting = active
+
+# 配置传送门为关卡传送模式
+func configure_for_level_teleport(target_level: int):
+	next_level = target_level
+	destination_scene = ""
+	print("传送门配置为关卡传送模式，目标关卡：", target_level)
+
+# 配置传送门为场景传送模式
+func configure_for_scene_teleport(scene_path: String, position: Vector2 = Vector2.ZERO):
+	destination_scene = scene_path
+	teleport_position = position
+	next_level = -1
+	print("传送门配置为场景传送模式，目标场景：", scene_path)
+
+# 获取传送门状态信息
+func get_portal_info() -> Dictionary:
+	return {
+		"is_active": is_active,
+		"next_level": next_level,
+		"destination_scene": destination_scene,
+		"teleport_position": teleport_position,
+		"has_teleport_manager": teleport_manager != null,
+		"has_level_manager": level_manager != null
+	}

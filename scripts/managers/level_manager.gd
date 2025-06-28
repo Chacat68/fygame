@@ -350,3 +350,22 @@ func is_time_limit_exceeded() -> bool:
 	if time_limit == 0:
 		return false  # 没有时间限制
 	return get_level_play_time() > time_limit
+
+# 进入下一关
+func next_level() -> bool:
+	var next_level_id = current_level_id + 1
+	
+	# 检查下一关是否存在
+	if not level_config or next_level_id >= level_config.get_level_count():
+		print("[LevelManager] 已经是最后一关")
+		level_load_error.emit(next_level_id, "没有更多关卡")
+		return false
+	
+	# 检查下一关是否解锁
+	if not is_level_unlocked(next_level_id):
+		print("[LevelManager] 下一关尚未解锁：", next_level_id)
+		level_load_error.emit(next_level_id, "关卡尚未解锁")
+		return false
+	
+	# 加载下一关
+	return load_level(next_level_id)
