@@ -327,6 +327,7 @@ position = Vector2(664, -75)
 
 [node name="Portal" parent="." instance=ExtResource("11_5newe")]
 position = Vector2(50, -90)
+destination_scene = "res://scenes/levels/lv2.tscn"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
 position = Vector2(1419, -24)

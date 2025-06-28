@@ -230,7 +230,7 @@ _data = {
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kvpfn"]
 radius = 10.1
 
-[node name="Game" type="Node2D"]
+[node name="lv3" type="Node2D"]
 position = Vector2(-21, -41)
 
 [node name="GameManager" parent="." instance=ExtResource("1_su46b")]
