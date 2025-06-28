@@ -3,9 +3,6 @@ extends Area2D
 # 传送门脚本
 # 用于在关卡之间传送玩家
 
-# 信号
-signal portal_body_entered(body)
-
 # 传送门参数
 var next_level = -1 # -1表示自动进入下一关
 var is_active = true # 传送门是否激活

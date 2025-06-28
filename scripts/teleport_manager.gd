@@ -131,7 +131,7 @@ func _calculate_teleport_position(portal: Node2D) -> Vector2:
 	return portal.global_position + config.portal_offset
 
 # 检查位置是否安全（避免传送到墙体或危险区域）
-func _is_position_safe(position: Vector2) -> bool:
+func _is_position_safe(_position: Vector2) -> bool:
 	# 这里可以添加更复杂的安全检查逻辑
 	# 比如检查是否有碰撞体、是否在killzone等
 	return true

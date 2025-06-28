@@ -3,14 +3,14 @@ extends CanvasLayer
 # UI控制脚本，管理金币和击杀计数显示
 
 # 引入传送管理器
-const TeleportManager = preload("res://scripts/teleport_manager.gd")
+const TeleportManagerClass = preload("res://scripts/teleport_manager.gd")
 
 # 状态变量
 var coin_count = 0
 var kill_count = 0
 
 # 传送管理器实例
-var teleport_manager: TeleportManager
+var teleport_manager: TeleportManagerClass
 
 # UI位置参数（可在Inspector中调整）
 @export var margin_left: int = 10
@@ -33,7 +33,7 @@ signal kills_changed(new_count)
 
 func _ready():
 	# 初始化传送管理器
-	teleport_manager = TeleportManager.new()
+	teleport_manager = TeleportManagerClass.new()
 	add_child(teleport_manager)
 	
 	# 加载传送配置
@@ -127,7 +127,7 @@ func _on_teleport_started(player: Node2D, destination: Vector2):
 	print("[CoinCounter] 传送开始：玩家从 ", player.global_position, " 传送到 ", destination)
 
 # 传送完成回调
-func _on_teleport_completed(player: Node2D, destination: Vector2):
+func _on_teleport_completed(_player: Node2D, destination: Vector2):
 	print("[CoinCounter] 传送完成：玩家已到达 ", destination)
 	# 这里可以添加传送完成后的UI反馈，比如显示提示信息
 

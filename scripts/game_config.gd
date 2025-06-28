@@ -5,13 +5,13 @@ extends Resource
 # 用于统一管理游戏中的各种数值参数，避免硬编码
 
 # 玩家相关配置
-@export var player_speed: float = 300.0
-@export var player_jump_velocity: float = -400.0
-@export var player_gravity: float = 980.0
-@export var player_max_jumps: int = 2
-@export var player_max_health: int = 3
-@export var player_damage_amount: int = 10
-@export var player_invincibility_time: float = 1.0
+@export var player_speed: float = 150.0  # 玩家水平移动速度（像素/秒）
+@export var player_jump_velocity: float = -400.0  # 玩家跳跃初始速度（负值表示向上，像素/秒）
+@export var player_gravity: float = 380.0  # 重力加速度（像素/秒²）
+@export var player_max_jumps: int = 2  # 玩家最大跳跃次数（包括二段跳）
+@export var player_max_health: int = 3  # 玩家最大生命值
+@export var player_damage_amount: int = 10  # 玩家造成的伤害值
+@export var player_invincibility_time: float = 1.0  # 玩家受伤后的无敌时间（秒）
 
 # 关卡相关配置
 @export var death_height: float = 300.0
