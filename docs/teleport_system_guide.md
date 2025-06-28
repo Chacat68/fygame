@@ -100,7 +100,7 @@ teleport_manager.set_config(custom_config)
 ```gdscript
 # 应用电影式传送预设
 var config = TeleportConfig.new()
-config.apply_preset(TeleportConfig.Preset.CINEMATIC)
+config.apply_preset(TeleportConfig.TeleportPreset.CINEMATIC)
 teleport_manager.set_config(config)
 ```
 

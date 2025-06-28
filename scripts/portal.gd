@@ -91,7 +91,7 @@ func _on_body_entered(body):
 	# 检查是否为玩家
 	if body.is_in_group("player") and is_active:
 		# 发出信号
-		emit_signal("body_entered", body)
+		body_entered.emit(body)
 		
 		# 防止玩家多次触发传送门
 		is_active = false

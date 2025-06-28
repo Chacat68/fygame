@@ -125,14 +125,14 @@ func _test_config_presets():
 		var test_config = TeleportConfig.new()
 		
 		# 测试瞬间传送预设
-		test_config.apply_preset(TeleportConfig.Preset.INSTANT)
+		test_config.apply_preset(TeleportConfig.TeleportPreset.INSTANT)
 		if test_config.teleport_duration == 0.0:
 			_add_test_result("✅ INSTANT预设配置正确")
 		else:
 			_add_test_result("❌ INSTANT预设配置错误")
 		
 		# 测试平滑传送预设
-		test_config.apply_preset(TeleportConfig.Preset.SMOOTH)
+		test_config.apply_preset(TeleportConfig.TeleportPreset.SMOOTH)
 		if test_config.teleport_duration > 0.0:
 			_add_test_result("✅ SMOOTH预设配置正确")
 		else:

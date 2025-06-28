@@ -28,8 +28,8 @@ func _on_portal_entered(body):
 func add_point():
 	score += 1
 	kill_count += 1
-	emit_signal("score_changed", score)
-	emit_signal("kill_count_changed", kill_count)
+	score_changed.emit(score)
+	kill_count_changed.emit(kill_count)
 	
 	# 更新UI
 	if ui:
@@ -40,8 +40,8 @@ func add_point():
 func reset_score():
 	score = 0
 	kill_count = 0
-	emit_signal("score_changed", score)
-	emit_signal("kill_count_changed", kill_count)
+	score_changed.emit(score)
+	kill_count_changed.emit(kill_count)
 	
 	if ui:
 		ui.update_coin_count(0)

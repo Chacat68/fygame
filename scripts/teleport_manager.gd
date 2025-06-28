@@ -50,26 +50,26 @@ func can_teleport() -> bool:
 func teleport_to_portal(player_node: Node2D = null) -> bool:
 	# 检查是否可以传送
 	if not can_teleport():
-		emit_signal("teleport_failed", "传送冷却中，请稍后再试")
+		teleport_failed.emit("传送冷却中，请稍后再试")
 		return false
 	
 	if not player_node:
 		player_node = _get_player()
 	
 	if not player_node:
-		emit_signal("teleport_failed", "未找到玩家节点")
+		teleport_failed.emit("未找到玩家节点")
 		return false
 	
 	# 查找Portal节点
 	var portal = _find_portal()
 	if not portal:
-		emit_signal("teleport_failed", "未找到传送门节点")
+		teleport_failed.emit("未找到传送门节点")
 		return false
 	
 	# 检查传送距离
 	var distance = player_node.global_position.distance_to(portal.global_position)
 	if distance > config.max_teleport_distance:
-		emit_signal("teleport_failed", "传送距离过远")
+		teleport_failed.emit("传送距离过远")
 		return false
 	
 	# 计算传送位置
@@ -86,7 +86,7 @@ func teleport_to_portal(player_node: Node2D = null) -> bool:
 # 传送到指定坐标
 func teleport_to_position(player_node: Node2D, position: Vector2) -> bool:
 	if not player_node:
-		emit_signal("teleport_failed", "玩家节点无效")
+		teleport_failed.emit("玩家节点无效")
 		return false
 	
 	return _execute_teleport(player_node, position)
@@ -157,7 +157,7 @@ func _find_safe_position_near(original_position: Vector2) -> Vector2:
 # 执行传送
 func _execute_teleport(player: Node2D, destination: Vector2) -> bool:
 	is_teleporting = true
-	emit_signal("teleport_started", player, destination)
+	teleport_started.emit(player, destination)
 	
 	# 记录传送时间
 	var current_time = Time.get_time_dict_from_system()
@@ -212,12 +212,12 @@ func _complete_teleport(player: Node2D, destination: Vector2):
 	if config.log_teleport_events:
 		print("[TeleportManager] 玩家已传送到：", destination)
 	
-	emit_signal("teleport_completed", player, destination)
+	teleport_completed.emit(player, destination)
 	
 	# 启动冷却计时器
 	if config.cooldown_time > 0:
 		await get_tree().create_timer(config.cooldown_time).timeout
-		emit_signal("teleport_cooldown_finished")
+		teleport_cooldown_finished.emit()
 
 # 播放传送特效
 func _play_teleport_effect(from_position: Vector2, to_position: Vector2):
@@ -236,4 +236,4 @@ func get_config() -> TeleportConfig:
 # 重置为默认配置
 func reset_to_default():
 	config = TeleportConfig.new()
-	config.apply_preset(TeleportConfig.Preset.INSTANT)
+	config.apply_preset(TeleportConfig.TeleportPreset.INSTANT)

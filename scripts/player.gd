@@ -156,7 +156,7 @@ func take_damage(amount: int = 10):
 	current_health -= amount
 	
 	# 发出血量变化信号
-	emit_signal("health_changed", current_health)
+	health_changed.emit(current_health)
 	
 	# 设置无敌状态
 	is_invincible = true
@@ -182,7 +182,7 @@ func _apply_respawn_effect():
 	
 	# 重置血量
 	current_health = MAX_HEALTH
-	emit_signal("health_changed", current_health)
+	health_changed.emit(current_health)
 	
 	# 应用闪烁效果
 	var tween = create_tween()

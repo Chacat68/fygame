@@ -13,10 +13,10 @@ class_name TeleportExample
 
 # 预设配置选项
 var preset_configs = {
-	"瞬间传送": TeleportConfig.Preset.INSTANT,
-	"平滑传送": TeleportConfig.Preset.SMOOTH,
-	"电影式传送": TeleportConfig.Preset.CINEMATIC,
-	"调试模式": TeleportConfig.Preset.DEBUG
+	"瞬间传送": TeleportConfig.TeleportPreset.INSTANT,
+	"平滑传送": TeleportConfig.TeleportPreset.SMOOTH,
+	"电影式传送": TeleportConfig.TeleportPreset.CINEMATIC,
+	"调试模式": TeleportConfig.TeleportPreset.DEBUG
 }
 
 func _ready():
