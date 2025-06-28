@@ -1,10 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://bkxvp2qr3n8ys"]
+[gd_scene load_steps=7 format=3 uid="uid://bkxvp2qr3n8ys"]
 
 [ext_resource type="Script" uid="uid://bkxvp2qr3n8ys" path="res://scripts/levels/level2.gd" id="1_level2"]
 [ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/entities/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/managers/game_manager.tscn" id="3_game_manager"]
 [ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui/ui.tscn" id="4_ui"]
 [ext_resource type="Texture2D" uid="uid://c4wkged2fd15c" path="res://assets/sprites/world_tileset.png" id="5_tileset"]
+[ext_resource type="PackedScene" uid="uid://bt3xk5tjyby52" path="res://scenes/entities/killzone.tscn" id="6_killzone"]
+[ext_resource type="PackedScene" uid="uid://bedut538hiyon" path="res://scenes/entities/coin.tscn" id="7_coin"]
+[ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="8_slime"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_level2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_level2"]
 texture = ExtResource("5_tileset")
@@ -12,6 +17,76 @@ texture = ExtResource("5_tileset")
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:0/0 = 0
 1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+4:0/0 = 0
+4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+5:0/0 = 0
+5:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+6:0/0 = 0
+6:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+7:0/0 = 0
+7:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+8:0/0 = 0
+8:0/0/physics_layer_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+9:0/0 = 0
+9:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, -2.875, -7.125, 2.5625, -6.8125, 8, -6.8125, 8, 0, 2.25, 0.0625, -2.33337, -0.907394, -8, -1.125)
+9:0/0/physics_layer_0/polygon_0/one_way = true
+10:0/0 = 0
+10:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -5.9375, 0.375, -5, 8, -6.125, 8, 0.891906, -8, 0.966231)
+10:0/0/physics_layer_0/polygon_0/one_way = true
+11:0/0 = 0
+11:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -5.82705, 0.132433, -6.29056, 8, -8, 8, -2.11893, 0.397299, -0.927031, -8, -0.529732)
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:1/0 = 0
+1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+3:1/0 = 0
+3:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+4:1/0 = 0
+4:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+5:1/0 = 0
+5:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+6:1/0 = 0
+6:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+7:1/0 = 0
+7:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+8:1/0 = 0
+8:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+9:1/0 = 0
+9:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0.594604, -6.83794, 8, -5.72306, 8, 0.148651, -8, -1.48651)
+10:1/0 = 0
+10:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -5.42576, 0.371628, -4.60818, 8, -5.57441, 8, 0.891906, -8, 0.966231)
+11:1/0 = 0
+11:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -5.82705, 0.132433, -6.29056, 8, -8, 8, -2.11893, 0.397299, -0.927031, -8, -0.529732)
+0:2/0 = 0
+0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:2/0 = 0
+1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+2:2/0 = 0
+2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+3:2/0 = 0
+3:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+4:2/0 = 0
+4:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+5:2/0 = 0
+5:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+6:2/0 = 0
+6:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+7:2/0 = 0
+7:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+8:2/0 = 0
+8:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+9:2/0 = 0
+9:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 0.594604, -6.83794, 8, -5.72306, 8, 0.148651, -8, -1.48651)
+10:2/0 = 0
+10:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -5.42576, 0.371628, -4.60818, 8, -5.57441, 8, 0.891906, -8, 0.966231)
+11:2/0 = 0
+11:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -5.82705, 0.132433, -6.29056, 8, -8, 8, -2.11893, 0.397299, -0.927031, -8, -0.529732)
 
 [sub_resource type="TileSet" id="TileSet_level2"]
 physics_layer_0/collision_layer = 1
@@ -37,9 +112,30 @@ format = 2
 layer_0/name = "Ground"
 layer_0/tile_data = PackedInt32Array(0, 0, 0, 1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 0, 0, 5, 0, 0, 6, 0, 0, 7, 0, 0, 8, 0, 0, 9, 0, 0, 10, 0, 0, 11, 0, 0, 12, 0, 0, 13, 0, 0, 14, 0, 0, 15, 0, 0)
 
+[node name="Killzone" parent="." instance=ExtResource("6_killzone")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+position = Vector2(0, 600)
+shape = SubResource("WorldBoundaryShape2D_level2")
+
 [node name="Coins" type="Node2D" parent="."]
 
+[node name="Coin" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(200, 250)
+
+[node name="Coin2" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(300, 250)
+
+[node name="Coin3" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(400, 250)
+
 [node name="Enemies" type="Node2D" parent="."]
+
+[node name="Slime" parent="Enemies" instance=ExtResource("8_slime")]
+position = Vector2(350, 280)
+
+[node name="Slime2" parent="Enemies" instance=ExtResource("8_slime")]
+position = Vector2(500, 280)
 
 [node name="Labels" type="CanvasLayer" parent="."]
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://brj8melw5o5hj" path="res://scripts/ui/game_start_screen.gd" id="1_start"]
 [ext_resource type="FontFile" uid="uid://bdtg4xmvtjkd4" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
-[ext_resource type="Texture2D" uid="uid://da37c6ceu3wms" path="res://assets/images/home1.png" id="3_bg"]
+[ext_resource type="Texture2D" uid="uid://c11i4wggvta1v" path="res://assets/images/home2.png" id="2_k3ftq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f8d9e"]
 
@@ -120,32 +120,31 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_bg")
+texture = ExtResource("2_k3ftq")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="GameTitle" type="Label" parent="."]
 layout_mode = 1
-offset_left = 106.0
-offset_top = 262.0
-offset_right = 266.0
-offset_bottom = 375.0
+offset_left = 59.0
+offset_top = 258.0
+offset_right = 539.0
+offset_bottom = 371.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 80
-text = "群星"
+text = "小王子冒险记"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 50.0
-offset_top = -75.0
-offset_right = 350.0
-offset_bottom = 75.0
-grow_horizontal = 2
+offset_left = 152.0
+offset_top = -38.0
+offset_right = 452.0
+offset_bottom = 137.0
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
