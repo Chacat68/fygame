@@ -10,11 +10,12 @@ config_version=5
 
 [application]
 
-config/name="群星"
+config/name="小王子冒险记"
 config/version="1.0"
 run/main_scene="res://scenes/ui/game_start_screen.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+config/tags=PackedStringArray("2d", "策略")
 
 [autoload]
 
