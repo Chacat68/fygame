@@ -1,0 +1,60 @@
+[gd_scene load_steps=8 format=3 uid="uid://bkxvp2qr3n8ys"]
+
+[ext_resource type="Script" uid="uid://bkxvp2qr3n8ys" path="res://scripts/levels/level2.gd" id="1_level2"]
+[ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/entities/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/managers/game_manager.tscn" id="3_game_manager"]
+[ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui/ui.tscn" id="4_ui"]
+[ext_resource type="Texture2D" uid="uid://c4wkged2fd15c" path="res://assets/sprites/world_tileset.png" id="5_tileset"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_level2"]
+texture = ExtResource("5_tileset")
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[sub_resource type="TileSet" id="TileSet_level2"]
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_level2")
+
+[node name="Level2" type="Node2D"]
+script = ExtResource("1_level2")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(100, 300)
+
+[node name="GameManager" parent="." instance=ExtResource("3_game_manager")]
+
+[node name="UI" parent="." instance=ExtResource("4_ui")]
+
+[node name="LevelCamera" type="Camera2D" parent="."]
+position = Vector2(100, 300)
+enabled = true
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_level2")
+format = 2
+layer_0/name = "Ground"
+layer_0/tile_data = PackedInt32Array(0, 0, 0, 1, 0, 0, 2, 0, 0, 3, 0, 0, 4, 0, 0, 5, 0, 0, 6, 0, 0, 7, 0, 0, 8, 0, 0, 9, 0, 0, 10, 0, 0, 11, 0, 0, 12, 0, 0, 13, 0, 0, 14, 0, 0, 15, 0, 0)
+
+[node name="Coins" type="Node2D" parent="."]
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Labels" type="CanvasLayer" parent="."]
+
+[node name="WelcomeLabel" type="Label" parent="Labels"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -100.0
+offset_right = 50.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "欢迎来到关卡2！"
+horizontal_alignment = 1
+vertical_alignment = 1

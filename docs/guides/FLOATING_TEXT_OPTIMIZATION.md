@@ -47,7 +47,7 @@
 var text_manager = FloatingTextManager.get_instance()
 
 # 创建排列的飘字效果
-text_manager.create_arranged_floating_text(world_position, "金币+10", game_root)
+text_manager.create_arranged_floating_text(world_position, "金币+1", game_root)
 ```
 
 ### 配置参数

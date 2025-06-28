@@ -18,7 +18,7 @@ extends Resource
 @export_group("玩家跳跃")
 # 玩家跳跃初始速度（像素/秒）
 # 负值表示向上的速度，绝对值越大跳得越高
-@export var player_jump_velocity: float = -250.0
+@export var player_jump_velocity: float = -280.0
 
 # 玩家最大跳跃次数
 # 允许玩家连续跳跃的次数（包括二段跳等）
@@ -27,7 +27,7 @@ extends Resource
 @export_group("玩家生命")
 # 玩家最大生命值
 # 玩家可承受的最大伤害次数
-@export var player_max_health: int = 3
+@export var player_max_health: int = 100
 
 # 玩家受到的伤害量
 # 每次受伤时减少的生命值
@@ -60,7 +60,7 @@ extends Resource
 @export var slime_health: int = 1
 
 # 金币配置
-@export var coin_value: int = 10
+@export var coin_value: int = 1
 
 # 浮动文本配置
 @export var floating_text_speed: float = 50.0
