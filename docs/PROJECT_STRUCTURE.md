@@ -30,16 +30,22 @@
 #### `/docs/`
 项目文档
 - `design/` - 设计文档
-  - 游戏机制设计
-  - 关卡设计
-  - 敌人AI设计
-  - 玩家状态机设计
+  - `game_mechanics.md` - 游戏机制设计（已更新，包含完整系统描述）
+  - `player_state_machine.md` - 玩家状态机设计（已更新，包含实际实现）
+  - `game_config_system.md` - 游戏配置系统设计（新增）
+  - `teleport_system_design.md` - 传送系统设计文档（新增）
+  - `ui_design.md` - UI设计文档
+  - `level_design.md` - 关卡设计文档
 - `guides/` - 使用指南
   - 浮动文本优化指南
   - 传送系统变更日志
   - 传送测试指南
 - `system/` - 系统文档
   - 传送系统指南
+- `api/` - API文档
+  - `resource_manager_api.md` - 资源管理器API
+- `PROJECT_STRUCTURE.md` - 项目结构说明（本文档）
+- `README.md` - 项目说明文档
 
 #### `/scenes/`
 场景文件，按功能分类
@@ -67,21 +73,28 @@
 #### `/scripts/`
 脚本文件，按功能模块分类
 - `autoload/` - 自动加载脚本
-  - `resource_manager_autoload.gd` - 资源管理器自动加载
+  - `resource_manager_autoload.gd` - 资源管理器自动加载（AutoLoad单例）
 - `entities/` - 实体脚本
   - `player/` - 玩家相关脚本
-    - `player.gd` - 玩家主脚本
-    - `player_states/` - 玩家状态机
+    - `player.gd` - 玩家主脚本（集成GameConfig配置系统）
+    - `player_states/` - 玩家状态机系统
+      - `player_state.gd` - 状态机基类
+      - `idle_state.gd` - 闲置状态
+      - `run_state.gd` - 奔跑状态
+      - `jump_state.gd` - 跳跃状态
+      - `fall_state.gd` - 下落状态
+      - `hurt_state.gd` - 受伤状态
+      - `death_state.gd` - 死亡状态
   - `enemies/` - 敌人脚本
-    - `slime.gd` - 史莱姆脚本
+    - `slime.gd` - 史莱姆脚本（包含完整状态机和AI系统）
   - `items/` - 道具脚本
-    - `coin.gd` - 金币脚本
-    - `coin_counter.gd` - 金币计数器
+    - `coin.gd` - 金币脚本（集成FloatingTextManager）
+    - `coin_counter.gd` - 金币计数器（集成传送系统）
 - `managers/` - 管理器脚本
   - `game_manager.gd` - 游戏管理器
   - `game_state.gd` - 游戏状态管理
   - `floating_text_manager.gd` - 浮动文本管理器
-  - `resource_manager.gd` - 资源管理器
+  - `resource_manager.gd` - 资源管理器（预加载所有游戏资源）
 - `ui/` - UI脚本
   - `main_menu.gd` - 主菜单脚本
   - `game_start_screen.gd` - 游戏开始界面脚本
@@ -91,10 +104,10 @@
   - `killzone.gd` - 死亡区域脚本
   - `portal.gd` - 传送门脚本
 - `systems/` - 系统脚本
+  - `game_config.gd` - 游戏配置系统（核心配置管理）
   - `teleport_config.gd` - 传送配置
-  - `teleport_manager.gd` - 传送管理器
-  - `game_config.gd` - 游戏配置
-  - `floating_text.gd` - 浮动文本系统
+  - `teleport_manager.gd` - 传送管理器（完整传送系统）
+  - `floating_text.gd` - 浮动文本系统（支持动画和配置）
 - `utils/` - 工具脚本
   - `config_hot_reload.gd` - 配置热重载
   - `config_sync_tool.gd` - 配置同步工具

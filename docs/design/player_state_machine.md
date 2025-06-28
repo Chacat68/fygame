@@ -4,11 +4,11 @@
 
 本文档详细描述了游戏中玩家角色的状态机系统，包括各状态的行为、转换条件以及实现细节。状态机模式使玩家的行为逻辑更加清晰和可维护。
 
+# 玩家状态机系统设计
 ## 状态机架构
-
 ### 基础状态类
 
-所有玩家状态都继承自`PlayerState`基类，该基类定义了以下方法：
+所有玩家状态都继承自`PlayerState`基类，该基类定义了状态机的基础接口。实际实现位于`/scripts/entities/player/player_states/player_state.gd`：
 
 ```gdscript
 class_name PlayerState
@@ -40,6 +40,39 @@ func handle_input():
 # 更新动画
 func update_animation():
     pass
+```
+
+### 状态机管理
+
+玩家主脚本（`player.gd`）中实现了状态机的核心管理逻辑：
+
+```gdscript
+# 状态管理
+var current_state: PlayerState
+var states = {}
+
+# 初始化状态机
+func _init_states():
+    # 创建各种状态
+    states = {
+        "Idle": IdleState.new(self),
+        "Run": RunState.new(self),
+        "Jump": JumpState.new(self),
+        "Fall": FallState.new(self),
+        "Hurt": HurtState.new(self),
+        "Death": DeathState.new(self)
+    }
+    
+    # 设置初始状态
+    _change_state("Idle")
+
+# 切换状态
+func _change_state(new_state_name: String):
+    if current_state:
+        current_state.exit()
+    
+    current_state = states[new_state_name]
+    current_state.enter()
 ```
 
 ### 状态初始化
