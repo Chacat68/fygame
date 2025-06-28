@@ -16,6 +16,11 @@ var acceleration = 1.2                  # 加速系数
 var max_distance = 80.0                 # 最大上升距离（像素）
 var total_distance = 0.0                # 已上升的总距离
 
+# 排列相关参数
+var horizontal_offset = 0.0             # 水平偏移量
+var stagger_delay = 0.0                 # 错开延迟时间
+var is_delayed = false                  # 是否处于延迟状态
+
 # 初始化函数
 func _ready():
 	# 初始化配置
@@ -23,6 +28,21 @@ func _ready():
 	
 	# 设置初始透明度
 	modulate.a = 1.0
+	
+	# 应用水平偏移
+	position.x += horizontal_offset
+	
+	# 如果有延迟，先隐藏文本
+	if stagger_delay > 0.0:
+		is_delayed = true
+		modulate.a = 0.0
+		# 创建延迟计时器
+		var delay_timer = Timer.new()
+		delay_timer.wait_time = stagger_delay
+		delay_timer.one_shot = true
+		delay_timer.timeout.connect(_start_animation)
+		add_child(delay_timer)
+		delay_timer.start()
 	
 	# 如果有待设置的文本，现在设置它
 	if label and pending_text:
@@ -45,8 +65,23 @@ func set_text(text):
 	if label:
 		label.text = text
 
+# 设置排列参数
+func set_arrangement(h_offset: float, delay: float):
+	horizontal_offset = h_offset
+	stagger_delay = delay
+
+# 开始动画（延迟结束后调用）
+func _start_animation():
+	is_delayed = false
+	modulate.a = 1.0
+	elapsed_time = 0.0
+
 # 每帧更新
 func _process(delta):
+	# 如果处于延迟状态，不执行动画
+	if is_delayed:
+		return
+	
 	# 计算当前进度（0.0到1.0之间）
 	var progress = elapsed_time / fade_duration
 	

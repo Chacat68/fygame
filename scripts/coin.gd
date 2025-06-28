@@ -8,8 +8,7 @@ var config: GameConfig
 @onready var animation_player = $AnimationPlayer
 @onready var sound_player = $CoinSound
 
-# 预加载飘字场景
-var floating_text_scene = preload("res://scenes/floating_text.tscn")
+# 飘字效果现在由FloatingTextManager管理
 
 # 状态变量
 var popup_shown = false
@@ -78,22 +77,16 @@ func _show_floating_text(player):
 	if not game_root:
 		game_root = get_tree().get_root()
 	
-	# 实例化飘字场景
-	var floating_text = floating_text_scene.instantiate()
-	
 	# 计算世界坐标中的位置（在玩家上方）
 	var world_position = player.global_position + Vector2(0, -30)
-	floating_text.global_position = world_position
 	
 	# 设置飘字文本
 	var coin_value = config.coin_value if config else 1
-	floating_text.pending_text = "金币+" + str(coin_value)
+	var text = "金币+" + str(coin_value)
 	
-	# 将飘字添加到游戏根节点，而不是玩家
-	game_root.add_child(floating_text)
-	
-	# 添加到场景树后再设置文本
-	floating_text.set_text("金币+" + str(coin_value))
+	# 使用飘字管理器创建排列的飘字效果
+	var text_manager = FloatingTextManager.get_instance()
+	text_manager.create_arranged_floating_text(world_position, text, game_root)
 
 # 当动画播放完成后，移除金币
 func _on_animation_player_animation_finished(_anim_name):

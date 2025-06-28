@@ -32,8 +32,7 @@ var current_health: int
 @onready var ray_cast_left = $RayCastLeft
 @onready var animated_sprite = $AnimatedSprite2D
 
-# 预加载飘字场景
-var floating_text_scene = preload("res://scenes/floating_text.tscn")
+# 飘字效果现在由FloatingTextManager管理
 
 # 在准备好时调用
 func _ready():
@@ -247,35 +246,15 @@ func _show_floating_text(player):
 	if not game_root:
 		game_root = get_tree().get_root()
 	
-	# 实例化击杀飘字场景
-	var kill_text = floating_text_scene.instantiate()
+	# 计算基础位置（在怪物上方）
+	var base_position = global_position + Vector2(0, -30)
 	
-	# 计算世界坐标中的位置（在怪物上方）
-	var kill_position = global_position + Vector2(-20, -30)
-	kill_text.global_position = kill_position
+	# 使用飘字管理器创建排列的飘字效果
+	var text_manager = FloatingTextManager.get_instance()
 	
-	# 设置击杀飘字文本
-	kill_text.pending_text = "击杀+1"
+	# 创建击杀飘字
+	text_manager.create_arranged_floating_text(base_position, "击杀+1", game_root)
 	
-	# 将击杀飘字添加到游戏根节点
-	game_root.add_child(kill_text)
-	
-	# 添加到场景树后再设置文本
-	kill_text.set_text("击杀+1")
-	
-	# 实例化金币飘字场景
-	var coin_text = floating_text_scene.instantiate()
-	
-	# 计算世界坐标中的位置（在怪物上方，稍微偏右）
-	var coin_position = global_position + Vector2(20, -30)
-	coin_text.global_position = coin_position
-	
-	# 设置金币飘字文本
+	# 创建金币飘字
 	var coin_value = config.coin_value if config else 1
-	coin_text.pending_text = "金币+" + str(coin_value)
-	
-	# 将金币飘字添加到游戏根节点
-	game_root.add_child(coin_text)
-	
-	# 添加到场景树后再设置文本
-	coin_text.set_text("金币+" + str(coin_value))
+	text_manager.create_arranged_floating_text(base_position, "金币+" + str(coin_value), game_root)
