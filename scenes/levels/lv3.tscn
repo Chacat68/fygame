@@ -1,21 +1,21 @@
-[gd_scene load_steps=19 format=4 uid="uid://qaccrpcioxge"]
+[gd_scene load_steps=19 format=4 uid="uid://bqqepkn0lxog8"]
 
-[ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/managers/game_manager.tscn" id="1_kvpfn"]
-[ext_resource type="Script" uid="uid://c1b4frqkv0k58" path="res://scripts/managers/game_manager.gd" id="2_dinhu"]
-[ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui/ui.tscn" id="3_kvuet"]
-[ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/entities/player.tscn" id="4_trtic"]
-[ext_resource type="PackedScene" uid="uid://bt3xk5tjyby52" path="res://scenes/entities/killzone.tscn" id="5_ir15t"]
-[ext_resource type="Texture2D" uid="uid://dsmp6enbdqgyo" path="res://assets/sprites/world_tileset.png" id="6_ca42v"]
-[ext_resource type="PackedScene" uid="uid://bedut538hiyon" path="res://scenes/entities/coin.tscn" id="7_rysoc"]
-[ext_resource type="PackedScene" uid="uid://cbn8s4tmx1k7b" path="res://scenes/entities/platform.tscn" id="8_ssvqc"]
-[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="9_264po"]
-[ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="10_1kice"]
-[ext_resource type="PackedScene" path="res://scenes/entities/portal.tscn" id="11_5newe"]
+[ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/managers/game_manager.tscn" id="1_su46b"]
+[ext_resource type="Script" uid="uid://c1b4frqkv0k58" path="res://scripts/managers/game_manager.gd" id="2_ijfv3"]
+[ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui/ui.tscn" id="3_vqgv6"]
+[ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/entities/player.tscn" id="4_fx073"]
+[ext_resource type="PackedScene" uid="uid://bt3xk5tjyby52" path="res://scenes/entities/killzone.tscn" id="5_4l23p"]
+[ext_resource type="Texture2D" uid="uid://dsmp6enbdqgyo" path="res://assets/sprites/world_tileset.png" id="6_qow2t"]
+[ext_resource type="PackedScene" uid="uid://bedut538hiyon" path="res://scenes/entities/coin.tscn" id="7_hp8ip"]
+[ext_resource type="PackedScene" uid="uid://cbn8s4tmx1k7b" path="res://scenes/entities/platform.tscn" id="8_4vgto"]
+[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="9_ahfxv"]
+[ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="10_8isoo"]
+[ext_resource type="PackedScene" path="res://scenes/entities/portal.tscn" id="11_fbx0w"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_jjg3b"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t0102"]
-texture = ExtResource("6_ca42v")
+texture = ExtResource("6_qow2t")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:0/0 = 0
@@ -233,15 +233,15 @@ radius = 10.1
 [node name="Game" type="Node2D"]
 position = Vector2(-21, -41)
 
-[node name="GameManager" parent="." instance=ExtResource("1_kvpfn")]
+[node name="GameManager" parent="." instance=ExtResource("1_su46b")]
 unique_name_in_owner = true
-script = ExtResource("2_dinhu")
+script = ExtResource("2_ijfv3")
 
-[node name="UI" parent="." instance=ExtResource("3_kvuet")]
+[node name="UI" parent="." instance=ExtResource("3_vqgv6")]
 margin_left = 80
 margin_top = 15
 
-[node name="Player" parent="." instance=ExtResource("4_trtic")]
+[node name="Player" parent="." instance=ExtResource("4_fx073")]
 
 [node name="GameCamera" type="Camera2D" parent="."]
 position = Vector2(0, -6)
@@ -251,7 +251,7 @@ limit_left = -200
 limit_bottom = 120
 limit_smoothed = true
 
-[node name="Killzone" parent="." instance=ExtResource("5_ir15t")]
+[node name="Killzone" parent="." instance=ExtResource("5_4l23p")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
 position = Vector2(0, 600)
@@ -271,30 +271,30 @@ tile_set = SubResource("TileSet_sbgfy")
 
 [node name="Coins" type="Node" parent="."]
 
-[node name="Coin" parent="Coins" instance=ExtResource("7_rysoc")]
+[node name="Coin" parent="Coins" instance=ExtResource("7_hp8ip")]
 position = Vector2(223, -28)
 
-[node name="Coin2" parent="Coins" instance=ExtResource("7_rysoc")]
+[node name="Coin2" parent="Coins" instance=ExtResource("7_hp8ip")]
 position = Vector2(301, -30)
 
-[node name="Coin3" parent="Coins" instance=ExtResource("7_rysoc")]
+[node name="Coin3" parent="Coins" instance=ExtResource("7_hp8ip")]
 position = Vector2(217, -109)
 
-[node name="Coin4" parent="Coins" instance=ExtResource("7_rysoc")]
+[node name="Coin4" parent="Coins" instance=ExtResource("7_hp8ip")]
 position = Vector2(80, -29)
 
-[node name="Coin5" parent="Coins" instance=ExtResource("7_rysoc")]
+[node name="Coin5" parent="Coins" instance=ExtResource("7_hp8ip")]
 position = Vector2(-72, -132)
 
-[node name="Coin6" parent="Coins" instance=ExtResource("7_rysoc")]
+[node name="Coin6" parent="Coins" instance=ExtResource("7_hp8ip")]
 position = Vector2(493, -101)
 
 [node name="Platforms" type="Node" parent="."]
 
-[node name="Platform" parent="Platforms" instance=ExtResource("8_ssvqc")]
+[node name="Platform" parent="Platforms" instance=ExtResource("8_4vgto")]
 position = Vector2(-137, -90)
 
-[node name="Platform2" parent="Platforms" instance=ExtResource("8_ssvqc")]
+[node name="Platform2" parent="Platforms" instance=ExtResource("8_4vgto")]
 position = Vector2(-28, -90)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Platforms/Platform2"]
@@ -310,22 +310,22 @@ offset_left = 49.0
 offset_top = -58.0
 offset_right = 111.0
 offset_bottom = -40.0
-theme_override_fonts/font = ExtResource("9_264po")
+theme_override_fonts/font = ExtResource("9_ahfxv")
 theme_override_font_sizes/font_size = 12
 text = "按空格键跳"
 
 [node name="Monster" type="Node" parent="."]
 
-[node name="Slime" parent="Monster" instance=ExtResource("10_1kice")]
+[node name="Slime" parent="Monster" instance=ExtResource("10_8isoo")]
 position = Vector2(168, -12)
 
-[node name="Slime2" parent="Monster" instance=ExtResource("10_1kice")]
+[node name="Slime2" parent="Monster" instance=ExtResource("10_8isoo")]
 position = Vector2(520, -91)
 
-[node name="Slime3" parent="Monster" instance=ExtResource("10_1kice")]
+[node name="Slime3" parent="Monster" instance=ExtResource("10_8isoo")]
 position = Vector2(664, -75)
 
-[node name="Portal" parent="." instance=ExtResource("11_5newe")]
+[node name="Portal" parent="." instance=ExtResource("11_fbx0w")]
 position = Vector2(50, -90)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
