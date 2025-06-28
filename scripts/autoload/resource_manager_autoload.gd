@@ -13,6 +13,8 @@ var _resource_manager_instance: Node
 func _ready():
 	# 创建资源管理器实例
 	_resource_manager_instance = ResourceManagerScript.new()
+	# 将实例添加到场景树中，这样它的_ready方法会被调用
+	add_child(_resource_manager_instance)
 	print("资源管理器已初始化")
 
 # 获取音效资源

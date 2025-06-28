@@ -25,6 +25,21 @@ layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 0
 
+[node name="CoinBackground" type="Panel" parent="TopBar/CoinCounter"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+modulate = Color(0, 0, 0, 0.5)
+custom_minimum_size = Vector2(160, 50)
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -5.0
+offset_right = 10.0
+offset_bottom = 5.0
+
 [node name="CoinIcon" type="TextureRect" parent="TopBar/CoinCounter"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
@@ -92,6 +107,21 @@ text = "传送到传送门"
 layout_mode = 2
 theme_override_constants/separation = 8
 alignment = 0
+
+[node name="KillBackground" type="Panel" parent="TopBar/KillCounter"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+modulate = Color(0, 0, 0, 0.5)
+custom_minimum_size = Vector2(160, 50)
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -10.0
+offset_top = -5.0
+offset_right = 10.0
+offset_bottom = 5.0
 
 [node name="KillIcon" type="TextureRect" parent="TopBar/KillCounter"]
 custom_minimum_size = Vector2(40, 40)

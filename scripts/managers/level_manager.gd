@@ -86,7 +86,7 @@ func _load_and_validate_config() -> void:
 
 # 加载指定关卡
 func load_level(level_id: int) -> bool:
-	var start_time = Time.get_time_dict_from_system()["unix"]
+	var start_time = Time.get_unix_time_from_system()
 	performance_data["total_loads"] += 1
 	
 	# 验证配置
@@ -111,7 +111,7 @@ func load_level(level_id: int) -> bool:
 	_setup_level(level_id, level_data, load_result.scene)
 	
 	# 记录性能数据
-	var load_time = Time.get_time_dict_from_system()["unix"] - start_time
+	var load_time = Time.get_unix_time_from_system() - start_time
 	_record_load_performance(load_time, true)
 	
 	print("关卡加载成功: %s (耗时: %.3f秒)" % [level_data.get("name", "未知关卡"), load_time])
@@ -165,7 +165,7 @@ func _setup_level(level_id: int, level_data: Dictionary, scene_instance: Node) -
 	var old_level_id = current_level_id
 	current_level_id = level_id
 	current_level_data = level_data
-	level_start_time = Time.get_time_dict_from_system()["unix"]
+	level_start_time = Time.get_unix_time_from_system()
 	level_score = 0
 	is_level_completed = false
 	
@@ -309,7 +309,7 @@ func get_current_level_name() -> String:
 func get_level_play_time() -> float:
 	if level_start_time == 0.0:
 		return 0.0
-	return Time.get_time_dict_from_system()["unix"] - level_start_time
+	return Time.get_unix_time_from_system() - level_start_time
 
 # 获取关卡列表
 func get_level_list() -> Array[Dictionary]:

@@ -3,11 +3,13 @@ extends GutTest
 # 资源管理器单元测试
 # 测试优化后的资源缓存、异步加载和性能监控功能
 
-var resource_manager: ResourceManager
+# 预加载ResourceManager脚本
+const ResourceManagerScript = preload("res://scripts/managers/resource_manager.gd")
+var resource_manager: Node
 
 func before_each():
 	# 创建测试实例
-	resource_manager = ResourceManager.new()
+	resource_manager = ResourceManagerScript.new()
 	resource_manager._ready()  # 手动调用初始化
 
 func after_each():
@@ -98,7 +100,7 @@ func test_cache_management():
 	var initial_cache_size = resource_manager.resource_cache.size()
 	
 	# 模拟添加缓存项
-	resource_manager._cache_resource("test_sound", ResourceManager.ResourceType.SOUND, preload("res://assets/sounds/jump.wav"))
+	resource_manager._cache_resource("test_sound", resource_manager.ResourceType.SOUND, preload("res://assets/sounds/jump.wav"))
 	
 	assert_gt(resource_manager.resource_cache.size(), initial_cache_size, "缓存大小应该增加")
 	
@@ -111,22 +113,22 @@ func test_memory_usage_tracking():
 	var initial_memory = resource_manager.performance_stats["memory_usage"]
 	
 	# 添加一些缓存项
-	resource_manager._cache_resource("test1", ResourceManager.ResourceType.SOUND, preload("res://assets/sounds/jump.wav"))
-	resource_manager._cache_resource("test2", ResourceManager.ResourceType.SPRITE, preload("res://assets/sprites/knight.png"))
+	resource_manager._cache_resource("test1", resource_manager.ResourceType.SOUND, preload("res://assets/sounds/jump.wav"))
+	resource_manager._cache_resource("test2", resource_manager.ResourceType.SPRITE, preload("res://assets/sprites/knight.png"))
 	
 	assert_gt(resource_manager.performance_stats["memory_usage"], initial_memory, "内存使用应该增加")
 
 func test_cache_cleanup_by_type():
 	# 测试按类型清理缓存
 	# 添加不同类型的缓存项
-	resource_manager._cache_resource("test_sound", ResourceManager.ResourceType.SOUND, preload("res://assets/sounds/jump.wav"))
-	resource_manager._cache_resource("test_sprite", ResourceManager.ResourceType.SPRITE, preload("res://assets/sprites/knight.png"))
+	resource_manager._cache_resource("test_sound", resource_manager.ResourceType.SOUND, preload("res://assets/sounds/jump.wav"))
+	resource_manager._cache_resource("test_sprite", resource_manager.ResourceType.SPRITE, preload("res://assets/sprites/knight.png"))
 	
 	var initial_cache_size = resource_manager.resource_cache.size()
 	assert_gt(initial_cache_size, 0, "缓存应该有内容")
 	
 	# 清理音效类型的缓存
-	resource_manager.clear_cache_by_type(ResourceManager.ResourceType.SOUND)
+	resource_manager.clear_cache_by_type(resource_manager.ResourceType.SOUND)
 	
 	# 验证只有音效缓存被清理
 	assert_false(resource_manager.resource_cache.has("SOUND_test_sound"), "音效缓存应该被清理")
@@ -137,7 +139,7 @@ func test_async_loading_queue():
 	var initial_queue_size = resource_manager.loading_queue.size()
 	
 	# 添加异步加载请求（使用不存在的路径进行测试）
-	resource_manager.load_resource_async("res://test/nonexistent.wav", "test_async", ResourceManager.ResourceType.SOUND)
+	resource_manager.load_resource_async("res://test/nonexistent.wav", "test_async", resource_manager.ResourceType.SOUND)
 	
 	assert_gt(resource_manager.loading_queue.size(), initial_queue_size, "加载队列应该增加")
 
@@ -155,7 +157,7 @@ func test_signal_connections():
 	)
 	
 	# 尝试加载不存在的资源
-	resource_manager.load_resource_async("res://nonexistent.wav", "test", ResourceManager.ResourceType.SOUND)
+	resource_manager.load_resource_async("res://nonexistent.wav", "test", resource_manager.ResourceType.SOUND)
 	
 	# 等待一小段时间让异步处理完成
 	await get_tree().create_timer(0.2).timeout
@@ -183,8 +185,8 @@ func test_play_nonexistent_sound():
 func test_preload_resources_batch():
 	# 测试批量预加载资源
 	var resource_list = [
-		{"path": "res://test1.wav", "name": "test1", "type": ResourceManager.ResourceType.SOUND},
-		{"path": "res://test2.png", "name": "test2", "type": ResourceManager.ResourceType.SPRITE}
+		{"path": "res://test1.wav", "name": "test1", "type": resource_manager.ResourceType.SOUND},
+		{"path": "res://test2.png", "name": "test2", "type": resource_manager.ResourceType.SPRITE}
 	]
 	
 	var initial_queue_size = resource_manager.loading_queue.size()

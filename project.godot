@@ -27,6 +27,10 @@ ResourceManager="*res://scripts/autoload/resource_manager_autoload.gd"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/teleport_system/plugin.cfg")
+
 [input]
 
 jump={

@@ -1,6 +1,7 @@
 extends Node
 
-# 资源管理器单例
+# 资源管理器类
+# 注意：此类不应使用class_name，因为它被用作AutoLoad单例
 # 用于集中管理游戏中的所有资源预加载
 # 避免在各个脚本中分散加载资源
 
@@ -75,7 +76,7 @@ func _ready():
 	_start_cache_cleanup_timer()
 
 func _initialize_performance_monitoring():
-	performance_stats["last_cleanup_time"] = Time.get_time_dict_from_system()["unix"]
+	performance_stats["last_cleanup_time"] = Time.get_unix_time_from_system()
 
 func _start_cache_cleanup_timer():
 	var timer = Timer.new()
@@ -128,7 +129,7 @@ func load_resource_async(resource_path: String, resource_name: String, resource_
 		"path": resource_path,
 		"name": resource_name,
 		"type": resource_type,
-		"timestamp": Time.get_time_dict_from_system()["unix"]
+		"timestamp": Time.get_unix_time_from_system()
 	}
 	
 	loading_queue.append(load_request)
@@ -224,7 +225,7 @@ func _update_memory_usage() -> void:
 
 # 定期清理缓存
 func _cleanup_cache() -> void:
-	var current_time = Time.get_time_dict_from_system()["unix"]
+	var current_time = Time.get_unix_time_from_system()
 	var memory_mb = performance_stats["memory_usage"] / (1024.0 * 1024.0)
 	
 	# 如果内存使用超过阈值，清理缓存
