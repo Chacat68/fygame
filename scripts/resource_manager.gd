@@ -1,4 +1,3 @@
-class_name ResourceManager
 extends Node
 
 # 资源管理器单例
@@ -39,19 +38,6 @@ var scenes = {
 	"platform": preload("res://scenes/platform.tscn"),
 	"floating_text": preload("res://scenes/floating_text.tscn")
 }
-
-# 单例实例
-static var _instance = null
-
-# 获取单例实例
-static func get_instance() -> ResourceManager:
-	if _instance == null:
-		_instance = ResourceManager.new()
-	return _instance
-
-# 简写方法，方便访问
-static func instance() -> ResourceManager:
-	return get_instance()
 
 # 获取音效资源
 func get_sound(sound_name: String) -> AudioStream:

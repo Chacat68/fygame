@@ -3,16 +3,16 @@ extends Node
 # 资源管理器自动加载脚本
 # 将此脚本添加到项目设置的AutoLoad中，命名为"ResourceManager"
 
-# 预加载ResourceManager类
-const ResourceManagerClass = preload("res://scripts/resource_manager.gd")
+# 预加载ResourceManager脚本
+const ResourceManagerScript = preload("res://scripts/resource_manager.gd")
 
 # 资源管理器实例
-var _resource_manager_instance: ResourceManagerClass
+var _resource_manager_instance: Node
 
 # 在游戏启动时初始化资源管理器
 func _ready():
 	# 创建资源管理器实例
-	_resource_manager_instance = ResourceManagerClass.new()
+	_resource_manager_instance = ResourceManagerScript.new()
 	print("资源管理器已初始化")
 
 # 获取音效资源
