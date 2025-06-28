@@ -13,14 +13,14 @@ func _enter_tree():
 	add_custom_type(
 		"TeleportManager",
 		"Node2D",
-		preload("res://scripts/teleport_manager.gd"),
+		preload("res://scripts/systems/teleport_manager.gd"),
 		preload("res://addons/teleport_system/icons/teleport_manager.svg")
 	)
 	
 	add_custom_type(
 		"TeleportConfig",
 		"Resource",
-		preload("res://scripts/teleport_config.gd"),
+		preload("res://scripts/systems/teleport_config.gd"),
 		preload("res://addons/teleport_system/icons/teleport_config.svg")
 	)
 	

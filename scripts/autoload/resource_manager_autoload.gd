@@ -4,7 +4,7 @@ extends Node
 # 将此脚本添加到项目设置的AutoLoad中，命名为"ResourceManager"
 
 # 预加载ResourceManager脚本
-const ResourceManagerScript = preload("res://scripts/resource_manager.gd")
+const ResourceManagerScript = preload("res://scripts/managers/resource_manager.gd")
 
 # 资源管理器实例
 var _resource_manager_instance: Node
