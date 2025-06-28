@@ -4,20 +4,3 @@
 
 [resource]
 script = ExtResource("1")
-player_speed = 300.0
-player_jump_velocity = -400.0
-player_gravity = 980.0
-player_max_jumps = 2
-player_max_health = 3
-player_damage_amount = 10
-player_invincibility_time = 1.0
-death_height = 300.0
-hurt_duration = 1.0
-slime_speed = 50.0
-slime_patrol_distance = 100.0
-slime_chase_speed = 80.0
-slime_attack_range = 30.0
-slime_health = 1
-coin_value = 10
-floating_text_speed = 50.0
-floating_text_fade_duration = 2.0

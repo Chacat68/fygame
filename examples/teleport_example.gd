@@ -176,7 +176,9 @@ func demonstrate_teleport_methods():
 	
 	# 方法2: 传送到指定位置
 	var target_position = Vector2(100, 100)
-	teleport_manager.teleport_to_position(target_position)
+	var player = get_node_or_null("Player")
+	if player:
+		teleport_manager.teleport_to_position(player, target_position)
 	
 	# 方法3: 传送指定玩家到Portal
 	var specific_player = get_node_or_null("Player")
