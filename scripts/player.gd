@@ -1,17 +1,19 @@
 extends CharacterBody2D
 
-# 角色属性常量
-const SPEED = 130.0
-const JUMP_VELOCITY = -300.0
-const MAX_JUMPS = 2  # 最大跳跃次数（包括第一次跳跃）
-const MAX_HEALTH = 100  # 最大血量
-const DAMAGE_AMOUNT = 10  # 受到伤害的数值
-const INVINCIBILITY_TIME = 1.0  # 受伤后的无敌时间（秒）
+# 游戏配置
+var config: GameConfig
+
+# 角色属性（从配置文件加载）
+var SPEED: float
+var JUMP_VELOCITY: float
+var MAX_JUMPS: int
+var MAX_HEALTH: int
+var INVINCIBILITY_TIME: float
+var gravity: float
 
 # 状态变量
 var jumps_made = 0   # 已经跳跃的次数
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-var current_health = MAX_HEALTH  # 当前血量
+var current_health: int  # 当前血量
 var is_invincible = false  # 是否处于无敌状态
 var is_falling_to_death = false  # 是否正在掉落死亡
 
@@ -26,19 +28,23 @@ var states = {}
 var hurt_sound = null
 var jump_sound = null
 
-# 预加载ResourceManager类
-const ResourceManagerClass = preload("res://scripts/resource_manager.gd")
+# 音效资源现在通过ResourceManager AutoLoad获取，不需要预加载
 
-# 初始化音效资源
-func _init_sounds():
-	# 如果ResourceManager已注册为自动加载，直接使用
-	if Engine.has_singleton("ResourceManager"):
-		hurt_sound = Engine.get_singleton("ResourceManager").get_sound("hurt")
-		jump_sound = Engine.get_singleton("ResourceManager").get_sound("jump")
-	else:
-		# 如果ResourceManager未注册为自动加载，使用单例模式
-		hurt_sound = ResourceManagerClass.instance().get_sound("hurt")
-		jump_sound = ResourceManagerClass.instance().get_sound("jump")
+# 初始化配置
+func _init_config():
+	# 加载游戏配置
+	config = GameConfig.get_config()
+	
+	# 设置角色属性
+	SPEED = config.player_speed
+	JUMP_VELOCITY = config.player_jump_velocity
+	MAX_JUMPS = config.player_max_jumps
+	MAX_HEALTH = config.player_max_health
+	INVINCIBILITY_TIME = config.player_invincibility_time
+	gravity = config.player_gravity
+	
+	# 初始化当前血量
+	current_health = MAX_HEALTH
 
 # 信号
 signal health_changed(new_health)
@@ -48,11 +54,11 @@ var should_apply_respawn_effect = false
 
 # 初始化函数
 func _ready():
+	# 初始化配置
+	_init_config()
+	
 	# 将玩家添加到player组，便于后续查找
 	add_to_group("player")
-	
-	# 初始化音效资源
-	_init_sounds()
 	
 	# 初始化状态
 	_init_states()
@@ -109,6 +115,9 @@ func _physics_process(delta):
 # 处理无敌状态计时
 var invincibility_timer = 0.0
 func _handle_invincibility(delta):
+	if not animated_sprite:
+		return
+		
 	if is_invincible:
 		invincibility_timer += delta
 		
@@ -125,9 +134,9 @@ func _handle_invincibility(delta):
 # 检查是否掉落死亡
 func _check_fall_death():
 	# 获取死亡高度
-	var death_height = 300 # 默认值
+	var death_height = config.death_height if config else 300.0 # 从配置获取，默认值300
 	
-	# 尝试从游戏管理器获取关卡特定的死亡高度
+	# 尝试从游戏管理器获取关卡特定的死亡高度（优先级更高）
 	var game_manager = get_tree().get_root().get_node_or_null("Game/GameManager")
 	if game_manager and game_manager.has_method("get_death_height"):
 		death_height = game_manager.get_death_height()
@@ -138,7 +147,7 @@ func _check_fall_death():
 		_die()
 
 # 受到伤害
-func take_damage(amount = DAMAGE_AMOUNT):
+func take_damage(amount: int = 10):
 	# 如果处于无敌状态，不受伤害
 	if is_invincible:
 		return
@@ -227,7 +236,6 @@ func _perform_stomp_kill(monster):
 	monster._die(self)
 	
 	# 播放击杀音效（如果有的话）
-	if Engine.has_singleton("ResourceManager"):
-		Engine.get_singleton("ResourceManager").play_sound("power_up", self)
+	ResourceManager.play_sound("power_up", self)
 
 # 注释：原有的重复_check_fall_death函数已被移除，使用上面的_check_fall_death函数实现

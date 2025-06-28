@@ -1,8 +1,25 @@
 extends Area2D
 
+# 游戏配置
+var config: GameConfig
+
 # 添加一个导出变量，可以在编辑器中设置killzone类型
 @export var is_cliff_bottom: bool = false
-@export var damage_amount: int = 10 # 可配置的伤害值
+@export var damage_amount: int = 10 # 可配置的伤害值（编辑器覆盖）
+
+# 初始化函数
+func _ready():
+	# 初始化配置
+	_init_config()
+
+# 初始化配置
+func _init_config():
+	# 加载游戏配置
+	config = GameConfig.get_config()
+	
+	# 如果编辑器中没有特别设置伤害值，则使用配置中的值
+	if damage_amount == 10: # 默认值
+		damage_amount = config.player_damage_amount if config else 10
 
 # 当有物体进入Area2D时调用此函数
 func _on_body_entered(body):

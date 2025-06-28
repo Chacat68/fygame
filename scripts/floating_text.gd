@@ -3,24 +3,40 @@ extends Node2D
 # 文本标签引用
 @onready var label = $Label
 
-# 动画参数
-var initial_velocity = Vector2(0, -15)  # 初始向上移动的速度（更慢）
-var max_velocity = Vector2(0, -40)      # 最大向上移动的速度（更慢）
-var fade_duration = 1.5                 # 淡出持续时间（缩短）
+# 游戏配置
+var config: GameConfig
+
+# 动画参数（从配置文件加载）
+var initial_velocity: Vector2
+var max_velocity: Vector2
+var fade_duration: float
 var elapsed_time = 0.0
 var pending_text = "金币+1"              # 默认文本
-var acceleration = 1.2                  # 加速系数（减小）
-var max_distance = 80.0                 # 最大上升距离（像素）（大幅减小）
+var acceleration = 1.2                  # 加速系数
+var max_distance = 80.0                 # 最大上升距离（像素）
 var total_distance = 0.0                # 已上升的总距离
 
 # 初始化函数
 func _ready():
+	# 初始化配置
+	_init_config()
+	
 	# 设置初始透明度
 	modulate.a = 1.0
 	
 	# 如果有待设置的文本，现在设置它
 	if label and pending_text:
 		label.text = pending_text
+
+# 初始化配置
+func _init_config():
+	# 加载游戏配置
+	config = GameConfig.get_config()
+	
+	# 设置动画参数
+	initial_velocity = Vector2(0, -config.floating_text_speed * 0.3)
+	max_velocity = Vector2(0, -config.floating_text_speed)
+	fade_duration = config.floating_text_fade_duration
 
 # 设置显示的文本
 func set_text(text):
@@ -65,4 +81,4 @@ func _process(delta):
 	
 	# 当完全淡出后，移除节点
 	if elapsed_time >= fade_duration or alpha <= 0.05:
-		queue_free() 
+		queue_free()

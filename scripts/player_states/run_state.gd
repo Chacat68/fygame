@@ -2,7 +2,8 @@ class_name RunState
 extends PlayerState
 
 func enter():
-    player.animated_sprite.play("run")
+    if player.animated_sprite:
+        player.animated_sprite.play("run")
 
 func physics_process(delta: float):
     # 应用重力
@@ -14,7 +15,7 @@ func physics_process(delta: float):
     var direction = Input.get_axis("move_left", "move_right")
     
     # 翻转精灵
-    if direction != 0:
+    if direction != 0 and player.animated_sprite:
         player.animated_sprite.flip_h = (direction < 0)
     
     # 应用移动

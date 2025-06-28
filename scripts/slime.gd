@@ -10,14 +10,22 @@ enum EnemyState {
 	DEAD
 }
 
-# 移动属性
-var SPEED = 45 # 改为变量，使其可以被修改
+# 游戏配置
+var config: GameConfig
+
+# 移动属性（从配置文件加载）
+var SPEED: float
+var CHASE_SPEED: float
+var PATROL_DISTANCE: float
+var ATTACK_RANGE: float
+var HEALTH: int
 
 # 状态变量
 var direction = 1
 var current_state = EnemyState.PATROL
 var is_dead = false
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+var current_health: int
 
 # 组件引用
 @onready var ray_cast_right = $RayCastRight
@@ -29,6 +37,9 @@ var floating_text_scene = preload("res://scenes/floating_text.tscn")
 
 # 在准备好时调用
 func _ready():
+	# 初始化配置
+	_init_config()
+	
 	# 将怪物添加到enemy组，便于识别
 	add_to_group("enemy")
 	
@@ -37,6 +48,19 @@ func _ready():
 	
 	# 设置初始状态
 	_change_state(EnemyState.PATROL)
+
+# 初始化配置
+func _init_config():
+	# 加载游戏配置
+	config = GameConfig.get_config()
+	
+	# 设置史莱姆属性
+	SPEED = config.slime_speed
+	CHASE_SPEED = config.slime_chase_speed
+	PATROL_DISTANCE = config.slime_patrol_distance
+	ATTACK_RANGE = config.slime_attack_range
+	HEALTH = config.slime_health
+	current_health = HEALTH
 	
 	# 设置射线可见，便于调试
 	# 注意：debug_shape_thickness在某些Godot版本中不可用
@@ -170,7 +194,7 @@ func _change_state(new_state):
 			pass
 		EnemyState.CHASE:
 			# 追逐状态可以增加移动速度
-			SPEED = 65
+			SPEED = CHASE_SPEED
 			# 可以在这里播放追逐动画
 		EnemyState.ATTACK:
 			velocity.x = 0
@@ -247,10 +271,11 @@ func _show_floating_text(player):
 	coin_text.global_position = coin_position
 	
 	# 设置金币飘字文本
-	coin_text.pending_text = "金币+1"
+	var coin_value = config.coin_value if config else 1
+	coin_text.pending_text = "金币+" + str(coin_value)
 	
 	# 将金币飘字添加到游戏根节点
 	game_root.add_child(coin_text)
 	
 	# 添加到场景树后再设置文本
-	coin_text.set_text("金币+1")
+	coin_text.set_text("金币+" + str(coin_value))

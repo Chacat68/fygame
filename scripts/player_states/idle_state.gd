@@ -2,7 +2,8 @@ class_name IdleState
 extends PlayerState
 
 func enter():
-    player.animated_sprite.play("idle")
+    if player.animated_sprite:
+        player.animated_sprite.play("idle")
 
 func physics_process(delta: float):
     # 应用重力

@@ -1,5 +1,8 @@
 extends Area2D
 
+# 游戏配置
+var config: GameConfig
+
 # 组件引用
 @onready var coin_counter = get_node_or_null("/root/Game/UI")
 @onready var animation_player = $AnimationPlayer
@@ -11,6 +14,16 @@ var floating_text_scene = preload("res://scenes/floating_text.tscn")
 # 状态变量
 var popup_shown = false
 var collected = false
+
+# 初始化函数
+func _ready():
+	# 初始化配置
+	_init_config()
+
+# 初始化配置
+func _init_config():
+	# 加载游戏配置
+	config = GameConfig.get_config()
 
 # 当有物体进入Area2D时调用此函数
 func _on_body_shape_entered(_body_id, _body, _body_shape, _local_shape):
@@ -73,13 +86,14 @@ func _show_floating_text(player):
 	floating_text.global_position = world_position
 	
 	# 设置飘字文本
-	floating_text.pending_text = "金币+1"
+	var coin_value = config.coin_value if config else 1
+	floating_text.pending_text = "金币+" + str(coin_value)
 	
 	# 将飘字添加到游戏根节点，而不是玩家
 	game_root.add_child(floating_text)
 	
 	# 添加到场景树后再设置文本
-	floating_text.set_text("金币+1")
+	floating_text.set_text("金币+" + str(coin_value))
 
 # 当动画播放完成后，移除金币
 func _on_animation_player_animation_finished(_anim_name):

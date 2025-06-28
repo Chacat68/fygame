@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 Music="*res://scenes/music.tscn"
 GameState="*res://scenes/game_state.tscn"
+ResourceManager="*res://scripts/autoload/resource_manager_autoload.gd"
 
 [display]
 
