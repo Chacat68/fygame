@@ -58,8 +58,8 @@ stretch_mode = 5
 
 [node name="CoinText" type="Label" parent="TopBar/CoinCounter"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
@@ -68,8 +68,8 @@ vertical_alignment = 1
 
 [node name="CoinCount" type="Label" parent="TopBar/CoinCounter"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
@@ -94,9 +94,9 @@ offset_left = -100.0
 offset_top = 15.0
 offset_right = -15.0
 offset_bottom = 45.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.2, 0.2, 0.2, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 16
@@ -124,9 +124,9 @@ theme_override_constants/separation = 5
 
 [node name="TeleportButton" type="Button" parent="TestPanel/TestVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_hover_color = Color(0.2, 0.2, 0.2, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 14
@@ -148,8 +148,8 @@ stretch_mode = 5
 
 [node name="KillText" type="Label" parent="TopBar/KillCounter"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
@@ -158,8 +158,8 @@ vertical_alignment = 1
 
 [node name="KillCount" type="Label" parent="TopBar/KillCounter"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 3
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 32
