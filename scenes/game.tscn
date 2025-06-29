@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cbn8s4tmx1k7b" path="res://scenes/entities/platform.tscn" id="8_ssvqc"]
 [ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="9_264po"]
 [ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="10_1kice"]
-[ext_resource type="PackedScene" path="res://scenes/entities/portal.tscn" id="11_5newe"]
+[ext_resource type="PackedScene" uid="uid://bqhqxnhqxnhqx" path="res://scenes/entities/portal.tscn" id="11_5newe"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_jjg3b"]
 
@@ -328,6 +328,6 @@ position = Vector2(664, -75)
 [node name="Portal" parent="." instance=ExtResource("11_5newe")]
 position = Vector2(50, -90)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Portal"]
 position = Vector2(1450, 24)
 shape = SubResource("CapsuleShape2D_kvpfn")
