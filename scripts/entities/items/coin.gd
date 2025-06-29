@@ -4,7 +4,7 @@ extends Area2D
 var config: GameConfig
 
 # 组件引用
-@onready var coin_counter = get_node_or_null("/root/Game/UI")
+@onready var coin_counter = _get_ui_node()
 @onready var animation_player = $AnimationPlayer
 @onready var sound_player = $CoinSound
 
@@ -73,9 +73,12 @@ func _show_floating_text(player):
 		return
 		
 	# 获取游戏场景根节点
-	var game_root = get_tree().get_root().get_node("Game")
+	var game_root = get_tree().get_root().get_node_or_null("Game")
 	if not game_root:
-		game_root = get_tree().get_root()
+		# 如果找不到Game节点，使用当前场景作为根节点
+		game_root = get_tree().current_scene
+		if not game_root:
+			game_root = get_tree().get_root()
 	
 	# 计算世界坐标中的位置（在玩家上方）
 	var world_position = player.global_position + Vector2(0, -30)
@@ -91,3 +94,12 @@ func _show_floating_text(player):
 # 当动画播放完成后，移除金币
 func _on_animation_player_animation_finished(_anim_name):
 	queue_free()  # 从场景中移除金币
+
+# 安全获取UI节点
+func _get_ui_node() -> Node:
+	var game_root = get_node_or_null("/root/Game")
+	if game_root:
+		return game_root.get_node_or_null("UI")
+	else:
+		# 如果Game节点不存在，尝试在当前场景中查找
+		return get_tree().get_first_node_in_group("ui")

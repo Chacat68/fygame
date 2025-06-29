@@ -45,6 +45,9 @@ var last_error: LoadError = LoadError.NONE
 
 # 初始化
 func _ready() -> void:
+	# 将自己添加到关卡管理器组，方便其他脚本查找
+	add_to_group("level_manager")
+	
 	_initialize_performance_monitoring()
 	_load_and_validate_config()
 
@@ -166,8 +169,14 @@ func _load_level_scene(level_data: Dictionary) -> Dictionary:
 
 # 设置关卡
 func _setup_level(level_id: int, level_data: Dictionary, scene_instance: Node) -> void:
+	# 检查场景树是否有效
+	var tree = get_tree()
+	if not tree or not tree.current_scene:
+		print("[LevelManager] 错误：场景树或当前场景无效，无法设置关卡")
+		return
+	
 	# 添加到场景树
-	get_tree().current_scene.add_child(scene_instance)
+	tree.current_scene.add_child(scene_instance)
 	current_level_scene = scene_instance
 	
 	# 更新关卡信息

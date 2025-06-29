@@ -20,6 +20,9 @@ var tween: Tween
 
 # 初始化传送管理器
 func _ready():
+	# 将自己添加到传送管理器组，方便其他脚本查找
+	add_to_group("teleport_manager")
+	
 	# 创建默认配置
 	if not config:
 		config = TeleportConfig.new()
@@ -93,26 +96,41 @@ func teleport_to_position(player_node: Node2D, position: Vector2) -> bool:
 
 # 获取玩家节点
 func _get_player() -> Node2D:
-	var player = get_tree().get_first_node_in_group("player")
+	# 检查场景树是否有效
+	var tree = get_tree()
+	if not tree:
+		print("[TeleportManager] 错误：场景树无效，无法获取玩家节点")
+		return null
+	
+	var player = tree.get_first_node_in_group("player")
 	if not player:
 		print("[TeleportManager] 警告：未找到玩家节点")
 	return player
 
 # 查找Portal节点
 func _find_portal() -> Node2D:
+	# 检查场景树是否有效
+	var tree = get_tree()
+	if not tree:
+		print("[TeleportManager] 错误：场景树无效，无法查找Portal节点")
+		return null
+	
 	# 首先尝试通过组查找
-	var portal = get_tree().get_first_node_in_group("portal")
+	var portal = tree.get_first_node_in_group("portal")
 	if portal:
 		return portal
 	
 	# 然后尝试通过节点名称查找
-	portal = get_tree().current_scene.get_node_or_null("Portal")
-	if portal:
+	if tree.current_scene:
+		portal = tree.current_scene.get_node_or_null("Portal")
+		if portal:
+			return portal
+
+		# 最后尝试递归查找所有Portal类型的节点
+		portal = _find_node_by_type(tree.current_scene, "Portal")
 		return portal
 	
-	# 最后尝试递归查找所有Portal类型的节点
-	portal = _find_node_by_type(get_tree().current_scene, "Portal")
-	return portal
+	return null
 
 # 递归查找指定类型的节点
 func _find_node_by_type(node: Node, type_name: String) -> Node:
@@ -216,8 +234,14 @@ func _complete_teleport(player: Node2D, destination: Vector2):
 	
 	# 启动冷却计时器
 	if config.cooldown_time > 0:
-		await get_tree().create_timer(config.cooldown_time).timeout
-		teleport_cooldown_finished.emit()
+		# 检查场景树是否有效
+		var tree = get_tree()
+		if tree:
+			await tree.create_timer(config.cooldown_time).timeout
+			teleport_cooldown_finished.emit()
+		else:
+			print("[TeleportManager] 警告：场景树无效，跳过冷却时间")
+			teleport_cooldown_finished.emit()
 
 # 播放传送特效
 func _play_teleport_effect(from_position: Vector2, to_position: Vector2):
@@ -274,33 +298,55 @@ func teleport_to_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZER
 
 # 延迟执行的场景切换函数
 func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
+	# 检查节点是否仍然有效
+	if not is_inside_tree():
+		print("警告：TeleportManager 不在场景树中，无法执行场景切换")
+		is_teleporting = false
+		return
+	
 	# 检查树是否仍然有效
-	if not get_tree():
-		teleport_failed.emit("场景树无效")
+	var tree = get_tree()
+	if not tree:
+		print("错误：场景树无效，无法执行场景切换")
 		is_teleporting = false
 		return
-	
+
 	# 切换场景
-	var result = get_tree().change_scene_to_file(scene_path)
+	var result = tree.change_scene_to_file(scene_path)
 	if result != OK:
-		teleport_failed.emit("场景切换失败：" + scene_path)
+		print("错误：场景切换失败：" + scene_path)
 		is_teleporting = false
 		return
-	
+
 	# 等待场景加载完成
-	await get_tree().process_frame
+	# 注意：场景切换后，当前节点可能已被释放，所以不能再访问 get_tree()
+	# 使用 Engine.get_main_loop() 来获取场景树
+	var main_loop = Engine.get_main_loop()
+	if main_loop and main_loop is SceneTree:
+		var scene_tree = main_loop as SceneTree
+		await scene_tree.process_frame
+	else:
+		print("警告：无法获取场景树，跳过后续处理")
+		is_teleporting = false
+		return
 	
 	# 在新场景中设置玩家位置
-	var new_player = _get_player()
+	# 使用场景树来查找新玩家，而不是通过已释放的节点
+	var scene_tree = Engine.get_main_loop() as SceneTree
+	var new_player = null
+	if scene_tree:
+		new_player = scene_tree.get_first_node_in_group("player")
+	
 	if new_player and spawn_position != Vector2.ZERO:
 		new_player.global_position = spawn_position
 	
 	# 如果配置了淡入效果，执行淡入
-	if config.enable_teleport_effects and config.fade_in_duration > 0 and new_player:
+	if config and config.enable_teleport_effects and config.fade_in_duration > 0 and new_player:
 		new_player.modulate.a = 0.0
-		tween = create_tween()
-		tween.tween_property(new_player, "modulate:a", 1.0, config.fade_in_duration)
-		await tween.finished
+		# 创建新的Tween，因为原来的可能已被释放
+		var fade_tween = new_player.create_tween()
+		fade_tween.tween_property(new_player, "modulate:a", 1.0, config.fade_in_duration)
+		await fade_tween.finished
 	
 	# 完成传送
 	is_teleporting = false

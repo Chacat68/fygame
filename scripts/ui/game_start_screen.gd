@@ -20,7 +20,7 @@ func _on_start_button_pressed():
 	# 重置游戏进度并开始新游戏
 	
 	# 如果存在游戏状态管理器，重置关卡进度
-	var game_state = get_node_or_null("/root/GameState")
+	var game_state = _get_game_state()
 	if game_state != null:
 		game_state.reset_game_progress()
 	
@@ -32,7 +32,7 @@ func _on_continue_button_pressed():
 	# 加载存档并继续游戏
 	
 	# 如果存在游戏状态管理器，加载存档
-	var game_state = get_node_or_null("/root/GameState")
+	var game_state = _get_game_state()
 	if game_state != null:
 		game_state.load_game_progress()
 	
@@ -43,3 +43,17 @@ func _on_continue_button_pressed():
 func _on_quit_button_pressed():
 	# 退出游戏
 	get_tree().quit()
+
+# 安全获取游戏状态节点的辅助方法
+func _get_game_state():
+	# 优先从自动加载中获取 GameState
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state:
+		return game_state
+	
+	# 如果自动加载不存在，尝试在场景中查找
+	var game_states = get_tree().get_nodes_in_group("game_state")
+	if game_states.size() > 0:
+		return game_states[0]
+	
+	return null

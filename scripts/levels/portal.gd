@@ -12,7 +12,7 @@ var teleport_position: Vector2 = Vector2.ZERO # 传送到目标场景的位置
 
 # Tween引用，用于清理
 var breathing_tween: Tween
-var rotation_tween: Tween
+# var rotation_tween: Tween  # 旋转动画已禁用
 var particle_tween: Tween
 
 # 管理器引用
@@ -40,6 +40,9 @@ func _ready():
 	
 	# 设置粒子效果
 	_setup_particle_effects()
+	
+	# 确保传送门正确显示
+	set_active(is_active)
 
 # 设置碰撞形状
 func _setup_collision_shape():
@@ -100,10 +103,10 @@ func _start_idle_animation():
 		breathing_tween.tween_property(portal_sprite, "modulate", Color(1.3, 1.3, 1.3, 1.0), 1.5)
 		breathing_tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.5)
 	
-		# 添加旋转动画
-		rotation_tween = create_tween()
-		rotation_tween.set_loops()
-		rotation_tween.tween_property(portal_sprite, "rotation", TAU, 8.0) # 8秒完成一圈
+		# 旋转动画已禁用 - 根据用户要求移除旋转效果
+		# rotation_tween = create_tween()
+		# rotation_tween.set_loops()
+		# rotation_tween.tween_property(portal_sprite, "rotation", TAU, 8.0) # 8秒完成一圈
 	
 	# 粒子强度变化动画
 	var particle_system = get_node_or_null("ParticleSystem")
@@ -125,9 +128,10 @@ func _cleanup_tweens():
 		breathing_tween.kill()
 		breathing_tween = null
 	
-	if rotation_tween and rotation_tween.is_valid():
-		rotation_tween.kill()
-		rotation_tween = null
+	# 旋转动画已禁用，无需清理
+	# if rotation_tween and rotation_tween.is_valid():
+	#	rotation_tween.kill()
+	#	rotation_tween = null
 	
 	if particle_tween and particle_tween.is_valid():
 		particle_tween.kill()
@@ -188,7 +192,11 @@ func _enhance_particles_for_teleport(particle_system: Node2D):
 		core_particles.initial_velocity_max = original_velocity_max * 1.5
 		
 		# 0.5秒后恢复原状
-		await get_tree().create_timer(0.5).timeout
+		var tree = get_tree()
+		if tree:
+			await tree.create_timer(0.5).timeout
+		else:
+			print("[Portal] 警告：场景树无效，跳过粒子效果恢复延迟")
 		if core_particles:
 			core_particles.amount = original_amount
 			core_particles.initial_velocity_max = original_velocity_max
@@ -225,30 +233,55 @@ func _reset_teleport_state():
 
 # 初始化管理器引用
 func _initialize_managers():
-	# 查找管理器节点
-	game_manager = get_tree().get_first_node_in_group("game_manager")
+	# 检查场景树是否有效
+	var tree = get_tree()
+	if not tree:
+		print("[Portal] 错误：场景树无效，无法初始化管理器")
+		return
+	
+	# 优先从组中查找传送管理器（TeleportManager在UI系统中创建）
+	teleport_manager = tree.get_first_node_in_group("teleport_manager")
+	
+	# 查找游戏管理器节点
+	game_manager = tree.get_first_node_in_group("game_manager")
 	if game_manager:
-		teleport_manager = game_manager.get_node_or_null("TeleportManager")
+		# 从GameManager中查找LevelManager
 		level_manager = game_manager.get_node_or_null("LevelManager")
-		
-		# 连接传送完成信号，以便重新激活传送门
-		if teleport_manager and not teleport_manager.teleport_completed.is_connected(_on_teleport_completed):
-			teleport_manager.teleport_completed.connect(_on_teleport_completed)
+	
+	# 如果在组中没找到，尝试从GameManager子节点中查找（向后兼容）
+	if not teleport_manager and game_manager:
+		teleport_manager = game_manager.get_node_or_null("TeleportManager")
+	
+	# 连接传送完成信号，以便重新激活传送门
+	if teleport_manager and not teleport_manager.teleport_completed.is_connected(_on_teleport_completed):
+		teleport_manager.teleport_completed.connect(_on_teleport_completed)
 
 # 传送完成后重新激活传送门
 func _on_teleport_completed(_player: Node2D, _destination: Vector2):
-	# 延迟重新激活，避免立即重复触发
-	await get_tree().create_timer(1.0).timeout
+	# 检查节点是否仍在场景树中
+	if not is_inside_tree():
+		print("[Portal] 警告：节点不在场景树中，跳过处理")
+		return
+	
+	# 安全获取场景树
+	var tree = get_tree()
+	if not tree:
+		# 如果当前节点的场景树无效，尝试从引擎获取
+		tree = Engine.get_main_loop() as SceneTree
+	
+	if tree:
+		# 延迟重新激活，避免立即重复触发
+		await tree.create_timer(1.0).timeout
+	else:
+		print("[Portal] 警告：无法获取有效的场景树，跳过延迟")
 	
 	# 重置传送标志和激活状态
 	is_teleporting = false
 	is_active = true
 	
-	# 如果在游戏管理器中找不到，尝试在场景树中查找
-	if not teleport_manager:
-		teleport_manager = get_tree().get_first_node_in_group("teleport_manager")
-	if not level_manager:
-		level_manager = get_tree().get_first_node_in_group("level_manager")
+	# 备用查找逻辑（如果主要查找失败）
+	if not level_manager and tree:
+		level_manager = tree.get_first_node_in_group("level_manager")
 
 # 设置目标场景
 func set_destination_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZERO):
@@ -263,12 +296,22 @@ func set_next_level(level):
 func set_active(active):
 	is_active = active
 	
-	# 更新视觉效果
+	# 更新传送门精灵的视觉效果
+	var portal_sprite = get_node_or_null("PortalSprite")
+	if portal_sprite:
+		portal_sprite.modulate = Color(1, 1, 1, 1) if active else Color(0.5, 0.5, 0.5, 0.5)
+	
+	# 更新粒子系统
+	var particle_system = get_node_or_null("ParticleSystem")
+	if particle_system:
+		for child in particle_system.get_children():
+			if child is CPUParticles2D:
+				child.emitting = active
+	
+	# 更新其他视觉效果
 	for child in get_children():
 		if child is ColorRect:
 			child.modulate = Color(1, 1, 1, 1) if active else Color(0.5, 0.5, 0.5, 0.5)
-		elif child is CPUParticles2D:
-			child.emitting = active
 
 # 配置传送门为关卡传送模式
 func configure_for_level_teleport(target_level: int):

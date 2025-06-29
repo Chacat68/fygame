@@ -338,7 +338,7 @@ position = Vector2(664, -75)
 
 [node name="Portal" parent="." instance=ExtResource("11_5newe")]
 top_level = true
-position = Vector2(600, -90)
+position = Vector2(1494, -130)
 collision_layer = 3
 collision_mask = 2
 

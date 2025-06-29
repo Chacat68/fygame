@@ -6,8 +6,8 @@ var kill_count = 0
 var is_changing_scene = false  # 防止重复场景切换
 
 # 组件引用
-@onready var ui = get_node_or_null("/root/Game/UI")
-@onready var portal = get_node_or_null("/root/Game/Portal")
+@onready var ui = _get_ui_node()
+@onready var portal = _get_portal_node()
 
 # 信号
 signal score_changed(new_score)
@@ -15,12 +15,14 @@ signal kill_count_changed(new_count)
 
 # 初始化
 func _ready():
+	# 将自己添加到游戏管理器组，方便其他脚本查找
+	add_to_group("game_manager")
+	
 	# 注释掉重复的传送门信号连接，避免与 portal.gd 中的信号处理冲突
 	# 传送门的 body_entered 信号现在由 portal.gd 统一处理
 	# if portal:
 	#	if not portal.body_entered.is_connected(_on_portal_entered):
 	#		portal.connect("body_entered", _on_portal_entered)
-	pass
 
 # 传送门触发处理 - 已禁用，由 portal.gd 统一处理
 # func _on_portal_entered(body):
@@ -70,7 +72,12 @@ func get_death_height():
 	var default_height = 300
 	
 	# 获取当前场景名称
-	var current_scene = get_tree().get_current_scene().name
+	var tree = get_tree()
+	if not tree or not tree.get_current_scene():
+		print("[GameManager] 警告：无法获取当前场景，使用默认死亡高度")
+		return default_height
+	
+	var current_scene = tree.get_current_scene().name
 	
 	# 根据不同关卡返回不同的死亡高度
 	match current_scene:
@@ -80,3 +87,21 @@ func get_death_height():
 			return 300
 		_:
 			return default_height
+
+# 安全获取UI节点
+func _get_ui_node() -> Node:
+	var game_root = get_node_or_null("/root/Game")
+	if game_root:
+		return game_root.get_node_or_null("UI")
+	else:
+		# 如果Game节点不存在，尝试在当前场景中查找
+		return get_tree().get_first_node_in_group("ui")
+
+# 安全获取Portal节点
+func _get_portal_node() -> Node:
+	var game_root = get_node_or_null("/root/Game")
+	if game_root:
+		return game_root.get_node_or_null("Portal")
+	else:
+		# 如果Game节点不存在，尝试在当前场景中查找
+		return get_tree().get_first_node_in_group("portal")

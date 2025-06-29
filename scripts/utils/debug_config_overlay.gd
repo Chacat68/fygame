@@ -6,7 +6,7 @@ var player: Node2D
 
 func _ready():
     config = GameConfig.get_config()
-    player = get_node("/root/Game/Player")  # 根据你的场景结构调整
+    player = _get_player_node()  # 安全获取玩家节点
     
     # 创建调试UI
     create_debug_sliders()
@@ -56,3 +56,19 @@ func _on_gravity_changed(value: float):
     if player:
         player.gravity = value
         print("重力调整为: ", value)
+
+# 安全获取玩家节点的辅助方法
+func _get_player_node() -> Node2D:
+    # 优先从 Game 节点下查找
+    var game_root = get_node_or_null("/root/Game")
+    if game_root:
+        var player_node = game_root.get_node_or_null("Player")
+        if player_node:
+            return player_node
+    
+    # 如果 Game 节点不存在，尝试在当前场景中通过组查找
+    var players = get_tree().get_nodes_in_group("player")
+    if players.size() > 0:
+        return players[0]
+    
+    return null

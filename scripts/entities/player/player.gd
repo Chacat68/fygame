@@ -137,7 +137,7 @@ func _check_fall_death():
 	var death_height = config.death_height if config else 300.0 # 从配置获取，默认值300
 	
 	# 尝试从游戏管理器获取关卡特定的死亡高度（优先级更高）
-	var game_manager = get_tree().get_root().get_node_or_null("Game/GameManager")
+	var game_manager = _get_game_manager()
 	if game_manager and game_manager.has_method("get_death_height"):
 		death_height = game_manager.get_death_height()
 	
@@ -250,3 +250,12 @@ func _perform_stomp_kill(monster):
 	ResourceManager.play_sound("power_up", self)
 
 # 注释：原有的重复_check_fall_death函数已被移除，使用上面的_check_fall_death函数实现
+
+# 安全获取GameManager节点
+func _get_game_manager() -> Node:
+	var game_root = get_node_or_null("/root/Game")
+	if game_root:
+		return game_root.get_node_or_null("GameManager")
+	else:
+		# 如果Game节点不存在，尝试在当前场景中查找
+		return get_tree().get_first_node_in_group("game_manager")

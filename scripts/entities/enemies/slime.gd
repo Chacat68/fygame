@@ -231,7 +231,7 @@ func _die(player):
 	tween.tween_callback(queue_free) # 完成后移除
 	
 	# 增加游戏分数
-	var game_manager = get_node_or_null("/root/Game/GameManager")
+	var game_manager = _get_game_manager()
 	if game_manager and game_manager.has_method("add_point"):
 		game_manager.add_point()
 
@@ -242,9 +242,12 @@ func _show_floating_text(player):
 		return
 		
 	# 获取游戏场景根节点
-	var game_root = get_tree().get_root().get_node("Game")
+	var game_root = get_tree().get_root().get_node_or_null("Game")
 	if not game_root:
-		game_root = get_tree().get_root()
+		# 如果找不到Game节点，使用当前场景作为根节点
+		game_root = get_tree().current_scene
+		if not game_root:
+			game_root = get_tree().get_root()
 	
 	# 计算基础位置（在怪物上方）
 	var base_position = global_position + Vector2(0, -30)
@@ -258,3 +261,12 @@ func _show_floating_text(player):
 	# 创建金币飘字
 	var coin_value = config.coin_value if config else 1
 	text_manager.create_arranged_floating_text(base_position, "金币+" + str(coin_value), game_root)
+
+# 安全获取GameManager节点
+func _get_game_manager() -> Node:
+	var game_root = get_node_or_null("/root/Game")
+	if game_root:
+		return game_root.get_node_or_null("GameManager")
+	else:
+		# 如果Game节点不存在，尝试在当前场景中查找
+		return get_tree().get_first_node_in_group("game_manager")
