@@ -12,6 +12,16 @@
 [ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="10_4m06h"]
 [ext_resource type="PackedScene" uid="uid://bqhqxnhqxnhqx" path="res://scenes/entities/portal.tscn" id="11_dculb"]
 
+[sub_resource type="GDScript" id="GDScript_portal_config_lv2"]
+script/source = "extends Node
+
+func _ready():
+	var portal = get_parent()
+	if portal and portal.has_method('configure_for_scene_teleport'):
+		print('配置传送门传送到 lv3')
+		portal.configure_for_scene_teleport('res://scenes/levels/lv3.tscn')
+"
+
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_jjg3b"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_t0102"]
@@ -326,8 +336,8 @@ position = Vector2(520, -91)
 position = Vector2(664, -75)
 
 [node name="Portal" parent="." instance=ExtResource("11_dculb")]
-position = Vector2(50, -90)
+position = Vector2(600, -90)
+collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Portal"]
-position = Vector2(1419, -24)
-shape = SubResource("CapsuleShape2D_kvpfn")
+[node name="PortalScript" type="Node" parent="Portal"]
+script = SubResource("GDScript_portal_config_lv2")

@@ -33,6 +33,7 @@ var current_level_data: Dictionary = {}
 var level_start_time: float = 0.0
 var level_score: int = 0
 var is_level_completed: bool = false
+var is_loading_level: bool = false  # 防止重复加载关卡
 
 # 性能监控
 var performance_data: Dictionary = {}
@@ -86,6 +87,11 @@ func _load_and_validate_config() -> void:
 
 # 加载指定关卡
 func load_level(level_id: int) -> bool:
+	# 防止重复加载
+	if is_loading_level:
+		return false
+	
+	is_loading_level = true
 	var start_time = Time.get_unix_time_from_system()
 	performance_data["total_loads"] += 1
 	
@@ -93,6 +99,7 @@ func load_level(level_id: int) -> bool:
 	var error_result = _validate_level_load_preconditions(level_id)
 	if error_result != LoadError.NONE:
 		_handle_load_error(level_id, error_result)
+		is_loading_level = false
 		return false
 	
 	# 获取关卡数据
@@ -105,6 +112,7 @@ func load_level(level_id: int) -> bool:
 	var load_result = _load_level_scene(level_data)
 	if not load_result.success:
 		_handle_load_error(level_id, load_result.error)
+		is_loading_level = false
 		return false
 	
 	# 设置关卡
@@ -115,6 +123,7 @@ func load_level(level_id: int) -> bool:
 	_record_load_performance(load_time, true)
 	
 	print("关卡加载成功: %s (耗时: %.3f秒)" % [level_data.get("name", "未知关卡"), load_time])
+	is_loading_level = false
 	return true
 
 # 验证关卡加载前置条件

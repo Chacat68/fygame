@@ -6,8 +6,14 @@ extends Area2D
 # 传送门参数
 var next_level = -1 # -1表示自动进入下一关
 var is_active = true # 传送门是否激活
+var is_teleporting = false # 防止重复传送的标志
 var destination_scene: String = "" # 目标场景路径
 var teleport_position: Vector2 = Vector2.ZERO # 传送到目标场景的位置
+
+# Tween引用，用于清理
+var breathing_tween: Tween
+var rotation_tween: Tween
+var particle_tween: Tween
 
 # 管理器引用
 var teleport_manager: TeleportManager
@@ -25,8 +31,9 @@ func _ready():
 	# 设置碰撞形状
 	_setup_collision_shape()
 	
-	# 连接信号
-	connect("body_entered", _on_body_entered)
+	# 连接信号，检查是否已经连接以避免重复连接
+	if not body_entered.is_connected(_on_body_entered):
+		connect("body_entered", _on_body_entered)
 	
 	# 启动持续动画效果
 	_start_idle_animation()
@@ -36,7 +43,7 @@ func _ready():
 
 # 设置碰撞形状
 func _setup_collision_shape():
-	var collision_shape = get_node("CollisionShape2D")
+	var collision_shape = get_node("PortalCollisionShape2D")
 	if collision_shape:
 		var shape = RectangleShape2D.new()
 		shape.size = Vector2(40, 60) # 传送门碰撞区域大小
@@ -79,20 +86,22 @@ func _setup_particle_effects():
 		glow_gradient.add_point(1.0, Color(0.1, 0.5, 0.8, 0.0))
 		glow_particles.color_ramp = glow_gradient
 
-# 启动空闲状态的动画效果
+# 启动持续动画效果
 func _start_idle_animation():
+	# 清理现有的Tween
+	_cleanup_tweens()
+	
 	# 获取传送门精灵
 	var portal_sprite = get_node_or_null("PortalSprite")
 	if portal_sprite:
 		# 创建呼吸效果动画
-		var tween = create_tween()
-		tween.set_loops() # 无限循环
-		tween.tween_property(portal_sprite, "modulate", Color(1.3, 1.3, 1.3, 1.0), 1.5)
-		tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.5)
+		breathing_tween = create_tween()
+		breathing_tween.set_loops() # 无限循环
+		breathing_tween.tween_property(portal_sprite, "modulate", Color(1.3, 1.3, 1.3, 1.0), 1.5)
+		breathing_tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.5)
 	
-	# 添加旋转动画
-	if portal_sprite:
-		var rotation_tween = create_tween()
+		# 添加旋转动画
+		rotation_tween = create_tween()
 		rotation_tween.set_loops()
 		rotation_tween.tween_property(portal_sprite, "rotation", TAU, 8.0) # 8秒完成一圈
 	
@@ -105,31 +114,50 @@ func _start_idle_animation():
 func _animate_particles(particle_system: Node2D):
 	var core_particles = particle_system.get_node_or_null("CoreParticles")
 	if core_particles:
-		var particle_tween = create_tween()
+		particle_tween = create_tween()
 		particle_tween.set_loops()
 		particle_tween.tween_method(_update_particle_amount.bind(core_particles), 30, 60, 2.0)
 		particle_tween.tween_method(_update_particle_amount.bind(core_particles), 60, 30, 2.0)
 
+# 清理Tween资源
+func _cleanup_tweens():
+	if breathing_tween and breathing_tween.is_valid():
+		breathing_tween.kill()
+		breathing_tween = null
+	
+	if rotation_tween and rotation_tween.is_valid():
+		rotation_tween.kill()
+		rotation_tween = null
+	
+	if particle_tween and particle_tween.is_valid():
+		particle_tween.kill()
+		particle_tween = null
+
+# 节点退出场景树时清理资源
+func _exit_tree():
+	_cleanup_tweens()
+
 # 更新粒子数量的辅助函数
-func _update_particle_amount(particles: CPUParticles2D, amount: int):
+func _update_particle_amount(amount: int, particles: CPUParticles2D):
 	if particles:
 		particles.amount = amount
 
 # 当有物体进入传送门时调用
 func _on_body_entered(body):
-	# 检查是否为玩家
-	if body.is_in_group("player") and is_active:
+	# 检查是否为玩家，并且传送门激活且未在传送中
+	if body.is_in_group("player") and is_active and not is_teleporting:
+		# 设置传送标志，防止重复触发
+		is_teleporting = true
+		is_active = false
+		
 		# 发出信号
 		body_entered.emit(body)
-		
-		# 防止玩家多次触发传送门
-		is_active = false
 		
 		# 添加视觉反馈
 		_play_teleport_animation()
 		
-		# 执行传送逻辑
-		_perform_teleport(body)
+		# 使用 call_deferred 延迟执行传送逻辑，避免在物理回调中直接操作
+		call_deferred("_perform_teleport", body)
 
 # 播放传送动画
 func _play_teleport_animation():
@@ -166,7 +194,7 @@ func _enhance_particles_for_teleport(particle_system: Node2D):
 			core_particles.initial_velocity_max = original_velocity_max
 
 # 执行传送逻辑
-func _perform_teleport(body):
+func _perform_teleport(_body):
 	# 获取管理器引用
 	if not teleport_manager:
 		_initialize_managers()
@@ -175,6 +203,9 @@ func _perform_teleport(body):
 	if destination_scene != "":
 		if teleport_manager:
 			teleport_manager.teleport_to_scene(destination_scene, teleport_position)
+		else:
+			print("错误：无法找到传送管理器")
+			_reset_teleport_state()
 		return
 	
 	# 否则使用关卡管理器进入下一关
@@ -185,6 +216,12 @@ func _perform_teleport(body):
 			level_manager.load_level(next_level)
 	else:
 		print("警告：无法找到关卡管理器")
+		_reset_teleport_state()
+
+# 重置传送状态的辅助函数
+func _reset_teleport_state():
+	is_teleporting = false
+	is_active = true
 
 # 初始化管理器引用
 func _initialize_managers():
@@ -193,6 +230,19 @@ func _initialize_managers():
 	if game_manager:
 		teleport_manager = game_manager.get_node_or_null("TeleportManager")
 		level_manager = game_manager.get_node_or_null("LevelManager")
+		
+		# 连接传送完成信号，以便重新激活传送门
+		if teleport_manager and not teleport_manager.teleport_completed.is_connected(_on_teleport_completed):
+			teleport_manager.teleport_completed.connect(_on_teleport_completed)
+
+# 传送完成后重新激活传送门
+func _on_teleport_completed(_player: Node2D, _destination: Vector2):
+	# 延迟重新激活，避免立即重复触发
+	await get_tree().create_timer(1.0).timeout
+	
+	# 重置传送标志和激活状态
+	is_teleporting = false
+	is_active = true
 	
 	# 如果在游戏管理器中找不到，尝试在场景树中查找
 	if not teleport_manager:
@@ -201,9 +251,9 @@ func _initialize_managers():
 		level_manager = get_tree().get_first_node_in_group("level_manager")
 
 # 设置目标场景
-func set_destination_scene(scene_path: String, position: Vector2 = Vector2.ZERO):
+func set_destination_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZERO):
 	destination_scene = scene_path
-	teleport_position = position
+	teleport_position = spawn_position
 
 # 设置下一关卡
 func set_next_level(level):
@@ -227,9 +277,9 @@ func configure_for_level_teleport(target_level: int):
 	print("传送门配置为关卡传送模式，目标关卡：", target_level)
 
 # 配置传送门为场景传送模式
-func configure_for_scene_teleport(scene_path: String, position: Vector2 = Vector2.ZERO):
+func configure_for_scene_teleport(scene_path: String, spawn_position: Vector2 = Vector2.ZERO):
 	destination_scene = scene_path
-	teleport_position = position
+	teleport_position = spawn_position
 	next_level = -1
 	print("传送门配置为场景传送模式，目标场景：", scene_path)
 

@@ -21,7 +21,7 @@ levels = Array[Dictionary]([
 	{
 		"id": 2,
 		"name": "关卡2",
-		"scene_path": "res://scenes/levels/level2.tscn",
+		"scene_path": "res://scenes/levels/lv2.tscn",
 		"script_path": "res://scripts/levels/level2.gd",
 		"theme": "进阶挑战",
 		"difficulty": "中等",

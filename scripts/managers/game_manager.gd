@@ -3,6 +3,7 @@ extends Node
 # 游戏状态
 var score = 0
 var kill_count = 0
+var is_changing_scene = false  # 防止重复场景切换
 
 # 组件引用
 @onready var ui = get_node_or_null("/root/Game/UI")
@@ -14,15 +15,31 @@ signal kill_count_changed(new_count)
 
 # 初始化
 func _ready():
-	# 连接传送门信号
-	if portal:
-		portal.connect("body_entered", _on_portal_entered)
+	# 注释掉重复的传送门信号连接，避免与 portal.gd 中的信号处理冲突
+	# 传送门的 body_entered 信号现在由 portal.gd 统一处理
+	# if portal:
+	#	if not portal.body_entered.is_connected(_on_portal_entered):
+	#		portal.connect("body_entered", _on_portal_entered)
+	pass
 
-# 传送门触发处理
-func _on_portal_entered(body):
-	if body.is_in_group("player"):
-		# 切换到 level2 场景
-		get_tree().change_scene_to_file("res://scenes/levels/level2.tscn")
+# 传送门触发处理 - 已禁用，由 portal.gd 统一处理
+# func _on_portal_entered(body):
+#	if body.is_in_group("player") and not is_changing_scene:
+#		# 使用 call_deferred 延迟切换场景，避免在物理回调中直接操作
+#		call_deferred("_change_to_level2")
+
+# 延迟执行的场景切换函数 - 已禁用，由传送系统统一处理
+# func _change_to_level2():
+#	# 防止重复调用
+#	if is_changing_scene:
+#		return
+#	
+#	is_changing_scene = true
+#	# 检查树是否仍然有效
+#	if get_tree():
+#		get_tree().change_scene_to_file("res://scenes/levels/lv2.tscn")
+#	else:
+#		is_changing_scene = false  # 如果切换失败，重置标志
 
 # 定义一个函数，用于增加分数并更新分数显示
 func add_point():

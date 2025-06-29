@@ -227,8 +227,19 @@ _data = {
 &"move": SubResource("Animation_rxsgj")
 }
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kvpfn"]
-radius = 10.1
+[sub_resource type="GDScript" id="GDScript_portal_config"]
+script/source = "
+extends Node
+
+# 传送门配置脚本
+func _ready():
+	# 获取父节点（传送门）
+	var portal = get_parent()
+	if portal and portal.has_method('configure_for_scene_teleport'):
+		# 配置传送门传送到第二关
+		portal.configure_for_scene_teleport('res://scenes/levels/lv2.tscn')
+		print('传送门已配置：传送到第二关')
+"
 
 [node name="Game" type="Node2D"]
 position = Vector2(-21, -41)
@@ -254,7 +265,7 @@ limit_smoothed = true
 [node name="Killzone" parent="." instance=ExtResource("5_ir15t")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
-position = Vector2(0, 600)
+position = Vector2(22, 481)
 shape = SubResource("WorldBoundaryShape2D_jjg3b")
 
 [node name="TileMap" type="Node" parent="."]
@@ -326,8 +337,10 @@ position = Vector2(520, -91)
 position = Vector2(664, -75)
 
 [node name="Portal" parent="." instance=ExtResource("11_5newe")]
-position = Vector2(50, -90)
+top_level = true
+position = Vector2(600, -90)
+collision_layer = 3
+collision_mask = 2
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="Portal"]
-position = Vector2(1450, 24)
-shape = SubResource("CapsuleShape2D_kvpfn")
+[node name="PortalScript" type="Node" parent="Portal"]
+script = SubResource("GDScript_portal_config")

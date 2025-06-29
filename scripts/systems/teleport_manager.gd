@@ -240,6 +240,10 @@ func reset_to_default():
 
 # 传送到指定场景
 func teleport_to_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZERO) -> bool:
+	# 防止重复传送
+	if is_teleporting:
+		return false
+	
 	# 检查场景路径是否有效
 	if scene_path == "" or not ResourceLoader.exists(scene_path):
 		teleport_failed.emit("场景路径无效或场景不存在：" + scene_path)
@@ -264,12 +268,24 @@ func teleport_to_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZER
 		tween.tween_property(player, "modulate:a", 0.0, config.fade_out_duration)
 		await tween.finished
 	
+	# 使用 call_deferred 延迟切换场景，避免在物理回调中直接操作
+	call_deferred("_change_scene_deferred", scene_path, spawn_position)
+	return true
+
+# 延迟执行的场景切换函数
+func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
+	# 检查树是否仍然有效
+	if not get_tree():
+		teleport_failed.emit("场景树无效")
+		is_teleporting = false
+		return
+	
 	# 切换场景
 	var result = get_tree().change_scene_to_file(scene_path)
 	if result != OK:
 		teleport_failed.emit("场景切换失败：" + scene_path)
 		is_teleporting = false
-		return false
+		return
 	
 	# 等待场景加载完成
 	await get_tree().process_frame
@@ -293,5 +309,3 @@ func teleport_to_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZER
 	# 输出调试信息
 	if config.log_teleport_events:
 		print("[TeleportManager] 场景传送完成：", scene_path, " 位置：", spawn_position)
-	
-	return true
