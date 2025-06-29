@@ -1,26 +1,83 @@
-# 小王子历险记
+# 小王子历险记 (FyGame)
 
-基于Brackeys教程制作的游戏demo
+基于Brackeys教程制作的2D平台跳跃游戏demo
 
-教程地址：https://youtu.be/LOhfqjmasi0?si=qng6rKh2-j9MwLgN
+**教程地址：** https://youtu.be/LOhfqjmasi0?si=qng6rKh2-j9MwLgN
 
-这是一个基于Brackeys教程制作的游戏demo项目。通过该项目，你可以学习如何使用Godot引擎创建简单的游戏。教程地址提供了详细的教学视频，帮助你逐步完成游戏的制作过程。
+## 项目简介
+
+这是一个基于Brackeys教程制作的游戏demo项目，使用Godot 4引擎开发。通过该项目，你可以学习如何创建一个完整的2D平台跳跃游戏，包括角色控制、敌人AI、收集系统、关卡管理等核心功能。
+
+## 技术栈
+
+- **游戏引擎：** Godot 4.x
+- **编程语言：** GDScript
+- **项目类型：** 2D平台跳跃游戏
+- **目标平台：** PC (Windows/Mac/Linux)
 
 
-# 游戏截图
+## 项目结构
 
-![](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/20250629135358423.png?imageSlim)
+本项目遵循标准化的目录结构和文件命名规范：
 
-![nyFavE](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/uPic/nyFavE.png)
+```
+fygame/
+├── docs/                          # 项目文档目录
+│   ├── design/                    # 设计文档
+│   ├── guides/                    # 使用指南
+│   └── system/                    # 系统文档
+├── scenes/                        # Godot场景文件
+│   ├── levels/                    # 关卡场景 (level1.tscn, level2.tscn...)
+│   ├── player/                    # 玩家相关场景
+│   ├── enemies/                   # 敌人场景
+│   ├── ui/                        # 用户界面场景
+│   └── environment/               # 环境元素场景
+├── scripts/                       # GDScript脚本文件
+│   ├── managers/                  # 管理器脚本
+│   ├── systems/                   # 系统脚本
+│   ├── player/                    # 玩家相关脚本
+│   └── utils/                     # 工具脚本
+├── resources/                     # Godot资源文件
+├── assets/                        # 原始资源文件
+│   ├── sprites/                   # 精灵图片
+│   ├── sounds/                    # 音效文件
+│   ├── music/                     # 背景音乐
+│   └── fonts/                     # 字体文件
+└── project.godot                  # Godot项目配置文件
+```
+
+详细的项目结构说明请参考：[PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
+
+## 游戏截图
+
+![游戏截图1](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/20250629135358423.png?imageSlim)
+
+![游戏截图2](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/uPic/nyFavE.png)
 
 
 
-# 游戏玩法规则
+## 快速开始
 
-## 基本玩法
+### 环境要求
+- Godot 4.x 引擎
+- 支持的操作系统：Windows、macOS、Linux
+
+### 运行游戏
+1. 克隆或下载项目到本地
+2. 使用Godot 4.x打开项目文件 `project.godot`
+3. 点击运行按钮或按F5开始游戏
+
+### 控制方式
+- **移动：** A/D键 或 方向键左右
+- **跳跃：** 空格键
+- **双段跳：** 在空中再次按空格键
+
+## 游戏玩法
+
+### 基本玩法
 - 这是一款2D平台跳跃游戏，玩家控制一个骑士角色在平台间移动和跳跃
-- 使用A/D或方向键左右移动，空格键跳跃
 - 游戏目标是收集尽可能多的金币，击杀敌人获取分数，同时避免掉落或受到伤害
+- 通过传送门可以进入下一关卡
 
 ## 角色能力
 - **双段跳**：玩家可以在空中再次按下跳跃键执行第二段跳跃，最多可跳跃2次
@@ -60,65 +117,42 @@
 - **状态保持**：使用GameState单例在场景重载后保持玩家复活状态
 - **延迟重载**：死亡后有1秒延迟再重新加载场景，给予玩家视觉反馈时间
 
-# 核心设计文档
+## 核心系统架构
 
-## 关卡管理系统
-
+### 关卡管理系统
 项目采用统一的关卡管理系统，提供模块化和数据驱动的开发方式：
 
-### 核心组件
-1. **LevelConfig资源** (level_config.gd)
-   - 统一管理所有关卡配置信息
-   - 包含关卡ID、名称、场景路径、难度等
-   - 支持关卡解锁条件和目标设置
+**核心组件：**
+- **LevelConfig资源** (`scripts/systems/level_config.gd`) - 统一管理关卡配置信息
+- **LevelManager管理器** (`scripts/managers/level_manager.gd`) - 负责关卡加载、切换和状态管理
+- **关卡场景** (`scenes/levels/level*.tscn`) - 遵循标准命名规范
 
-2. **LevelManager管理器** (level_manager.gd)
-   - 负责关卡的加载、切换和状态管理
-   - 提供关卡完成、失败、重新开始等功能
-   - 管理关卡进度和分数系统
+**关卡命名规范：**
+- 场景文件：`level1.tscn`, `level2.tscn`, `level3.tscn`
+- 脚本文件：`level1.gd`, `level2.gd`, `level3.gd`
+- 统一的数字编号便于管理和扩展
 
-3. **关卡命名规范**
-   - 场景文件：`level1.tscn`, `level2.tscn`, `level3.tscn`
-   - 脚本文件：`level1.gd`, `level2.gd`, `level3.gd`
-   - 统一的数字编号便于管理和扩展
+详细设计文档：[关卡设计指南](docs/design/integrated_level_design_guide.md)
 
-### 关卡索引系统
-- 详细的关卡列表和状态管理
-- 标准化的关卡添加流程
-- 开发状态跟踪和维护说明
+### 模块设计
 
-## 模块设计
-1. **角色控制模块** (player.gd)
-   - 动画状态机管理
-   - 物理运动处理
-   - 与关卡管理器的信号通信
+项目采用模块化设计，各功能模块独立开发和维护：
 
-2. **敌人AI模块** (slime.gd)
-   - 自动转向逻辑
-   - 射线碰撞检测
-   - 移动速度控制
+| 模块 | 脚本路径 | 主要功能 |
+|------|----------|----------|
+| **角色控制** | `scripts/player/player.gd` | 动画状态机、物理运动、信号通信 |
+| **敌人AI** | `scripts/enemies/slime.gd` | 自动转向、射线检测、移动控制 |
+| **游戏管理** | `scripts/managers/game_manager.gd` | 场景切换、分数统计、状态管理 |
+| **收集系统** | `scripts/collectibles/coin.gd`<br>`scripts/ui/coin_counter.gd` | 金币收集、分数显示、音效反馈 |
+| **死亡区域** | `scripts/environment/killzone.gd` | 碰撞检测、死亡处理 |
+| **反馈系统** | `scripts/utils/floating_text.gd` | 动态文本、动画效果、视觉反馈 |
+| **传送系统** | `scripts/systems/teleport_*.gd` | 传送门管理、场景切换、特效 |
 
-3. **游戏管理模块** (game_manager.gd)
-   - 场景切换
-   - 分数统计
-   - 游戏状态管理
-   - 与关卡管理器集成
-
-4. **收集系统模块** (coin.gd, coin_counter.gd)
-   - 金币收集逻辑
-   - 分数统计与显示
-   - 视觉与音效反馈
-   - 与关卡管理器的分数同步
-
-5. **死亡区域模块** (killzone.gd)
-   - 碰撞检测
-   - 角色死亡处理
-   - 通过关卡管理器处理失败
-
-6. **反馈系统模块** (floating_text.gd)
-   - 动态文本显示
-   - 动画效果控制
-   - 视觉反馈增强
+**设计原则：**
+- 按功能模块分类组织
+- 管理器类统一放在 `managers/` 目录
+- 系统级脚本放在 `systems/` 目录
+- 工具类脚本放在 `utils/` 目录
 
 ## 技术实现细节
 
@@ -142,32 +176,62 @@
 - 动态更新分数显示
 - 提供即时视觉反馈
 
+## 开发指南
+
+### 添加新关卡
+1. 在 `scenes/levels/` 创建 `level{数字}.tscn`
+2. 在 `scripts/levels/` 创建对应脚本（如需要）
+3. 更新 `resources/level_config.tres`
+4. 更新 `docs/design/level_index.md`
+
+### 添加新功能模块
+1. 在对应目录创建场景和脚本文件
+2. 遵循现有的命名规范
+3. 更新相关文档
+4. 考虑与现有系统的集成
+
+### 代码规范
+- 遵循 [PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) 中的文件组织规范
+- 使用中文注释
+- 保持代码的模块化和可维护性
+- 及时更新相关文档
+
+## 文档链接
+
+### 设计文档
+- [项目结构说明](docs/PROJECT_STRUCTURE.md)
+- [关卡设计指南](docs/design/integrated_level_design_guide.md)
+- [关卡索引](docs/design/level_index.md)
+- [传送系统设计](docs/design/teleport_system_design.md)
+- [敌人AI和战斗系统](docs/design/enemy_ai_and_combat.md)
+
+### 使用指南
+- [传送门使用指南](docs/guides/PORTAL_TELEPORT_GUIDE.md)
+- [传送系统测试指南](docs/guides/TELEPORT_TEST_GUIDE.md)
+- [浮动文本优化指南](docs/guides/FLOATING_TEXT_OPTIMIZATION.md)
+
+### 系统文档
+- [传送系统更新日志](docs/guides/TELEPORT_SYSTEM_CHANGELOG.md)
+- [优化指南](OPTIMIZATION_GUIDE.md)
+- [项目重构计划](PROJECT_RESTRUCTURE_PLAN.md)
+
 ## 扩展规划
 
-### 关卡系统扩展
-- 关卡编辑器开发
+### 短期目标
+- 完善关卡编辑器功能
+- 优化敌人AI系统
+- 增加更多关卡内容
+- 完善音效和视觉效果
+
+### 长期目标
 - 程序化关卡生成
-- 动态难度调整系统
-- 关卡评分和成就系统
-- 多主题关卡支持
-
-### 游戏功能扩展
-- 敌人基类和多样化敌人
-- 技能树和角色升级系统
-- 存档/读档功能
-- 关卡解锁和进度系统
 - 多人合作模式
+- 技能树和升级系统
+- 移动平台支持
 
-### 技术优化
-- 关卡流式加载
-- 对象池管理
-- 性能监控和优化
-- 模块化组件系统
-- 数据驱动配置管理
+---
 
-### 开发工具
-- 可视化关卡编辑器
-- 自动化测试工具
-- 关卡验证系统
-- 资源管理工具
-- 版本控制集成
+**注意事项：**
+- 本项目基于Brackeys教程制作，适合学习Godot游戏开发
+- 如有问题或建议，请通过项目Issues提出
+- 欢迎贡献代码和文档改进

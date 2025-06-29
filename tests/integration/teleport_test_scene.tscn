@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bvq8y3x4n5m2p"]
 
 [ext_resource type="Script" path="res://test_teleport.gd" id="1_test"]
-[ext_resource type="PackedScene" path="res://scenes/entities/portal.tscn" id="2_portal"]
-[ext_resource type="PackedScene" path="res://scenes/entities/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://bqhqxnhqxnhqx" path="res://scenes/entities/portal.tscn" id="2_portal"]
+[ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/entities/player.tscn" id="3_player"]
 
 [node name="TeleportTestScene" type="Node2D"]
 script = ExtResource("1_test")
