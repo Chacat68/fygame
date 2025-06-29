@@ -22,76 +22,98 @@ func _ready():
 	# 初始化管理器引用
 	_initialize_managers()
 	
-	# 创建碰撞形状
-	var collision_shape = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(40, 60) # 传送门碰撞区域大小
-	collision_shape.shape = shape
-	add_child(collision_shape)
-	
-	# 创建传送门视觉效果
-	_create_portal_visuals()
+	# 设置碰撞形状
+	_setup_collision_shape()
 	
 	# 连接信号
 	connect("body_entered", _on_body_entered)
 	
-	# 启动持续闪烁动画
+	# 启动持续动画效果
 	_start_idle_animation()
+	
+	# 设置粒子效果
+	_setup_particle_effects()
 
-# 创建传送门视觉效果
-func _create_portal_visuals():
-	# 创建主要的传送门矩形
-	var portal_rect = ColorRect.new()
-	portal_rect.size = Vector2(40, 60)
-	portal_rect.position = Vector2(-20, -30)
-	portal_rect.color = Color(0.1, 0.6, 1.0, 0.8) # 明亮的蓝色
-	add_child(portal_rect)
-	
-	# 创建边框效果
-	var border_rect = ColorRect.new()
-	border_rect.size = Vector2(44, 64)
-	border_rect.position = Vector2(-22, -32)
-	border_rect.color = Color(1.0, 1.0, 1.0, 0.9) # 白色边框
-	add_child(border_rect)
-	# 将主矩形移到边框前面
-	move_child(portal_rect, -1)
-	
-	# 创建粒子效果
-	var particles = CPUParticles2D.new()
-	particles.amount = 30
-	particles.lifetime = 2.0
-	particles.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
-	particles.emission_rect_extents = Vector2(20, 30)
-	particles.direction = Vector2(0, -1)
-	particles.gravity = Vector2(0, -50)
-	particles.initial_velocity_min = 20
-	particles.initial_velocity_max = 50
-	particles.scale_amount_min = 0.5
-	particles.scale_amount_max = 2.0
-	particles.color = Color(0.3, 0.9, 1.0, 0.8)
-	particles.emitting = true
-	add_child(particles)
-	
-	# 创建标签
-	var label = Label.new()
-	label.text = "传送门"
-	label.position = Vector2(-25, -50)
-	label.add_theme_color_override("font_color", Color.WHITE)
-	label.add_theme_color_override("font_shadow_color", Color.BLACK)
-	label.add_theme_constant_override("shadow_offset_x", 2)
-	label.add_theme_constant_override("shadow_offset_y", 2)
-	add_child(label)
+# 设置碰撞形状
+func _setup_collision_shape():
+	var collision_shape = get_node("CollisionShape2D")
+	if collision_shape:
+		var shape = RectangleShape2D.new()
+		shape.size = Vector2(40, 60) # 传送门碰撞区域大小
+		collision_shape.shape = shape
 
-# 启动空闲状态的闪烁动画
+func _setup_particle_effects():
+	# 获取粒子系统节点
+	var particle_system = get_node_or_null("ParticleSystem")
+	if not particle_system:
+		return
+	
+	# 设置核心粒子效果
+	var core_particles = particle_system.get_node_or_null("CoreParticles")
+	if core_particles:
+		# 添加颜色渐变效果
+		var gradient = Gradient.new()
+		gradient.add_point(0.0, Color(0.2, 0.8, 1.0, 1.0))
+		gradient.add_point(0.5, Color(0.5, 0.9, 1.0, 0.8))
+		gradient.add_point(1.0, Color(0.1, 0.6, 1.0, 0.0))
+		core_particles.color_ramp = gradient
+	
+	# 设置能量粒子效果
+	var energy_particles = particle_system.get_node_or_null("EnergyParticles")
+	if energy_particles:
+		# 添加闪烁效果
+		var energy_gradient = Gradient.new()
+		energy_gradient.add_point(0.0, Color(1.0, 1.0, 1.0, 0.8))
+		energy_gradient.add_point(0.3, Color(0.8, 0.9, 1.0, 1.0))
+		energy_gradient.add_point(0.7, Color(0.6, 0.8, 1.0, 0.9))
+		energy_gradient.add_point(1.0, Color(0.4, 0.7, 1.0, 0.0))
+		energy_particles.color_ramp = energy_gradient
+	
+	# 设置光晕粒子效果
+	var glow_particles = particle_system.get_node_or_null("GlowParticles")
+	if glow_particles:
+		# 添加柔和的光晕效果
+		var glow_gradient = Gradient.new()
+		glow_gradient.add_point(0.0, Color(0.1, 0.6, 1.0, 0.5))
+		glow_gradient.add_point(0.5, Color(0.2, 0.7, 1.0, 0.3))
+		glow_gradient.add_point(1.0, Color(0.1, 0.5, 0.8, 0.0))
+		glow_particles.color_ramp = glow_gradient
+
+# 启动空闲状态的动画效果
 func _start_idle_animation():
-	var tween = create_tween()
-	tween.set_loops() # 无限循环
+	# 获取传送门精灵
+	var portal_sprite = get_node_or_null("PortalSprite")
+	if portal_sprite:
+		# 创建呼吸效果动画
+		var tween = create_tween()
+		tween.set_loops() # 无限循环
+		tween.tween_property(portal_sprite, "modulate", Color(1.3, 1.3, 1.3, 1.0), 1.5)
+		tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.5)
 	
-	# 对所有ColorRect子节点应用闪烁效果
-	for child in get_children():
-		if child is ColorRect:
-			tween.parallel().tween_property(child, "modulate", Color(1.5, 1.5, 1.5, 0.9), 1.0)
-			tween.parallel().tween_property(child, "modulate", Color(1, 1, 1, 1), 1.0)
+	# 添加旋转动画
+	if portal_sprite:
+		var rotation_tween = create_tween()
+		rotation_tween.set_loops()
+		rotation_tween.tween_property(portal_sprite, "rotation", TAU, 8.0) # 8秒完成一圈
+	
+	# 粒子强度变化动画
+	var particle_system = get_node_or_null("ParticleSystem")
+	if particle_system:
+		_animate_particles(particle_system)
+
+# 粒子动画效果
+func _animate_particles(particle_system: Node2D):
+	var core_particles = particle_system.get_node_or_null("CoreParticles")
+	if core_particles:
+		var particle_tween = create_tween()
+		particle_tween.set_loops()
+		particle_tween.tween_method(_update_particle_amount.bind(core_particles), 30, 60, 2.0)
+		particle_tween.tween_method(_update_particle_amount.bind(core_particles), 60, 30, 2.0)
+
+# 更新粒子数量的辅助函数
+func _update_particle_amount(particles: CPUParticles2D, amount: int):
+	if particles:
+		particles.amount = amount
 
 # 当有物体进入传送门时调用
 func _on_body_entered(body):
@@ -111,12 +133,37 @@ func _on_body_entered(body):
 
 # 播放传送动画
 func _play_teleport_animation():
-	for child in get_children():
-		if child is ColorRect:
-			# 创建闪烁动画
-			var tween = create_tween()
-			tween.tween_property(child, "modulate", Color(2, 2, 2, 1), 0.2)
-			tween.tween_property(child, "modulate", Color(1, 1, 1, 1), 0.3)
+	# 获取传送门精灵
+	var portal_sprite = get_node_or_null("PortalSprite")
+	if portal_sprite:
+		# 创建强烈的闪烁动画
+		var flash_tween = create_tween()
+		flash_tween.tween_property(portal_sprite, "modulate", Color(2.5, 2.5, 2.5, 1.0), 0.1)
+		flash_tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.2)
+		flash_tween.tween_property(portal_sprite, "modulate", Color(2.0, 2.0, 2.0, 1.0), 0.1)
+		flash_tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.2)
+	
+	# 增强粒子效果
+	var particle_system = get_node_or_null("ParticleSystem")
+	if particle_system:
+		_enhance_particles_for_teleport(particle_system)
+
+# 传送时增强粒子效果
+func _enhance_particles_for_teleport(particle_system: Node2D):
+	var core_particles = particle_system.get_node_or_null("CoreParticles")
+	if core_particles:
+		# 临时增加粒子数量和速度
+		var original_amount = core_particles.amount
+		var original_velocity_max = core_particles.initial_velocity_max
+		
+		core_particles.amount = original_amount * 2
+		core_particles.initial_velocity_max = original_velocity_max * 1.5
+		
+		# 0.5秒后恢复原状
+		await get_tree().create_timer(0.5).timeout
+		if core_particles:
+			core_particles.amount = original_amount
+			core_particles.initial_velocity_max = original_velocity_max
 
 # 执行传送逻辑
 func _perform_teleport(body):

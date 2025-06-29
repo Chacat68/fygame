@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=4 uid="uid://test_portal_scene"]
+
+[ext_resource type="PackedScene" path="res://scenes/entities/portal.tscn" id="1_portal"]
+[ext_resource type="PackedScene" path="res://scenes/entities/player.tscn" id="2_player"]
+
+[sub_resource type="Environment" id="Environment_1"]
+background_mode = 1
+background_color = Color(0.1, 0.1, 0.2, 1)
+
+[node name="TestPortal" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="Portal" parent="." instance=ExtResource("1_portal")]
+position = Vector2(200, 0)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(-100, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -150.0
+offset_top = -100.0
+offset_right = -50.0
+offset_bottom = -75.0
+text = "传送门测试场景"
+horizontal_alignment = 1
+
+[node name="Instructions" type="Label" parent="."]
+offset_left = -150.0
+offset_top = 80.0
+offset_right = 150.0
+offset_bottom = 120.0
+text = "使用WASD或方向键移动玩家\n走向传送门测试效果"
+horizontal_alignment = 1

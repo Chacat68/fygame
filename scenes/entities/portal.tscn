@@ -1,6 +1,59 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=4 uid="uid://bqhqxnhqxnhqx"]
 
 [ext_resource type="Script" path="res://scripts/levels/portal.gd" id="1_portal"]
+[ext_resource type="Texture2D" uid="uid://portal_icon" path="res://assets/sprites/portal_icon.svg" id="2_portal_icon"]
 
 [node name="Portal" type="Area2D"]
 script = ExtResource("1_portal")
+
+[node name="PortalSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_portal_icon")
+scale = Vector2(0.8, 0.8)
+
+[node name="PortalCollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="ParticleSystem" type="Node2D" parent="."]
+
+[node name="CoreParticles" type="CPUParticles2D" parent="ParticleSystem"]
+amount = 50
+lifetime = 3.0
+emission_shape = 1
+emission_rect_extents = Vector2(15, 25)
+direction = Vector2(0, -1)
+gravity = Vector2(0, -30)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 0.3
+scale_amount_max = 1.5
+color = Color(0.2, 0.8, 1, 0.8)
+emitting = true
+
+[node name="EnergyParticles" type="CPUParticles2D" parent="ParticleSystem"]
+amount = 25
+lifetime = 2.0
+emission_shape = 2
+emission_sphere_radius = 20.0
+direction = Vector2(0, 0)
+gravity = Vector2(0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 15.0
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+scale_amount_min = 0.2
+scale_amount_max = 0.8
+color = Color(1, 1, 1, 0.6)
+emitting = true
+
+[node name="GlowParticles" type="CPUParticles2D" parent="ParticleSystem"]
+amount = 15
+lifetime = 4.0
+emission_shape = 1
+emission_rect_extents = Vector2(25, 35)
+direction = Vector2(0, -1)
+gravity = Vector2(0, -10)
+initial_velocity_min = 5.0
+initial_velocity_max = 20.0
+scale_amount_min = 1.0
+scale_amount_max = 3.0
+color = Color(0.1, 0.6, 1, 0.3)
+emitting = true
