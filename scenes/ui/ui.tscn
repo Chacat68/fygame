@@ -1,11 +1,35 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxvj5qbsn4e8p"]
 
 [ext_resource type="Script" uid="uid://dvqr6a4qm1u23" path="res://scripts/entities/items/coin_counter.gd" id="1_ixnqm"]
-[ext_resource type="Texture2D" uid="uid://cpl7gvoygk0gd" path="res://assets/sprites/coin_icon.png" id="2_yev5y"]
+[ext_resource type="Texture2D" uid="uid://dxd7ual10slyf" path="res://assets/sprites/coin_icon.png" id="2_yev5y"]
 [ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="3_ixnqm"]
 [ext_resource type="Texture2D" uid="uid://2e7v3oohbml0" path="res://assets/sprites/heart_icon.svg" id="4_heart"]
 [ext_resource type="Texture2D" uid="uid://dkorhj4jus0nv" path="res://assets/sprites/sword_icon.svg" id="5_sword"]
 [ext_resource type="Texture2D" uid="uid://cu15w8teeyy3" path="res://assets/sprites/coin_icon_enhanced.svg" id="6_coin_enhanced"]
+[ext_resource type="Texture2D" uid="uid://lo2hbtgl6k6o" path="res://assets/ui/Large tiles/Thin outline/tile_0000.png" id="7_button_normal"]
+[ext_resource type="Texture2D" uid="uid://djoqfls3f6868" path="res://assets/ui/Large tiles/Thin outline/tile_0007.png" id="8_button_hover"]
+[ext_resource type="Texture2D" uid="uid://bkl87xo2u4wji" path="res://assets/ui/Large tiles/Thin outline/tile_0037.png" id="9_panel_bg"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_counter_bg"]
+texture = ExtResource("9_panel_bg")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_button_normal"]
+texture = ExtResource("7_button_normal")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_button_hover"]
+texture = ExtResource("8_button_hover")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_ixnqm")
@@ -59,7 +83,7 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-modulate = Color(0, 0, 0, 0.2)
+theme_override_styles/panel = SubResource("StyleBoxTexture_counter_bg")
 z_index = -1
 
 [node name="TestButton" type="Button" parent="."]
@@ -70,8 +94,12 @@ offset_left = -100.0
 offset_top = 15.0
 offset_right = -15.0
 offset_bottom = 45.0
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxTexture_button_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_button_hover")
 text = "测试"
 
 [node name="TestPanel" type="Panel" parent="."]
@@ -94,8 +122,12 @@ theme_override_constants/separation = 5
 
 [node name="TeleportButton" type="Button" parent="TestPanel/TestVBox"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxTexture_button_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_button_hover")
 text = "传送到传送门"
 
 [node name="KillCounter" type="HBoxContainer" parent="TopBar"]
@@ -137,5 +169,5 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-modulate = Color(0, 0, 0, 0.2)
+theme_override_styles/panel = SubResource("StyleBoxTexture_counter_bg")
 z_index = -1

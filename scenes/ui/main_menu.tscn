@@ -1,8 +1,40 @@
-[gd_scene load_steps=4 format=3 uid="uid://cmp5frv2l1xel"]
+[gd_scene load_steps=8 format=3 uid="uid://cmp5frv2l1xel"]
 
 [ext_resource type="Script" uid="uid://bdi6m6ebacb1i" path="res://scripts/ui/main_menu.gd" id="1_menu"]
 [ext_resource type="FontFile" uid="uid://bdtg4xmvtjkd4" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
 [ext_resource type="Texture2D" uid="uid://da37c6ceu3wms" path="res://assets/images/home1.png" id="3_bg"]
+[ext_resource type="Texture2D" uid="uid://lo2hbtgl6k6o" path="res://assets/ui/Large tiles/Thin outline/tile_0000.png" id="4_button_normal"]
+[ext_resource type="Texture2D" uid="uid://djoqfls3f6868" path="res://assets/ui/Large tiles/Thin outline/tile_0007.png" id="5_button_hover"]
+[ext_resource type="Texture2D" uid="uid://bfd5dr822svpm" path="res://assets/ui/Large tiles/Thin outline/tile_0057.png" id="6_button_pressed"]
+[ext_resource type="Texture2D" uid="uid://bkl87xo2u4wji" path="res://assets/ui/Large tiles/Thin outline/tile_0037.png" id="7_panel_bg"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_normal"]
+texture = ExtResource("4_button_normal")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_hover"]
+texture = ExtResource("5_button_hover")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pressed"]
+texture = ExtResource("6_button_pressed")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_panel"]
+texture = ExtResource("7_panel_bg")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -24,38 +56,69 @@ stretch_mode = 6
 [node name="Title" type="Label" parent="."]
 layout_mode = 0
 anchor_left = 0.5
-anchor_top = 0.2
+anchor_top = 0.15
 anchor_right = 0.5
-anchor_bottom = 0.2
+anchor_bottom = 0.15
 offset_left = -200.0
 offset_right = 200.0
 offset_bottom = 50.0
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
 text = "平台冒险游戏"
+horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MenuPanel" type="Panel" parent="."]
 layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.4
+anchor_right = 0.5
+anchor_bottom = 0.4
+offset_left = -180.0
+offset_top = -80.0
+offset_right = 180.0
+offset_bottom = 120.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_panel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuPanel"]
+layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -50.0
-offset_right = 150.0
-offset_bottom = 100.0
-theme_override_constants/separation = 20
+offset_left = -120.0
+offset_top = -60.0
+offset_right = 120.0
+offset_bottom = 60.0
+theme_override_constants/separation = 25
 
 [node name="FixedLevelButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(200, 50)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_pressed")
 text = "固定关卡模式"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+custom_minimum_size = Vector2(200, 50)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_styles/normal = SubResource("StyleBoxTexture_normal")
+theme_override_styles/hover = SubResource("StyleBoxTexture_hover")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_pressed")
 text = "退出游戏"
 
 [connection signal="pressed" from="VBoxContainer/FixedLevelButton" to="." method="_on_fixed_level_button_pressed"]

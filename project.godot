@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="小王子冒险记"
+config/description="在帝国陨落百年后，曾被魔法屏障保护的遗忘山谷逐渐被外界发现。作为最后一位守塔人的后裔，你继承了能操控古代符文的血脉天赋，却也因此被各方势力追捕。当山谷结界突然失效，你必须在追寻身世真相与阻止远古灾祸之间做出抉择——而所有线索都指向那座沉入地底的黑曜石尖塔。"
 config/version="1.0"
 config/tags=PackedStringArray("2d", "策略")
 run/main_scene="res://scenes/ui/game_start_screen.tscn"

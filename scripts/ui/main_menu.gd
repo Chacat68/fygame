@@ -6,7 +6,7 @@ extends Control
 # 在准备好时调用
 func _ready():
 	# 设置按钮焦点
-	$VBoxContainer/StartButton.grab_focus()
+	$VBoxContainer/FixedLevelButton.grab_focus()
 
 # 固定关卡按钮点击事件
 func _on_fixed_level_button_pressed():
