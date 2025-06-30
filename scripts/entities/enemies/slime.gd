@@ -241,16 +241,13 @@ func _show_floating_text(player):
 	if not is_instance_valid(player):
 		return
 		
-	# 获取游戏场景根节点
-	var game_root = get_tree().get_root().get_node_or_null("Game")
+	# 获取场景根节点，避免Game节点的position偏移影响飘字位置
+	var game_root = get_tree().current_scene
 	if not game_root:
-		# 如果找不到Game节点，使用当前场景作为根节点
-		game_root = get_tree().current_scene
-		if not game_root:
-			game_root = get_tree().get_root()
+		game_root = get_tree().get_root()
 	
-	# 计算基础位置（在怪物上方）
-	var base_position = global_position + Vector2(0, -30)
+	# 计算基础位置（在怪物头顶附近）
+	var base_position = global_position + Vector2(0, -15)
 	
 	# 使用飘字管理器创建排列的飘字效果
 	var text_manager = FloatingTextManager.get_instance()

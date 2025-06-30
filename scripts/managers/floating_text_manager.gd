@@ -34,30 +34,14 @@ func create_arranged_floating_text(base_position: Vector2, text: String, game_ro
 	# 清理已经完成的飘字
 	_cleanup_finished_texts()
 	
-	# 计算当前飘字在排列中的位置
-	var current_index = active_floating_texts.size()
-	var row = current_index / max_texts_per_row  # 使用整数除法操作符
-	var col = current_index % max_texts_per_row
-	
-	# 计算水平偏移（居中排列）
-	var total_width = (max_texts_per_row - 1) * horizontal_spacing
-	var start_x = -total_width / 2.0
-	var horizontal_offset = start_x + col * horizontal_spacing
-	
-	# 计算垂直偏移（多排时向上偏移）
-	var vertical_offset = -row * 25.0
-	
-	# 计算延迟时间
-	var delay = col * stagger_delay_interval
-	
 	# 创建飘字实例
 	var floating_text = floating_text_scene.instantiate()
 	
-	# 设置位置（基础位置 + 偏移）
-	floating_text.global_position = base_position + Vector2(0, vertical_offset)
+	# 设置位置（直接使用基础位置，不添加任何偏移）
+	floating_text.global_position = base_position
 	
-	# 设置排列参数
-	floating_text.set_arrangement(horizontal_offset, delay)
+	# 不设置任何排列参数，飘字将直接在角色头顶显示
+	floating_text.set_arrangement(0.0, 0.0)
 	
 	# 设置文本
 	floating_text.pending_text = text

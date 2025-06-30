@@ -98,8 +98,10 @@ func _process(delta):
 		if frame_distance > remaining_distance:
 			frame_distance = remaining_distance
 			
-		# 更新位置
+		# 更新位置并进行像素对齐
 		position.y -= frame_distance
+		# 像素对齐以避免字体模糊
+		position = Vector2(round(position.x), round(position.y))
 		
 		# 累计已移动的距离
 		total_distance += frame_distance
