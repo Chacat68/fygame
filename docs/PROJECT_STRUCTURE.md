@@ -6,12 +6,21 @@
 
 ```
 fygame/
+├── .vscode/                       # VS Code配置目录
 ├── docs/                          # 项目文档目录
 ├── scenes/                        # Godot场景文件
 ├── scripts/                       # GDScript脚本文件
 ├── resources/                     # Godot资源文件
 ├── assets/                        # 原始资源文件
+├── addons/                        # Godot插件目录
+├── shaders/                       # 着色器文件
+├── tests/                         # 测试文件目录
+├── tools/                         # 开发工具目录
 ├── project.godot                  # Godot项目配置文件
+├── export_presets.cfg             # 导出预设配置
+├── default_bus_layout.tres        # 默认音频总线布局
+├── icon.svg                       # 项目图标文件
+├── PROJECT_RESTRUCTURE_PLAN.md    # 项目重构计划
 └── README.md                      # 项目说明文档
 ```
 
@@ -22,38 +31,61 @@ fygame/
 ```
 docs/
 ├── design/                        # 设计文档
+│   ├── enemy_ai_and_combat.md     # 敌人AI和战斗系统设计
+│   ├── game_config_system.md      # 游戏配置系统设计
+│   ├── game_mechanics.md          # 游戏机制设计
 │   ├── integrated_level_design_guide.md  # 关卡设计指南
-│   └── level_index.md             # 关卡索引文档
-├── project_structure.md           # 项目结构说明（本文档）
-└── README.md                      # 文档目录说明
+│   ├── level_index.md             # 关卡索引文档
+│   ├── player_state_machine.md    # 玩家状态机设计
+│   ├── stomp_kill_feature.md      # 踩踏击杀功能设计
+│   ├── teleport_system_design.md  # 传送系统设计
+│   └── ui_icon_optimization.md     # UI图标优化设计
+├── guides/                        # 使用指南
+│   ├── FLOATING_TEXT_OPTIMIZATION.md  # 飘字优化指南
+│   ├── PORTAL_TELEPORT_GUIDE.md   # 传送门使用指南
+│   ├── PORTAL_VISUAL_EFFECTS_GUIDE.md  # 传送门视觉效果指南
+│   ├── TELEPORT_SYSTEM_CHANGELOG.md    # 传送系统更新日志
+│   └── TELEPORT_TEST_GUIDE.md     # 传送系统测试指南
+├── system/                        # 系统文档
+│   └── teleport_system_guide.md   # 传送系统指南
+├── OPTIMIZATION_GUIDE.md          # 优化指南
+├── PROJECT_RESTRUCTURE_PLAN.md    # 项目重构计划
+└── PROJECT_STRUCTURE.md           # 项目结构说明（本文档）
 ```
 
 **用途说明：**
 - `design/` - 存放游戏设计相关文档
-- `integrated_level_design_guide.md` - 完整的关卡设计指南
-- `level_index.md` - 关卡列表和管理信息
+- `guides/` - 存放各种使用指南和教程
+- `system/` - 存放系统级文档
+- 各种设计文档涵盖了游戏的核心系统和功能
 
 ### scenes/ - 场景目录
 
 ```
 scenes/
-├── levels/                        # 关卡场景
-│   ├── level1.tscn               # 关卡1场景文件
-│   ├── level2.tscn               # 关卡2场景文件
-│   └── level3.tscn               # 关卡3场景文件
-├── player/                        # 玩家相关场景
-│   └── player.tscn               # 玩家角色场景
-├── enemies/                       # 敌人场景
-│   └── slime.tscn                # 史莱姆敌人场景
-├── ui/                           # 用户界面场景
-│   ├── main_menu.tscn            # 主菜单界面
-│   └── game_ui.tscn              # 游戏内UI
-├── collectibles/                  # 收集品场景
-│   └── coin.tscn                 # 金币场景
-├── environment/                   # 环境元素场景
+├── debug/                         # 调试场景
+│   └── portal_test.tscn          # 传送门测试场景
+├── entities/                      # 游戏实体场景
+│   ├── coin.tscn                 # 金币场景
+│   ├── killzone.tscn             # 死亡区域场景
 │   ├── platform.tscn             # 平台场景
-│   └── killzone.tscn             # 死亡区域场景
-└── main.tscn                     # 主场景文件
+│   ├── player.tscn               # 玩家角色场景
+│   ├── portal.tscn               # 传送门场景
+│   └── slime.tscn                # 史莱姆敌人场景
+├── levels/                        # 关卡场景
+│   ├── lv2.tscn                  # 关卡2场景文件
+│   └── lv3.tscn                  # 关卡3场景文件
+├── managers/                      # 管理器场景
+│   ├── floating_text.tscn        # 飘字管理器场景
+│   ├── game_manager.tscn         # 游戏管理器场景
+│   ├── game_state.tscn           # 游戏状态场景
+│   └── music.tscn                # 音乐管理器场景
+├── ui/                           # 用户界面场景
+│   ├── game_start_screen.tscn    # 游戏开始界面
+│   ├── main_menu.tscn            # 主菜单界面
+│   └── ui.tscn                   # 游戏内UI
+├── game.tscn                     # 主游戏场景
+└── test_portal.tscn              # 传送门测试场景
 ```
 
 **命名规范：**
@@ -65,36 +97,45 @@ scenes/
 
 ```
 scripts/
+├── autoload/                      # 自动加载脚本
+│   └── resource_manager_autoload.gd  # 资源管理器自动加载
+├── debug/                         # 调试脚本
+│   └── portal_debug.gd           # 传送门调试脚本
+├── entities/                      # 实体脚本
+│   ├── enemies/                   # 敌人脚本
+│   │   └── slime.gd              # 史莱姆敌人脚本
+│   ├── items/                     # 物品脚本
+│   │   ├── coin.gd               # 金币脚本
+│   │   └── coin_counter.gd       # 金币计数器脚本
+│   └── player/                    # 玩家相关脚本
+│       ├── player.gd             # 玩家控制脚本
+│       └── player_states/        # 玩家状态脚本目录
+├── levels/                        # 关卡脚本
+│   ├── killzone.gd               # 死亡区域脚本
+│   ├── level2.gd                 # 关卡2脚本
+│   ├── level3.gd                 # 关卡3脚本
+│   ├── mountain_cave_level.gd    # 山洞关卡脚本
+│   └── portal.gd                 # 传送门脚本
 ├── managers/                      # 管理器脚本
-│   ├── level_manager.gd          # 关卡管理器
+│   ├── floating_text_manager.gd  # 飘字管理器
 │   ├── game_manager.gd           # 游戏管理器
-│   └── audio_manager.gd          # 音频管理器
+│   ├── game_state.gd             # 游戏状态管理器
+│   ├── level_manager.gd          # 关卡管理器
+│   └── resource_manager.gd       # 资源管理器
 ├── systems/                       # 系统脚本
+│   ├── floating_text.gd          # 飘字系统
+│   ├── game_config.gd            # 游戏配置系统
 │   ├── level_config.gd           # 关卡配置系统
-│   ├── save_system.gd            # 存档系统
-│   └── input_system.gd           # 输入系统
-├── player/                        # 玩家相关脚本
-│   ├── player.gd                 # 玩家控制脚本
-│   └── player_state.gd           # 玩家状态管理
-├── enemies/                       # 敌人脚本
-│   ├── slime.gd                  # 史莱姆敌人脚本
-│   └── enemy_base.gd             # 敌人基类
+│   ├── teleport_config.gd        # 传送配置系统
+│   └── teleport_manager.gd       # 传送管理器
 ├── ui/                           # UI脚本
-│   ├── main_menu.gd              # 主菜单脚本
-│   ├── game_ui.gd                # 游戏UI脚本
-│   └── coin_counter.gd           # 金币计数器脚本
-├── collectibles/                  # 收集品脚本
-│   └── coin.gd                   # 金币脚本
-├── environment/                   # 环境脚本
-│   ├── platform.gd               # 平台脚本
-│   ├── moving_platform.gd        # 移动平台脚本
-│   └── killzone.gd               # 死亡区域脚本
-├── utils/                        # 工具脚本
-│   ├── floating_text.gd          # 飘字效果脚本
-│   └── game_state.gd             # 游戏状态单例
-└── autoload/                     # 自动加载脚本
-    ├── global.gd                 # 全局脚本
-    └── scene_manager.gd          # 场景管理器
+│   ├── game_start_screen.gd      # 游戏开始界面脚本
+│   └── main_menu.gd              # 主菜单脚本
+└── utils/                        # 工具脚本
+    ├── config_hot_reload.gd      # 配置热重载工具
+    ├── config_sync_tool.gd       # 配置同步工具
+    ├── debug_config_overlay.gd   # 调试配置覆盖工具
+    └── room_config.gd            # 房间配置工具
 ```
 
 **脚本组织原则：**
@@ -108,19 +149,9 @@ scripts/
 
 ```
 resources/
-├── level_config.tres             # 关卡配置资源
-├── game_settings.tres            # 游戏设置资源
-├── textures/                     # 纹理资源
-│   ├── player/                   # 玩家纹理
-│   ├── enemies/                  # 敌人纹理
-│   ├── environment/              # 环境纹理
-│   └── ui/                       # UI纹理
-├── audio/                        # 音频资源
-│   ├── sfx/                      # 音效文件
-│   └── music/                    # 背景音乐
-├── fonts/                        # 字体资源
-├── materials/                    # 材质资源
-└── themes/                       # UI主题资源
+├── default_teleport_config.tres  # 默认传送配置资源
+├── game_config.tres              # 游戏配置资源
+└── level_config.tres             # 关卡配置资源
 ```
 
 **资源管理原则：**
@@ -132,15 +163,40 @@ resources/
 
 ```
 assets/
-├── sprites/                      # 原始精灵图片
-│   ├── player/                   # 玩家精灵
-│   ├── enemies/                  # 敌人精灵
-│   ├── environment/              # 环境精灵
-│   └── ui/                       # UI精灵
-├── sounds/                       # 原始音效文件
-├── music/                        # 原始音乐文件
-├── fonts/                        # 原始字体文件
-└── source/                       # 源文件（PSD, AI等）
+├── fonts/                        # 字体文件
+│   ├── PixelOperator8-Bold.ttf  # 像素字体（粗体）
+│   └── PixelOperator8.ttf        # 像素字体（常规）
+├── images/                       # 图片资源
+│   ├── beijing.png               # 北京背景图
+│   ├── beijing.tres              # 北京纹理资源
+│   ├── home1.png                 # 家园图片1
+│   └── home2.png                 # 家园图片2
+├── music/                        # 音乐文件
+│   └── time_for_adventure.mp3    # 冒险时光背景音乐
+├── sounds/                       # 音效文件
+│   ├── coin.wav                  # 金币音效
+│   ├── explosion.wav             # 爆炸音效
+│   ├── hurt.wav                  # 受伤音效
+│   ├── jump.wav                  # 跳跃音效
+│   ├── power_up.wav              # 强化音效
+│   └── tap.wav                   # 点击音效
+├── sprites/                      # 精灵图片
+│   ├── coin.png                  # 金币精灵
+│   ├── coin_icon.png             # 金币图标
+│   ├── coin_icon_enhanced.svg    # 增强金币图标（SVG）
+│   ├── fruit.png                 # 水果精灵
+│   ├── heart_icon.svg            # 心形图标（SVG）
+│   ├── knight.png                # 骑士精灵
+│   ├── platforms.png             # 平台精灵
+│   ├── portal_icon.svg           # 传送门图标（SVG）
+│   ├── slime_green.png           # 绿色史莱姆精灵
+│   ├── slime_purple.png          # 紫色史莱姆精灵
+│   ├── sword_icon.svg            # 剑图标（SVG）
+│   └── world_tileset.png         # 世界瓦片集
+└── ui/                           # UI资源
+    ├── Large tiles/              # 大型瓦片
+    ├── Small tiles/              # 小型瓦片
+    └── Tilesheets/               # 瓦片表
 ```
 
 **原始资源管理：**
@@ -148,22 +204,99 @@ assets/
 - 保持源文件的完整性
 - 便于资源的更新和维护
 
+### addons/ - 插件目录
+
+```
+addons/
+├── gut/                          # GUT测试框架插件
+│   ├── 各种测试相关脚本和资源
+│   └── plugin.cfg               # 插件配置文件
+└── teleport_system/              # 传送系统插件
+    ├── icons/                    # 插件图标
+    ├── plugin.cfg                # 插件配置文件
+    ├── teleport_config_editor.gd # 传送配置编辑器
+    └── teleport_config_inspector.gd # 传送配置检查器
+```
+
+**插件管理：**
+- `gut/` - 用于单元测试和集成测试的GUT框架
+- `teleport_system/` - 自定义传送系统插件
+- 所有插件都包含plugin.cfg配置文件
+
+### tests/ - 测试目录
+
+```
+tests/
+├── examples/                     # 测试示例
+│   ├── floating_text_usage_example.gd  # 飘字使用示例
+│   ├── portal_teleport_test.gd   # 传送门测试
+│   ├── portal_teleport_test.tscn # 传送门测试场景
+│   └── teleport_example.gd       # 传送示例
+├── integration/                  # 集成测试
+│   └── teleport_test_scene.tscn  # 传送测试场景
+├── unit/                         # 单元测试
+│   ├── run_teleport_test.gd      # 传送测试运行器
+│   ├── test_floating_text_optimization.gd # 飘字优化测试
+│   ├── test_teleport.gd          # 传送功能测试
+│   └── test_tween_fix.gd         # 补间修复测试
+├── README.md                     # 测试说明文档
+├── test_gut_installation.gd      # GUT安装测试
+├── test_level_manager.gd         # 关卡管理器测试
+└── test_resource_manager.gd      # 资源管理器测试
+```
+
+**测试组织：**
+- `examples/` - 功能使用示例和演示
+- `integration/` - 集成测试场景
+- `unit/` - 单元测试脚本
+- 使用GUT框架进行自动化测试
+
+### tools/ - 开发工具目录
+
+```
+tools/
+├── scripts/                      # 工具脚本
+│   └── quick_test.sh            # 快速测试脚本
+└── project_optimizer.gd          # 项目优化工具
+```
+
+**开发工具：**
+- `project_optimizer.gd` - 项目优化和清理工具
+- `scripts/` - 各种开发辅助脚本
+- 提高开发效率的自动化工具
+
+### shaders/ - 着色器目录
+
+```
+shaders/
+└── pixelate.gdshader            # 像素化着色器
+```
+
+**着色器管理：**
+- 存放自定义着色器文件
+- 按功能和效果分类组织
+- 便于着色器的复用和维护
+- 当前包含像素化效果着色器
+
 ## 文件命名规范
 
 ### 场景文件命名
-- 关卡场景：`level{数字}.tscn`
+- 关卡场景：`lv{数字}.tscn`（如：lv2.tscn, lv3.tscn）
 - 功能场景：`功能名称.tscn`（小写字母+下划线）
 - 组件场景：`组件名称.tscn`
+- 测试场景：`test_功能名称.tscn`
 
 ### 脚本文件命名
 - 类脚本：`类名.gd`（小写字母+下划线）
 - 管理器：`功能_manager.gd`
-- 系统脚本：`功能_system.gd`
+- 系统脚本：`功能名称.gd`（如：teleport_config.gd）
+- 自动加载脚本：`功能_autoload.gd`
 
 ### 资源文件命名
-- 配置资源：`配置名称.tres`
-- 纹理资源：`描述性名称.png/jpg`
-- 音频资源：`描述性名称.ogg/wav`
+- 配置资源：`配置名称.tres`（如：game_config.tres）
+- 纹理资源：`描述性名称.png/svg`
+- 音频资源：`描述性名称.wav/mp3`
+- 字体资源：`字体名称.ttf`
 
 ## 路径引用规范
 
@@ -217,16 +350,26 @@ Thumbs.db
 ## 扩展指南
 
 ### 添加新关卡
-1. 在 `scenes/levels/` 创建 `level{数字}.tscn`
+1. 在 `scenes/levels/` 创建 `lv{数字}.tscn`
 2. 在 `scripts/levels/` 创建对应脚本（如需要）
 3. 更新 `resources/level_config.tres`
 4. 更新 `docs/design/level_index.md`
+5. 如需要，在 `tests/` 目录添加相应测试
 
 ### 添加新功能模块
 1. 在对应目录创建场景和脚本文件
 2. 遵循现有的命名规范
 3. 更新相关文档
 4. 考虑与现有系统的集成
+5. 编写相应的测试用例
+6. 如果是系统级功能，考虑添加到 `systems/` 目录
+
+### 添加新插件
+1. 在 `addons/` 目录创建插件文件夹
+2. 创建 `plugin.cfg` 配置文件
+3. 实现插件功能脚本
+4. 更新项目文档
+5. 在 `tests/` 目录添加插件测试
 
 ### 重构建议
 - 保持目录结构的一致性
