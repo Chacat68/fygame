@@ -332,10 +332,10 @@ func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
 	
 	# 在新场景中设置玩家位置
 	# 使用场景树来查找新玩家，而不是通过已释放的节点
-	var scene_tree = Engine.get_main_loop() as SceneTree
+	var current_scene_tree = Engine.get_main_loop() as SceneTree
 	var new_player = null
-	if scene_tree:
-		new_player = scene_tree.get_first_node_in_group("player")
+	if current_scene_tree:
+		new_player = current_scene_tree.get_first_node_in_group("player")
 	
 	if new_player and spawn_position != Vector2.ZERO:
 		new_player.global_position = spawn_position

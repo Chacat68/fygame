@@ -214,7 +214,9 @@ func _cache_resource(resource_name: String, resource_type: ResourceType, resourc
 # 清理旧的缓存条目
 func _cleanup_old_cache_entries() -> void:
 	# 简单的LRU实现：移除一半的缓存
-	var keys_to_remove = resource_cache.keys().slice(0, resource_cache.size() / 2)
+	# 使用显式整数转换避免类型转换警告
+	var half_size = int(resource_cache.size() / 2.0)
+	var keys_to_remove = resource_cache.keys().slice(0, half_size)
 	for key in keys_to_remove:
 		resource_cache.erase(key)
 
