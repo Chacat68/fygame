@@ -16,6 +16,10 @@ func physics_process(delta: float):
 	if player.velocity.y > 0:
 		return "Fall"
 	
+	# 检查冲刺技能
+	if Input.is_action_just_pressed("dash") and player.can_use_skill("dash"):
+		return "Dash"
+	
 	# 处理移动
 	var direction = Input.get_axis("move_left", "move_right")
 	
@@ -27,11 +31,13 @@ func physics_process(delta: float):
 	if direction:
 		player.velocity.x = direction * player.SPEED
 	else:
-		player.velocity.x = move_toward(player.velocity.x, 0, player.SPEED)
+		player.velocity.x = move_toward(player.velocity.x, 0, player.SPEED * 0.5)  # 空中减速较慢
 	
 	# 处理二段跳
 	if Input.is_action_just_pressed("jump") and player.jumps_made < player.MAX_JUMPS:
 		player.velocity.y = player.JUMP_VELOCITY
 		player.jumps_made += 1
+		# 播放跳跃音效
+		ResourceManager.play_sound("jump", player)
 	
 	return null

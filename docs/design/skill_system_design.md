@@ -4,6 +4,18 @@
 
 技能系统为游戏增加了更丰富的玩法机制，包括冲刺、墙跳、滑铲等技能，以及基于金币的技能升级树。系统采用模块化设计，易于扩展和维护。
 
+## 实现状态
+
+技能系统已完成实现，包括以下功能：
+
+- ✅ 技能管理器（SkillManager）
+- ✅ 技能状态（DashState, WallSlideState, WallJumpState, SlideState）
+- ✅ 技能升级UI
+- ✅ 技能解锁和升级系统
+- ✅ 技能冷却管理
+- ✅ 玩家状态机集成
+- ✅ 测试场景
+
 ## 系统架构
 
 ### 核心组件
@@ -462,4 +474,53 @@ func _enter_tree():
 
 ---
 
-本文档详细描述了技能系统的设计和实现方案。该系统采用模块化设计，易于扩展和维护，为游戏提供了丰富的玩法机制。开发人员应参考此文档进行技能系统的实现。
+## 使用指南
+
+### 如何测试技能系统
+
+1. 打开测试场景：`scenes/test/skill_test_scene.tscn`
+2. 运行场景，使用以下控制：
+   - WASD：移动
+   - 空格：跳跃
+   - X/Shift：冲刺
+   - S/Down：滑铲
+   - 靠近墙壁时按空格：墙跳
+   - 回车键：打开技能升级界面
+   - 空格键：添加测试金币
+
+### 如何集成到现有场景
+
+1. 确保玩家对象已经引用了技能管理器：
+   ```gdscript
+   var skill_manager = SkillManager.new()
+   ```
+
+2. 在玩家状态机中添加技能状态：
+   ```gdscript
+   _states["Dash"] = DashState.new(self)
+   _states["WallSlide"] = WallSlideState.new(self)
+   _states["WallJump"] = WallJumpState.new(self)
+   _states["Slide"] = SlideState.new(self)
+   ```
+
+3. 在玩家状态中添加技能输入检测：
+   ```gdscript
+   if Input.is_action_just_pressed("dash") and player.can_use_skill("dash"):
+       return "Dash"
+   ```
+
+4. 添加技能升级UI：
+   ```gdscript
+   var skill_ui = preload("res://scenes/ui/skill_upgrade_ui.tscn").instantiate()
+   skill_ui.set_skill_manager(player.get_skill_manager())
+   ```
+
+### 扩展新技能
+
+1. 创建新的技能状态类，继承自PlayerState
+2. 在SkillManager中添加新技能的配置和参数
+3. 在玩家状态机中注册新技能状态
+4. 在相关状态中添加技能输入检测
+5. 在技能升级UI中添加新技能的面板
+
+本文档详细描述了技能系统的设计和实现方案。该系统采用模块化设计，易于扩展和维护，为游戏提供了丰富的玩法机制。开发人员应参考此文档进行技能系统的实现和扩展。

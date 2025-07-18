@@ -66,6 +66,53 @@ extends Resource
 @export var floating_text_speed: float = 50.0
 @export var floating_text_fade_duration: float = 2.0
 
+# 技能系统配置
+@export_group("冲刺技能")
+# 冲刺距离（像素）
+@export var dash_distance: float = 120.0
+# 冲刺速度（像素/秒）
+@export var dash_speed: float = 600.0
+# 冲刺持续时间（秒）
+@export var dash_duration: float = 0.2
+# 冲刺冷却时间（秒）
+@export var dash_cooldown: float = 2.0
+# 冲刺时是否无敌
+@export var dash_invincible: bool = true
+# 冲刺解锁成本（金币）
+@export var dash_unlock_cost: int = 100
+
+@export_group("墙跳技能")
+# 墙跳力度（像素/秒）
+@export var wall_jump_force: float = 300.0
+# 贴墙滑行速度（像素/秒）
+@export var wall_slide_speed: float = 100.0
+# 墙跳水平推力（像素/秒）
+@export var wall_jump_horizontal: float = 200.0
+# 贴墙时间（秒）
+@export var wall_cling_time: float = 0.3
+# 最大连续墙跳次数
+@export var max_wall_jumps: int = 3
+# 墙跳解锁成本（金币）
+@export var wall_jump_unlock_cost: int = 150
+
+@export_group("滑铲技能")
+# 滑铲速度（像素/秒）
+@export var slide_speed: float = 250.0
+# 滑铲持续时间（秒）
+@export var slide_duration: float = 0.8
+# 滑铲伤害值
+@export var slide_damage: int = 15
+# 滑铲冷却时间（秒）
+@export var slide_cooldown: float = 3.0
+# 滑铲摩擦力
+@export var slide_friction: float = 0.9
+# 滑铲解锁成本（金币）
+@export var slide_unlock_cost: int = 200
+
+@export_group("技能系统通用")
+# 技能升级成本倍数
+@export var skill_upgrade_cost_multiplier: float = 1.5
+
 # 获取配置实例的静态方法
 # 在GameConfig类中添加验证方法
 func validate_config() -> bool:

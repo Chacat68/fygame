@@ -11,6 +11,13 @@ func physics_process(delta: float):
         player.velocity.y += player.gravity * delta
         return "Fall"
     
+    # 检查技能输入
+    if Input.is_action_just_pressed("dash") and player.can_use_skill("dash"):
+        return "Dash"
+    
+    if Input.is_action_just_pressed("slide") and player.can_use_skill("slide"):
+        return "Slide"
+    
     # 检查状态转换
     var direction = Input.get_axis("move_left", "move_right")
     if direction != 0:

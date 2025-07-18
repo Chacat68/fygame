@@ -11,6 +11,13 @@ func physics_process(delta: float):
         player.velocity.y += player.gravity * delta
         return "Fall"
     
+    # 检查技能输入
+    if Input.is_action_just_pressed("dash") and player.can_use_skill("dash"):
+        return "Dash"
+    
+    if Input.is_action_just_pressed("slide") and player.can_use_skill("slide"):
+        return "Slide"
+    
     # 处理移动
     var direction = Input.get_axis("move_left", "move_right")
     
@@ -23,7 +30,7 @@ func physics_process(delta: float):
         player.velocity.x = direction * player.SPEED
     else:
         player.velocity.x = move_toward(player.velocity.x, 0, player.SPEED)
-        return "Idle"
+        return "Idle"  # 停止移动时返回Idle状态
     
     # 处理跳跃
     if Input.is_action_just_pressed("jump"):

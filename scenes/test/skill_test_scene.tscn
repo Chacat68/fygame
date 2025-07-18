@@ -1,0 +1,171 @@
+[gd_scene load_steps=6 format=3 uid="uid://c8x7qr2ywxve"]
+
+[ext_resource type="Script" path="res://scripts/test/skill_test_scene.gd" id="1_skill_test"]
+[ext_resource type="PackedScene" path="res://scenes/ui/skill_upgrade_ui.tscn" id="2_skill_ui"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(100, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2"]
+size = Vector2(20, 200)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_debug"]
+bg_color = Color(0, 0, 0, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.5)
+
+[node name="SkillTestScene" type="Node2D"]
+script = ExtResource("1_skill_test")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(200, 400)
+collision_layer = 1
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Platforms"]
+position = Vector2(500, 500)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Ground"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Ground"]
+offset_left = -50.0
+offset_top = -10.0
+offset_right = 50.0
+offset_bottom = 10.0
+color = Color(0.5, 0.3, 0.2, 1)
+
+[node name="Platform1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(300, 400)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform1"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Platform1"]
+offset_left = -50.0
+offset_top = -10.0
+offset_right = 50.0
+offset_bottom = 10.0
+color = Color(0.5, 0.3, 0.2, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(700, 300)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Platform2"]
+offset_left = -50.0
+offset_top = -10.0
+offset_right = 50.0
+offset_bottom = 10.0
+color = Color(0.5, 0.3, 0.2, 1)
+
+[node name="Wall1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(100, 350)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Wall1"]
+shape = SubResource("RectangleShape2D_2")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Wall1"]
+offset_left = -10.0
+offset_top = -100.0
+offset_right = 10.0
+offset_bottom = 100.0
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="Wall2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(900, 350)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Wall2"]
+shape = SubResource("RectangleShape2D_2")
+
+[node name="ColorRect" type="ColorRect" parent="Platforms/Wall2"]
+offset_left = -10.0
+offset_top = -100.0
+offset_right = 10.0
+offset_bottom = 100.0
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="SkillUpgradeUI" parent="UI" instance=ExtResource("2_skill_ui")]
+
+[node name="DebugPanel" type="Panel" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = -20.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_debug")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="TitleLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "技能系统调试信息"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayerStateLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "玩家状态: Idle"
+
+[node name="CoinsLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "金币: 0"
+
+[node name="HSeparator2" type="HSeparator" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="DashCooldownLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "冲刺冷却: 就绪"
+
+[node name="WallJumpCooldownLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "墙跳冷却: 就绪"
+
+[node name="SlideCooldownLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "滑铲冷却: 就绪"
+
+[node name="HSeparator3" type="HSeparator" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="InstructionLabel" type="Label" parent="UI/DebugPanel/VBoxContainer"]
+layout_mode = 2
+text = "回车键: 打开技能界面\n空格键: 添加金币\nWASD: 移动\n空格: 跳跃\nShift/X: 冲刺\nS/下: 滑铲"
+autowrap_mode = 2

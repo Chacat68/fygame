@@ -1,0 +1,238 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvn8x7qr2ywxe"]
+
+[ext_resource type="Script" path="res://scripts/ui/skill_upgrade_ui.gd" id="1_0k8vx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
+bg_color = Color(0.1, 0.1, 0.1, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.4, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="SkillUpgradeUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_0k8vx")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.5)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+
+[node name="TopPanel" type="Panel" parent="VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 80)
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer/TopPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "技能升级"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CoinLabel" type="Label" parent="VBoxContainer/TopPanel/HBoxContainer"]
+layout_mode = 2
+text = "金币: 0"
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="VBoxContainer/TopPanel/HBoxContainer"]
+layout_mode = 2
+text = "关闭"
+
+[node name="SkillTreeContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DashSkillPanel" type="Panel" parent="VBoxContainer/SkillTreeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="SkillIcon" type="TextureRect" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkillNameLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "冲刺"
+
+[node name="SkillLevelLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "等级: 0/3"
+
+[node name="SkillDescription" type="Label" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "快速向前冲刺，可穿越敌人"
+autowrap_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer"]
+layout_mode = 2
+
+[node name="CostLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "解锁费用: 100"
+horizontal_alignment = 2
+
+[node name="UnlockButton" type="Button" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "解锁"
+
+[node name="UpgradeButton" type="Button" parent="VBoxContainer/SkillTreeContainer/DashSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "升级"
+visible = false
+
+[node name="WallJumpSkillPanel" type="Panel" parent="VBoxContainer/SkillTreeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="SkillIcon" type="TextureRect" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkillNameLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "墙跳"
+
+[node name="SkillLevelLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "等级: 0/3"
+
+[node name="SkillDescription" type="Label" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "贴墙滑行并可以进行墙跳"
+autowrap_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer"]
+layout_mode = 2
+
+[node name="CostLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "解锁费用: 150"
+horizontal_alignment = 2
+
+[node name="UnlockButton" type="Button" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "解锁"
+
+[node name="UpgradeButton" type="Button" parent="VBoxContainer/SkillTreeContainer/WallJumpSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "升级"
+visible = false
+
+[node name="SlideSkillPanel" type="Panel" parent="VBoxContainer/SkillTreeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 120)
+theme_override_styles/panel = SubResource("StyleBoxFlat_1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+
+[node name="SkillIcon" type="TextureRect" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(64, 64)
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkillNameLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "滑铲"
+
+[node name="SkillLevelLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "等级: 0/3"
+
+[node name="SkillDescription" type="Label" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "滑铲攻击敌人并快速移动"
+autowrap_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer"]
+layout_mode = 2
+
+[node name="CostLabel" type="Label" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "解锁费用: 200"
+horizontal_alignment = 2
+
+[node name="UnlockButton" type="Button" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "解锁"
+
+[node name="UpgradeButton" type="Button" parent="VBoxContainer/SkillTreeContainer/SlideSkillPanel/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "升级"
+visible = false

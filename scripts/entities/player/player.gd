@@ -3,6 +3,9 @@ extends CharacterBody2D
 # 游戏配置
 var config: GameConfig
 
+# 技能管理器
+var skill_manager: SkillManager
+
 # 角色属性（从配置文件加载）
 var SPEED: float
 var JUMP_VELOCITY: float
@@ -16,6 +19,8 @@ var jumps_made = 0   # 已经跳跃的次数
 var current_health: int  # 当前血量
 var is_invincible = false  # 是否处于无敌状态
 var is_falling_to_death = false  # 是否正在掉落死亡
+var wall_jump_count = 0  # 连续墙跳次数
+var facing_direction = 1  # 玩家朝向 (1=右, -1=左)
 
 # 状态管理
 var current_state: PlayerState
@@ -45,6 +50,10 @@ func _init_config():
 	
 	# 初始化当前血量
 	current_health = MAX_HEALTH
+	
+	# 初始化技能管理器
+	skill_manager = SkillManager.new()
+	skill_manager.init_skills()
 
 # 信号
 signal health_changed(new_health)
@@ -79,7 +88,11 @@ func _init_states():
 		"Jump": JumpState.new(self),
 		"Fall": FallState.new(self),
 		"Hurt": HurtState.new(self),
-		"Death": DeathState.new(self)
+		"Death": DeathState.new(self),
+		"Dash": DashState.new(self),
+		"WallSlide": WallSlideState.new(self),
+		"WallJump": WallJumpState.new(self),
+		"Slide": SlideState.new(self)
 	}
 	
 	# 设置初始状态
@@ -95,6 +108,9 @@ func _change_state(new_state_name: String):
 
 # 物理处理
 func _physics_process(delta):
+	# 更新技能冷却
+	skill_manager.update_cooldowns(delta)
+	
 	# 处理无敌状态
 	_handle_invincibility(delta)
 	
@@ -103,6 +119,9 @@ func _physics_process(delta):
 	
 	# 检查踩踏击杀
 	_check_stomp_kill()
+	
+	# 更新玩家朝向
+	_update_facing_direction()
 	
 	# 使用当前状态处理物理更新
 	var new_state_name = current_state.physics_process(delta)
@@ -250,6 +269,49 @@ func _perform_stomp_kill(monster):
 	ResourceManager.play_sound("power_up", self)
 
 # 注释：原有的重复_check_fall_death函数已被移除，使用上面的_check_fall_death函数实现
+
+# 更新玩家朝向
+func _update_facing_direction():
+	if velocity.x > 0:
+		facing_direction = 1
+		animated_sprite.flip_h = false
+	elif velocity.x < 0:
+		facing_direction = -1
+		animated_sprite.flip_h = true
+
+# 获取技能管理器
+func get_skill_manager() -> SkillManager:
+	return skill_manager
+
+# 检查是否可以使用技能
+func can_use_skill(skill_name: String) -> bool:
+	return skill_manager.can_use_skill(skill_name)
+
+# 使用技能
+func use_skill(skill_name: String) -> bool:
+	return skill_manager.use_skill(skill_name)
+
+# 重置墙跳计数
+func reset_wall_jump_count():
+	wall_jump_count = 0
+
+# 增加墙跳计数
+func increment_wall_jump_count():
+	wall_jump_count += 1
+
+# 获取墙跳计数
+func get_wall_jump_count() -> int:
+	return wall_jump_count
+
+# 获取玩家朝向
+func get_facing_direction() -> int:
+	return facing_direction
+
+# 设置玩家朝向
+func set_facing_direction(direction: int):
+	facing_direction = direction
+	if animated_sprite:
+		animated_sprite.flip_h = (direction < 0)
 
 # 安全获取GameManager节点
 func _get_game_manager() -> Node:
