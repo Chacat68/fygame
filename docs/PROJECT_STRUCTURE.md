@@ -30,34 +30,51 @@ fygame/
 
 ```
 docs/
-├── design/                        # 设计文档
-│   ├── enemy_ai_and_combat.md     # 敌人AI和战斗系统设计
-│   ├── game_config_system.md      # 游戏配置系统设计
-│   ├── game_mechanics.md          # 游戏机制设计
-│   ├── integrated_level_design_guide.md  # 关卡设计指南
-│   ├── level_index.md             # 关卡索引文档
-│   ├── player_state_machine.md    # 玩家状态机设计
-│   ├── stomp_kill_feature.md      # 踩踏击杀功能设计
-│   ├── teleport_system_design.md  # 传送系统设计
-│   └── ui_icon_optimization.md     # UI图标优化设计
-├── guides/                        # 使用指南
-│   ├── FLOATING_TEXT_OPTIMIZATION.md  # 飘字优化指南
-│   ├── PORTAL_TELEPORT_GUIDE.md   # 传送门使用指南
-│   ├── PORTAL_VISUAL_EFFECTS_GUIDE.md  # 传送门视觉效果指南
-│   ├── TELEPORT_SYSTEM_CHANGELOG.md    # 传送系统更新日志
-│   └── TELEPORT_TEST_GUIDE.md     # 传送系统测试指南
-├── system/                        # 系统文档
-│   └── teleport_system_guide.md   # 传送系统指南
-├── OPTIMIZATION_GUIDE.md          # 优化指南
-├── PROJECT_RESTRUCTURE_PLAN.md    # 项目重构计划
-└── PROJECT_STRUCTURE.md           # 项目结构说明（本文档）
+├── PROJECT_DESIGN.md             # 项目总设计文档
+├── PROJECT_STRUCTURE.md          # 项目结构说明（本文档）
+├── modules/                      # 模块设计文档
+│   ├── README.md                 # 模块文档说明
+│   ├── audio_system.md           # 音频系统模块设计
+│   ├── config_system.md          # 配置系统模块设计
+│   ├── enemy_ai_combat.md        # 敌人AI与战斗模块设计
+│   ├── game_mechanics.md         # 游戏机制模块设计
+│   ├── level_design.md           # 关卡设计模块设计
+│   ├── level_index.md            # 关卡索引
+│   ├── player_state_machine.md   # 玩家状态机模块设计
+│   ├── skill_system.md           # 技能系统模块设计
+│   ├── stomp_kill_feature.md     # 踩踏击杀功能设计
+│   ├── teleport_system.md        # 传送系统模块设计
+│   └── ui_system.md              # UI系统模块设计
+├── guides/                       # 使用指南
+│   ├── README.md                 # 指南文档说明
+│   ├── FLOATING_TEXT_OPTIMIZATION.md # 飘字优化指南
+│   ├── PORTAL_TELEPORT_GUIDE.md  # 传送门指南
+│   ├── PORTAL_VISUAL_EFFECTS_GUIDE.md # 传送门视觉效果指南
+│   ├── SKILL_SYSTEM_DEMO_GUIDE.md # 技能系统演示指南
+│   ├── SKILL_SYSTEM_EXTENSION_GUIDE.md # 技能系统扩展指南
+│   ├── SKILL_SYSTEM_FAQ.md       # 技能系统FAQ
+│   ├── TELEPORT_SYSTEM_CHANGELOG.md # 传送系统变更日志
+│   ├── TELEPORT_TEST_GUIDE.md    # 传送测试指南
+│   └── teleport_system_guide.md  # 传送系统使用指南
+├── development/                  # 开发文档
+│   ├── README.md                 # 开发文档说明
+│   ├── SKILL_SYSTEM_CODE_REVIEW_CHECKLIST.md # 技能系统代码审查清单
+│   └── SKILL_SYSTEM_PERFORMANCE_OPTIMIZATION.md # 技能系统性能优化
+└── testing/                      # 测试文档
+    ├── README.md                 # 测试文档说明
+    └── SKILL_SYSTEM_TEST_PLAN.md # 技能系统测试计划
 ```
 
-**用途说明：**
-- `design/` - 存放游戏设计相关文档
-- `guides/` - 存放各种使用指南和教程
-- `system/` - 存放系统级文档
-- 各种设计文档涵盖了游戏的核心系统和功能
+**文档组织：**
+- `PROJECT_DESIGN.md` - 项目总设计文档，包含所有模块的概览
+- `PROJECT_STRUCTURE.md` - 项目结构说明文档
+- `modules/` - 各个功能模块的详细设计文档
+- `guides/` - 使用指南、教程和操作手册
+- `development/` - 开发相关文档、规范和检查清单
+- `testing/` - 测试计划、测试策略和测试文档
+- 所有文档使用Markdown格式
+- 每个目录都有README.md说明文档内容
+- 保持文档与代码的同步更新
 
 ### scenes/ - 场景目录
 
