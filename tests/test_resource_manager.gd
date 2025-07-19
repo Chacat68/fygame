@@ -164,23 +164,16 @@ func test_signal_connections():
 	
 	assert_true(resource_load_failed_fired, "应该触发resource_load_failed信号")
 
-func test_play_sound_convenience_method():
-	# 测试播放音效的便捷方法
-	var audio_player = resource_manager.play_sound("jump")
-	
-	assert_not_null(audio_player, "应该返回AudioStreamPlayer")
-	assert_true(audio_player is AudioStreamPlayer, "返回的应该是AudioStreamPlayer类型")
-	assert_not_null(audio_player.stream, "AudioStreamPlayer应该有音频流")
-	
-	# 清理
-	if audio_player:
-		audio_player.queue_free()
+# 注意：音频播放功能已迁移到AudioManager
+# 以下测试已被注释，因为ResourceManager不再负责音频播放
 
-func test_play_nonexistent_sound():
-	# 测试播放不存在的音效
-	var audio_player = resource_manager.play_sound("nonexistent")
-	
-	assert_null(audio_player, "不存在的音效应该返回null")
+# func test_play_sound_convenience_method():
+# 	# 测试播放音效的便捷方法（已迁移到AudioManager）
+# 	pass
+
+# func test_play_nonexistent_sound():
+# 	# 测试播放不存在的音效（已迁移到AudioManager）
+# 	pass
 
 func test_preload_resources_batch():
 	# 测试批量预加载资源

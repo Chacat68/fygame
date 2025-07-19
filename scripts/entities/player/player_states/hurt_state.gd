@@ -11,7 +11,7 @@ func enter():
 	
 	# 播放受伤音效
 	# 使用AutoLoad的ResourceManager播放音效
-	ResourceManager.play_sound("hurt", player)
+	AudioManager.play_sfx("hurt")
 
 func physics_process(delta: float):
 	# 应用重力

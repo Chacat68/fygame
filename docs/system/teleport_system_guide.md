@@ -130,7 +130,7 @@ teleport_manager.set_config(config)
 ```gdscript
 func _play_teleport_effect(from_position: Vector2, to_position: Vector2):
     # 播放传送音效
-    AudioManager.play_sound("teleport_sound")
+    AudioManager.play_sfx("teleport_sound")
     
     # 创建粒子效果
     var particles = preload("res://effects/TeleportParticles.tscn").instantiate()

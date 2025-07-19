@@ -266,7 +266,7 @@ func _perform_stomp_kill(monster):
 	monster._die(self)
 	
 	# 播放击杀音效（如果有的话）
-	ResourceManager.play_sound("power_up", self)
+	AudioManager.play_sfx("power_up")
 
 # 注释：原有的重复_check_fall_death函数已被移除，使用上面的_check_fall_death函数实现
 

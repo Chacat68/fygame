@@ -19,37 +19,72 @@ enum ResourceType {
 	OTHER
 }
 
-# 预加载的核心资源
-var sounds = {
+# 资源优先级枚举
+enum ResourcePriority {
+	CRITICAL,  # 游戏启动必需的资源
+	HIGH,      # 游戏核心功能资源
+	MEDIUM,    # 常用资源
+	LOW        # 可延迟加载的资源
+}
+
+# 只预加载关键资源，其他资源按需加载
+var critical_sounds = {
 	"jump": preload("res://assets/sounds/jump.wav"),
-	"hurt": preload("res://assets/sounds/hurt.wav"),
-	"coin": preload("res://assets/sounds/coin.wav"),
-	"power_up": preload("res://assets/sounds/power_up.wav"),
-	"explosion": preload("res://assets/sounds/explosion.wav"),
-	"tap": preload("res://assets/sounds/tap.wav")
+	"hurt": preload("res://assets/sounds/hurt.wav")
 }
 
-var music = {
-	"adventure": preload("res://assets/music/time_for_adventure.mp3")
+var critical_sprites = {
+	"knight": preload("res://assets/sprites/knight.png")
 }
 
-var sprites = {
-	"knight": preload("res://assets/sprites/knight.png"),
-	"coin": preload("res://assets/sprites/coin.png"),
-	"slime_green": preload("res://assets/sprites/slime_green.png"),
-	"slime_purple": preload("res://assets/sprites/slime_purple.png"),
-	"platforms": preload("res://assets/sprites/platforms.png"),
-	"world_tileset": preload("res://assets/sprites/world_tileset.png"),
-	"fruit": preload("res://assets/sprites/fruit.png"),
-	"coin_icon": preload("res://assets/sprites/coin_icon.png")
+# 资源路径配置（按需加载）
+var resource_paths = {
+	# 音效资源路径
+	"sounds": {
+		"coin": "res://assets/sounds/coin.wav",
+		"power_up": "res://assets/sounds/power_up.wav",
+		"explosion": "res://assets/sounds/explosion.wav",
+		"tap": "res://assets/sounds/tap.wav"
+	},
+	# 音乐资源路径
+	"music": {
+		"adventure": "res://assets/music/time_for_adventure.mp3"
+	},
+	# 精灵资源路径
+	"sprites": {
+		"coin": "res://assets/sprites/coin.png",
+		"slime_green": "res://assets/sprites/slime_green.png",
+		"slime_purple": "res://assets/sprites/slime_purple.png",
+		"platforms": "res://assets/sprites/platforms.png",
+		"world_tileset": "res://assets/sprites/world_tileset.png",
+		"fruit": "res://assets/sprites/fruit.png",
+		"coin_icon": "res://assets/sprites/coin_icon.png"
+	},
+	# 场景资源路径
+	"scenes": {
+		"coin": "res://scenes/entities/coin.tscn",
+		"slime": "res://scenes/entities/slime.tscn",
+		"platform": "res://scenes/entities/platform.tscn",
+		"floating_text": "res://scenes/managers/floating_text.tscn"
+	}
 }
 
-var scenes = {
-	"coin": preload("res://scenes/entities/coin.tscn"),
-	"slime": preload("res://scenes/entities/slime.tscn"),
-	"platform": preload("res://scenes/entities/platform.tscn"),
-	"floating_text": preload("res://scenes/managers/floating_text.tscn")
+# 资源优先级配置
+var resource_priorities = {
+	"jump": ResourcePriority.CRITICAL,
+	"hurt": ResourcePriority.CRITICAL,
+	"knight": ResourcePriority.CRITICAL,
+	"coin": ResourcePriority.HIGH,
+	"slime_green": ResourcePriority.HIGH,
+	"platforms": ResourcePriority.MEDIUM,
+	"adventure": ResourcePriority.LOW
 }
+
+# 保留原有变量以兼容现有代码
+var sounds = {}
+var music = {}
+var sprites = {}
+var scenes = {}
 
 # 动态资源缓存
 var resource_cache: Dictionary = {}
@@ -74,6 +109,18 @@ var memory_threshold_mb: float = 512.0
 func _ready():
 	_initialize_performance_monitoring()
 	_start_cache_cleanup_timer()
+	_initialize_critical_resources()
+	_preload_high_priority_resources()
+
+# 按名称加载资源（用于预加载）
+func _load_resource_by_name(resource_name: String) -> void:
+	# 确定资源类型和路径
+	for type_key in resource_paths:
+		if resource_paths[type_key].has(resource_name):
+			var resource_path = resource_paths[type_key][resource_name]
+			var resource_type = _get_resource_type_from_key(type_key)
+			load_resource_async(resource_path, resource_name, resource_type)
+			break
 
 func _initialize_performance_monitoring():
 	performance_stats["last_cleanup_time"] = Time.get_unix_time_from_system()
@@ -101,7 +148,7 @@ func get_sprite(sprite_name: String) -> Texture2D:
 func get_scene(scene_name: String) -> PackedScene:
 	return _get_resource(scene_name, ResourceType.SCENE, scenes)
 
-# 通用资源获取方法
+# 通用资源获取方法（优化版）
 func _get_resource(resource_name: String, resource_type: ResourceType, resource_dict: Dictionary) -> Resource:
 	# 首先检查预加载资源
 	if resource_dict.has(resource_name):
@@ -111,10 +158,22 @@ func _get_resource(resource_name: String, resource_type: ResourceType, resource_
 	# 检查动态缓存
 	var cache_key = "%s_%s" % [ResourceType.keys()[resource_type], resource_name]
 	if resource_cache.has(cache_key):
+		var cache_entry = resource_cache[cache_key]
+		# 更新访问统计
+		cache_entry["access_count"] += 1
+		cache_entry["timestamp"] = Time.get_unix_time_from_system()
 		performance_stats["cache_hits"] += 1
-		return resource_cache[cache_key]
+		return cache_entry["resource"]
 	
-	# 缓存未命中
+	# 尝试按需加载资源
+	var loaded_resource = _load_resource_on_demand(resource_name, resource_type)
+	if loaded_resource:
+		performance_stats["cache_misses"] += 1
+		# 将资源添加到对应的字典中
+		resource_dict[resource_name] = loaded_resource
+		return loaded_resource
+	
+	# 资源加载失败
 	performance_stats["cache_misses"] += 1
 	performance_stats["failed_loads"] += 1
 	
@@ -122,6 +181,48 @@ func _get_resource(resource_name: String, resource_type: ResourceType, resource_
 	push_error(error_msg)
 	resource_load_failed.emit(resource_name, error_msg)
 	return null
+
+# 按需加载资源
+func _load_resource_on_demand(resource_name: String, resource_type: ResourceType) -> Resource:
+	var type_key = ResourceType.keys()[resource_type].to_lower() + "s"
+	
+	# 检查资源路径配置
+	if resource_paths.has(type_key) and resource_paths[type_key].has(resource_name):
+		var resource_path = resource_paths[type_key][resource_name]
+		
+		# 检查文件是否存在
+		if ResourceLoader.exists(resource_path):
+			var resource = load(resource_path)
+			if resource:
+				performance_stats["total_loads"] += 1
+				print("按需加载资源: %s" % resource_name)
+				return resource
+	
+	return null
+
+# 按名称加载资源（用于预加载）
+func _load_resource_by_name(resource_name: String) -> void:
+	# 确定资源类型
+	for type_key in resource_paths:
+		if resource_paths[type_key].has(resource_name):
+			var resource_path = resource_paths[type_key][resource_name]
+			var resource_type = _get_resource_type_from_key(type_key)
+			load_resource_async(resource_path, resource_name, resource_type)
+			break
+
+# 从类型键获取资源类型枚举
+func _get_resource_type_from_key(type_key: String) -> ResourceType:
+	match type_key:
+		"sounds":
+			return ResourceType.SOUND
+		"music":
+			return ResourceType.MUSIC
+		"sprites":
+			return ResourceType.SPRITE
+		"scenes":
+			return ResourceType.SCENE
+		_:
+			return ResourceType.OTHER
 
 # 异步加载资源
 func load_resource_async(resource_path: String, resource_name: String, resource_type: ResourceType) -> void:
@@ -200,7 +301,7 @@ func _check_load_progress(request: Dictionary, timer: Timer) -> void:
 			# 继续等待
 			pass
 
-# 缓存资源
+# 缓存资源（优化版）
 func _cache_resource(resource_name: String, resource_type: ResourceType, resource: Resource) -> void:
 	var cache_key = "%s_%s" % [ResourceType.keys()[resource_type], resource_name]
 	
@@ -208,22 +309,107 @@ func _cache_resource(resource_name: String, resource_type: ResourceType, resourc
 	if resource_cache.size() >= max_cache_size:
 		_cleanup_old_cache_entries()
 	
-	resource_cache[cache_key] = resource
+	# 添加时间戳和优先级信息
+	var cache_entry = {
+		"resource": resource,
+		"timestamp": Time.get_unix_time_from_system(),
+		"access_count": 1,
+		"priority": resource_priorities.get(resource_name, ResourcePriority.MEDIUM)
+	}
+	
+	resource_cache[cache_key] = cache_entry
 	_update_memory_usage()
+	
+	# 同时添加到对应的主字典中以提高访问速度
+	match resource_type:
+		ResourceType.SOUND:
+			sounds[resource_name] = resource
+		ResourceType.MUSIC:
+			music[resource_name] = resource
+		ResourceType.SPRITE:
+			sprites[resource_name] = resource
+		ResourceType.SCENE:
+			scenes[resource_name] = resource
 
-# 清理旧的缓存条目
+# 清理旧的缓存条目（智能清理）
 func _cleanup_old_cache_entries() -> void:
-	# 简单的LRU实现：移除一半的缓存
-	# 使用显式整数转换避免类型转换警告
-	var half_size = int(resource_cache.size() / 2.0)
-	var keys_to_remove = resource_cache.keys().slice(0, half_size)
-	for key in keys_to_remove:
+	var current_time = Time.get_unix_time_from_system()
+	var entries_to_remove = []
+	
+	# 收集需要清理的条目（基于优先级和访问频率）
+	for cache_key in resource_cache:
+		var entry = resource_cache[cache_key]
+		var age = current_time - entry.timestamp
+		var priority = entry.priority
+		var access_count = entry.access_count
+		
+		# 清理策略：低优先级且长时间未访问的资源
+		var should_remove = false
+		if priority == ResourcePriority.LOW and age > 600:  # 10分钟
+			should_remove = true
+		elif priority == ResourcePriority.MEDIUM and age > 1800 and access_count < 3:  # 30分钟且访问次数少
+			should_remove = true
+		elif age > 3600:  # 1小时以上的资源（除了关键资源）
+			if priority != ResourcePriority.CRITICAL:
+				should_remove = true
+		
+		if should_remove:
+			entries_to_remove.append(cache_key)
+	
+	# 如果智能清理不够，强制清理一些条目
+	if entries_to_remove.size() < resource_cache.size() / 4:
+		# 按访问次数和时间排序，移除最少使用的
+		var sorted_entries = []
+		for cache_key in resource_cache:
+			var entry = resource_cache[cache_key]
+			if entry.priority != ResourcePriority.CRITICAL:
+				sorted_entries.append({"key": cache_key, "score": entry.access_count * 1000 - (current_time - entry.timestamp)})
+		
+		sorted_entries.sort_custom(func(a, b): return a.score < b.score)
+		
+		# 移除评分最低的条目
+		var additional_removals = min(10, sorted_entries.size())
+		for i in range(additional_removals):
+			entries_to_remove.append(sorted_entries[i].key)
+	
+	# 执行清理
+	for key in entries_to_remove:
 		resource_cache.erase(key)
+	
+	if entries_to_remove.size() > 0:
+		print("缓存清理完成，移除了 %d 个条目" % entries_to_remove.size())
 
-# 更新内存使用统计
+# 更新内存使用统计（增强版）
 func _update_memory_usage() -> void:
-	# 简化的内存使用计算
-	performance_stats["memory_usage"] = resource_cache.size() * 1024  # 假设每个资源1KB
+	# 更精确的内存使用估算
+	var total_memory = 0
+	for cache_key in resource_cache:
+		var entry = resource_cache[cache_key]
+		var resource = entry.resource
+		
+		# 根据资源类型估算内存使用
+		if resource is Texture2D:
+			var texture = resource as Texture2D
+			total_memory += texture.get_width() * texture.get_height() * 4  # RGBA
+		elif resource is AudioStream:
+			total_memory += 1024 * 1024  # 假设1MB音频
+		elif resource is PackedScene:
+			total_memory += 512 * 1024  # 假设512KB场景
+		else:
+			total_memory += 1024  # 默认1KB
+	
+	performance_stats["memory_usage"] = total_memory
+	
+	# 动态内存阈值管理
+	var memory_threshold = 64 * 1024 * 1024  # 64MB基础阈值
+	if OS.get_static_memory_usage_by_type().size() > 0:
+		# 根据系统内存动态调整
+		memory_threshold = min(memory_threshold * 2, 128 * 1024 * 1024)
+	
+	# 如果内存使用过高，触发清理
+	if performance_stats["memory_usage"] > memory_threshold:
+		print("内存使用过高 (%d MB)，触发缓存清理" % (performance_stats["memory_usage"] / 1024 / 1024))
+		_cleanup_cache()
 
 # 定期清理缓存
 func _cleanup_cache() -> void:
@@ -238,6 +424,47 @@ func _cleanup_cache() -> void:
 		print("资源缓存已清理，释放内存: %.2f MB" % memory_mb)
 	
 	performance_stats["last_cleanup_time"] = current_time
+
+# 初始化关键资源
+func _initialize_critical_resources() -> void:
+	print("开始初始化关键资源...")
+	
+	# 预加载关键音效
+	for sound_name in critical_sounds:
+		if critical_sounds[sound_name]:
+			sounds[sound_name] = critical_sounds[sound_name]
+	
+	# 预加载关键精灵
+	for sprite_name in critical_sprites:
+		if critical_sprites[sprite_name]:
+			sprites[sprite_name] = critical_sprites[sprite_name]
+	
+	print("关键资源初始化完成")
+
+# 异步预加载高优先级资源
+func _preload_high_priority_resources() -> void:
+	print("开始异步预加载高优先级资源...")
+	
+	for resource_name in resource_priorities:
+		var priority = resource_priorities[resource_name]
+		if priority == ResourcePriority.HIGH:
+			# 异步加载高优先级资源
+			_load_resource_by_name(resource_name)
+	
+	print("高优先级资源预加载队列已启动")
+
+# 获取资源类型从缓存键
+func _get_resource_type_from_key(cache_key: String) -> ResourceType:
+	if cache_key.begins_with("SOUND_"):
+		return ResourceType.SOUND
+	elif cache_key.begins_with("MUSIC_"):
+		return ResourceType.MUSIC
+	elif cache_key.begins_with("SPRITE_"):
+		return ResourceType.SPRITE
+	elif cache_key.begins_with("SCENE_"):
+		return ResourceType.SCENE
+	else:
+		return ResourceType.SOUND  # 默认值
 
 # 获取性能统计
 func get_performance_stats() -> Dictionary:
@@ -263,28 +490,6 @@ func clear_cache_by_type(resource_type: ResourceType) -> void:
 	
 	_update_memory_usage()
 
-# 播放音效的便捷方法
-func play_sound(sound_name: String, parent_node: Node = null, volume_db: float = -10.0) -> AudioStreamPlayer:
-	var sound = get_sound(sound_name)
-	if sound:
-		var audio_player = AudioStreamPlayer.new()
-		audio_player.stream = sound
-		audio_player.volume_db = volume_db
-		
-		# 如果提供了父节点，添加到父节点
-		if parent_node:
-			parent_node.add_child(audio_player)
-		else:
-			# 否则添加到场景树的根节点
-			var scene_tree = Engine.get_main_loop() as SceneTree
-			if scene_tree:
-				scene_tree.current_scene.add_child(audio_player)
-		
-		# 播放音效
-		audio_player.play()
-		
-		# 设置音频播放完成后自动清理
-		audio_player.finished.connect(func(): audio_player.queue_free())
-		
-		return audio_player
-	return null
+# 注意：音频播放功能已迁移到AudioManager
+# 请使用 AudioManager.play_sfx() 和 AudioManager.play_music() 来播放音频
+# 此处保留音频资源获取功能以供AudioManager使用

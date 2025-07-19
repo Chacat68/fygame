@@ -172,7 +172,11 @@
 - `get_music(music_name: String) -> AudioStream`
 - `get_sprite(sprite_name: String) -> Texture2D`
 - `get_scene(scene_name: String) -> PackedScene`
-- `play_sound(sound_name: String, parent_node: Node, volume_db: float) -> AudioStreamPlayer`
+
+**注意**：音频播放功能已迁移到专门的`AudioManager`系统，请使用以下方法：
+- `AudioManager.play_sfx(sound_name: String, volume_db: float, pitch: float, priority: int) -> AudioStreamPlayer`
+- `AudioManager.play_music(music_name: String, volume_db: float, loop: bool) -> AudioStreamPlayer`
+- `AudioManager.play_music_with_fade_in(music_name: String, fade_duration: float) -> AudioStreamPlayer`
 
 ### 单例模式
 

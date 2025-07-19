@@ -6,7 +6,7 @@ func enter():
 		player.animated_sprite.play("jump")
 	# 播放跳跃音效
 	# 使用AutoLoad的ResourceManager播放音效
-	ResourceManager.play_sound("jump", player)
+	AudioManager.play_sfx("jump")
 
 func physics_process(delta: float):
 	# 应用重力
@@ -38,6 +38,6 @@ func physics_process(delta: float):
 		player.velocity.y = player.JUMP_VELOCITY
 		player.jumps_made += 1
 		# 播放跳跃音效
-		ResourceManager.play_sound("jump", player)
+		AudioManager.play_sfx("jump")
 	
 	return null

@@ -185,7 +185,7 @@ func _on_unlock_skill(skill_name: String):
 		_update_ui()
 		skill_upgraded.emit(skill_name, 1)
 		# 播放解锁音效
-		ResourceManager.play_sound("power_up", self)
+		AudioManager.play_sfx("power_up")
 
 func _on_upgrade_skill(skill_name: String):
 	if skill_manager and skill_manager.upgrade_skill(skill_name):
@@ -193,7 +193,7 @@ func _on_upgrade_skill(skill_name: String):
 		_update_ui()
 		skill_upgraded.emit(skill_name, new_level)
 		# 播放升级音效
-		ResourceManager.play_sound("power_up", self)
+		AudioManager.play_sfx("power_up")
 
 func _on_close_button_pressed():
 	ui_closed.emit()

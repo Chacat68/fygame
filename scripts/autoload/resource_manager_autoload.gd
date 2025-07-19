@@ -33,6 +33,5 @@ func get_sprite(sprite_name: String) -> Texture2D:
 func get_scene(scene_name: String) -> PackedScene:
 	return _resource_manager_instance.get_scene(scene_name)
 
-# 播放音效的便捷方法
-func play_sound(sound_name: String, parent_node: Node = null, volume_db: float = -10.0) -> AudioStreamPlayer:
-	return _resource_manager_instance.play_sound(sound_name, parent_node, volume_db)
+# 注意：音频播放功能已迁移到AudioManager
+# 请使用 AudioManager.play_sfx() 和 AudioManager.play_music() 来播放音频
