@@ -102,4 +102,4 @@
 
 ## 详细文档
 
-更详细的技能系统设计文档请参考：`/docs/design/skill_system_design.md`
+更详细的技能系统设计文档请参考：`/docs/modules/skill_system.md`
