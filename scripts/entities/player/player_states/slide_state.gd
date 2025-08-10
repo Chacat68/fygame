@@ -80,8 +80,7 @@ func enter():
     player.animated_sprite.play("slide")
     
     # 播放滑铲音效
-    if ResourceManager.has_sound("slide"):
-        AudioManager.play_sound("slide")
+    AudioManager.play_sfx("slide")
     
     # 启用攻击区域
     slide_attack_area.monitoring = true
@@ -131,7 +130,7 @@ func physics_process(delta):
     
     return null
 
-func handle_input(event):
+func handle_input():
     """处理滑铲状态下的输入"""
     # 3级滑铲技能：滑铲结束时可以直接跳跃
     var skill_level = player.skill_manager.get_skill_level("slide")
@@ -200,15 +199,14 @@ func _deal_slide_damage(enemy):
     
     # 播放攻击音效
     if ResourceManager.has_sound("slide_hit"):
-        AudioManager.play_sound("slide_hit")
+        AudioManager.play_sfx("slide_hit")
     
     # 创建伤害飘字
-    if FloatingTextManager:
-        FloatingTextManager.create_floating_text(
-            str(slide_damage),
-            enemy.global_position,
-            Color.ORANGE
-        )
+    FloatingTextManager.create_floating_text(
+        str(slide_damage),
+        enemy.global_position,
+        Color.ORANGE
+    )
     
     print("滑铲命中敌人: ", enemy.name, " 伤害: ", slide_damage)
 

@@ -85,7 +85,7 @@ func physics_process(delta):
     
     return null
 
-func handle_input(event):
+func handle_input():
     """处理贴墙滑行状态下的输入"""
     # 检测跳跃输入
     if Input.is_action_just_pressed("jump"):

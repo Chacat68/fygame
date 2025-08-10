@@ -2,7 +2,7 @@ extends Node
 
 # 音频管理器
 # 专门负责游戏中所有音频的播放、管理和优化
-class_name AudioManager
+# 注意：此脚本作为AutoLoad单例使用，不应使用class_name
 
 # 信号定义
 signal audio_finished(audio_id: String)
@@ -70,8 +70,8 @@ func _setup_audio_buses() -> void:
 
 # 设置淡入淡出动画
 func _setup_fade_tween() -> void:
-	_fade_tween = Tween.new()
-	add_child(_fade_tween)
+	_fade_tween = create_tween()
+	# Tween在Godot 4中不需要add_child
 
 # 设置清理计时器
 func _setup_cleanup_timer() -> void:

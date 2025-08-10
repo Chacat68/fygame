@@ -24,6 +24,7 @@ Music="*res://scenes/managers/music.tscn"
 GameState="*res://scenes/managers/game_state.tscn"
 ResourceManager="*res://scripts/autoload/resource_manager_autoload.gd"
 AudioManager="*res://scripts/managers/audio_manager.gd"
+FloatingTextManager="*res://scripts/managers/floating_text_manager.gd"
 
 [display]
 

@@ -1,7 +1,7 @@
 extends Node
 
 # 飘字管理器 - 负责协调多个飘字的排列和动画（性能优化版）
-class_name FloatingTextManager
+# 注意：此脚本作为AutoLoad单例使用，不应使用class_name
 
 # 预加载飘字场景
 var floating_text_scene = preload("res://scenes/managers/floating_text.tscn")
@@ -51,6 +51,31 @@ func _setup_cleanup_timer():
 func _periodic_cleanup():
 	_cleanup_finished_texts()
 	_cleanup_object_pool()
+
+# 创建飘字效果（简化版本，兼容旧接口）
+func create_floating_text(text: String, position: Vector2, color: Color = Color.WHITE) -> void:
+	# 获取游戏根节点
+	var game_root = get_tree().get_root().get_node_or_null("Game")
+	if not game_root:
+		game_root = get_tree().get_root()
+	
+	# 获取或创建飘字实例
+	var floating_text = _get_floating_text_from_pool()
+	
+	# 重置和配置飘字
+	_configure_floating_text(floating_text, position, text)
+	
+	# 设置颜色
+	if floating_text.has_method("set_color"):
+		floating_text.set_color(color)
+	elif floating_text.get_node_or_null("Label"):
+		floating_text.get_node("Label").modulate = color
+	
+	# 添加到游戏场景
+	game_root.add_child(floating_text)
+	
+	# 添加到活跃列表
+	active_floating_texts.append(floating_text)
 
 # 创建排列的飘字效果（对象池优化版）
 func create_arranged_floating_text(base_position: Vector2, text: String, game_root: Node) -> void:

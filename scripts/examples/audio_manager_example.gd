@@ -9,7 +9,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	
 	# 播放背景音乐（带淡入效果）
-	AudioManager.play_music("adventure", true, true)
+	AudioManager.play_music("adventure")
 	
 	# 设置音量
 	AudioManager.set_bus_volume(AudioManager.AudioBus.MUSIC, 0.7)

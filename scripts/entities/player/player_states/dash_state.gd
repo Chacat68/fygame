@@ -45,8 +45,7 @@ func enter():
     player.animated_sprite.play("dash")
     
     # 播放冲刺音效
-    if ResourceManager.has_sound("dash"):
-        AudioManager.play_sound("dash")
+    AudioManager.play_sfx("dash")
     
     # 发射技能使用信号
     player.skill_manager.skill_used.emit("dash")
@@ -90,7 +89,7 @@ func physics_process(delta):
     
     return null
 
-func handle_input(event):
+func handle_input():
     """处理冲刺状态下的输入"""
     # 冲刺期间不处理其他输入
     return null
@@ -109,7 +108,7 @@ func _on_dash_hit_enemy(enemy):
         
         # 播放撞击特效
         if ResourceManager.has_sound("dash_hit"):
-            AudioManager.play_sound("dash_hit")
+            AudioManager.play_sfx("dash_hit")
 
 func can_transition_to(new_state: String) -> bool:
     """检查是否可以转换到新状态"""

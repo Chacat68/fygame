@@ -35,7 +35,7 @@ func enter():
     
     # 播放墙跳音效
     if ResourceManager.has_sound("wall_jump"):
-        AudioManager.play_sound("wall_jump")
+        AudioManager.play_sfx("wall_jump")
     
     # 发射技能使用信号
     player.skill_manager.skill_used.emit("wall_jump")
@@ -86,7 +86,7 @@ func physics_process(delta):
     
     return null
 
-func handle_input(event):
+func handle_input():
     """处理墙跳状态下的输入"""
     # 检测连续墙跳
     if Input.is_action_just_pressed("jump") and _can_wall_slide():
@@ -158,4 +158,4 @@ func _on_wall_jump_land():
     
     # 播放着地音效
     if ResourceManager.has_sound("land"):
-        AudioManager.play_sound("land")
+        AudioManager.play_sfx("land")
