@@ -333,8 +333,8 @@ func _record_load_performance(load_time: float, success: bool) -> void:
 		load_times = load_times.slice(-10)
 
 # 预加载下一关卡队列
-func _queue_next_level_preload(current_level_id: int) -> void:
-	var next_level_id = current_level_id + 1
+func _queue_next_level_preload(level_id: int) -> void:
+	var next_level_id = level_id + 1
 	if level_config and next_level_id <= level_config.get_level_count():
 		if not _scene_cache.has(next_level_id) and not _preload_queue.has(next_level_id):
 			_preload_queue.append(next_level_id)
