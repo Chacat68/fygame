@@ -78,34 +78,55 @@ func _update_cooldowns(delta: float):
 # 技能解锁和升级
 func unlock_skill(skill_name: String) -> bool:
     """解锁技能"""
+    # 检查输入参数
+    if skill_name.is_empty():
+        push_error("技能名称不能为空")
+        return false
+    
+    # 检查技能是否存在
     if not skills.has(skill_name):
-        print("技能不存在: ", skill_name)
+        push_error("技能不存在: %s" % skill_name)
         return false
     
     var skill = skills[skill_name]
+    
+    # 检查技能数据完整性
+    if not skill or not skill.has("is_unlocked") or not skill.has("unlock_cost"):
+        push_error("技能数据不完整: %s" % skill_name)
+        return false
+    
     if skill.is_unlocked:
         print("技能已解锁: ", skill_name)
         return false
     
-    if player_coins < skill.unlock_cost:
-        print("金币不足，需要: ", skill.unlock_cost, " 当前: ", player_coins)
+    var unlock_cost = skill.get("unlock_cost", 0)
+    if player_coins < unlock_cost:
+        print("金币不足，需要: ", unlock_cost, " 当前: ", player_coins)
         return false
     
     # 扣除金币并解锁技能
-    _spend_coins(skill.unlock_cost)
+    _spend_coins(unlock_cost)
     skill.is_unlocked = true
     skill.current_level = 1
     
     skill_unlocked.emit(skill_name)
-    print("技能已解锁: ", skill.name)
+    print("技能已解锁: ", skill.get("name", skill_name))
     return true
 
 func upgrade_skill(skill_name: String) -> bool:
     """升级技能"""
+    # 检查技能是否存在
     if not skills.has(skill_name):
+        push_error("技能不存在: %s" % skill_name)
         return false
     
     var skill = skills[skill_name]
+    
+    # 检查技能数据完整性
+    if not skill or not skill.has("is_unlocked") or not skill.has("current_level") or not skill.has("max_level"):
+        push_error("技能数据不完整: %s" % skill_name)
+        return false
+    
     if not skill.is_unlocked:
         print("技能未解锁: ", skill_name)
         return false
@@ -114,7 +135,17 @@ func upgrade_skill(skill_name: String) -> bool:
         print("技能已达到最高等级: ", skill_name)
         return false
     
-    var upgrade_cost = skill.upgrade_costs[skill.current_level - 1]
+    # 安全地获取升级费用
+    if not skill.has("upgrade_costs") or not skill.upgrade_costs is Array:
+        push_error("技能升级费用配置错误: %s" % skill_name)
+        return false
+    
+    var cost_index = skill.current_level - 1
+    if cost_index < 0 or cost_index >= skill.upgrade_costs.size():
+        push_error("技能升级费用索引越界: %s, 索引: %d, 数组大小: %d" % [skill_name, cost_index, skill.upgrade_costs.size()])
+        return false
+    
+    var upgrade_cost = skill.upgrade_costs[cost_index]
     if player_coins < upgrade_cost:
         print("金币不足，需要: ", upgrade_cost, " 当前: ", player_coins)
         return false
@@ -130,10 +161,20 @@ func upgrade_skill(skill_name: String) -> bool:
 # 技能使用检查
 func can_use_skill(skill_name: String) -> bool:
     """检查是否可以使用技能"""
+    # 检查输入参数
+    if skill_name.is_empty():
+        return false
+    
+    # 检查技能是否存在
     if not skills.has(skill_name):
         return false
     
     var skill = skills[skill_name]
+    
+    # 检查技能数据完整性
+    if not skill or not skill.has("is_unlocked") or not skill.has("current_level"):
+        return false
+    
     if not skill.is_unlocked or skill.current_level == 0:
         return false
     
@@ -150,9 +191,15 @@ func use_skill(skill_name: String) -> bool:
     
     var skill = skills[skill_name]
     
+    # 检查技能数据完整性（额外检查cooldown_time字段）
+    if not skill.has("cooldown_time"):
+        push_error("技能冷却时间配置缺失: %s" % skill_name)
+        return false
+    
     # 开始冷却
-    if skill.cooldown_time > 0:
-        skill_cooldowns[skill_name] = skill.cooldown_time
+    var cooldown_time = skill.get("cooldown_time", 0.0)
+    if cooldown_time > 0:
+        skill_cooldowns[skill_name] = cooldown_time
     
     skill_used.emit(skill_name)
     return true
@@ -160,15 +207,35 @@ func use_skill(skill_name: String) -> bool:
 # 技能参数获取
 func get_skill_level(skill_name: String) -> int:
     """获取技能等级"""
+    # 检查输入参数
+    if skill_name.is_empty():
+        return 0
+    
+    # 检查技能是否存在
     if not skills.has(skill_name):
         return 0
-    return skills[skill_name].current_level
+    
+    var skill = skills[skill_name]
+    if not skill or not skill.has("current_level"):
+        return 0
+    
+    return skill.get("current_level", 0)
 
 func is_skill_unlocked(skill_name: String) -> bool:
     """检查技能是否已解锁"""
+    # 检查输入参数
+    if skill_name.is_empty():
+        return false
+    
+    # 检查技能是否存在
     if not skills.has(skill_name):
         return false
-    return skills[skill_name].is_unlocked
+    
+    var skill = skills[skill_name]
+    if not skill or not skill.has("is_unlocked"):
+        return false
+    
+    return skill.get("is_unlocked", false)
 
 func get_skill_cooldown_remaining(skill_name: String) -> float:
     """获取技能剩余冷却时间"""
@@ -267,15 +334,27 @@ func save_skill_data() -> Dictionary:
 
 func load_skill_data(data: Dictionary):
     """加载技能数据"""
-    if data.has("unlocked_skills"):
-        for skill_id in data.unlocked_skills:
-            if skills.has(skill_id):
-                skills[skill_id].is_unlocked = true
+    # 检查输入参数
+    if not data or data.is_empty():
+        push_error("技能数据为空")
+        return
     
-    if data.has("skill_levels"):
+    # 加载已解锁的技能
+    if data.has("unlocked_skills") and data.unlocked_skills is Array:
+        for skill_id in data.unlocked_skills:
+            if skill_id is String and skills.has(skill_id):
+                var skill = skills[skill_id]
+                if skill and skill.has("is_unlocked"):
+                    skill.is_unlocked = true
+    
+    # 加载技能等级
+    if data.has("skill_levels") and data.skill_levels is Dictionary:
         for skill_id in data.skill_levels.keys():
-            if skills.has(skill_id):
-                skills[skill_id].current_level = data.skill_levels[skill_id]
+            if skill_id is String and skills.has(skill_id):
+                var skill = skills[skill_id]
+                var level = data.skill_levels[skill_id]
+                if skill and skill.has("current_level") and level is int and level >= 0:
+                    skill.current_level = level
 
 # 调试功能
 func _debug_unlock_all_skills():

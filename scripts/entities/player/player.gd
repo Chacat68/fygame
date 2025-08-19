@@ -100,11 +100,30 @@ func _init_states():
 
 # 切换状态
 func _change_state(new_state_name: String):
+	# 检查状态名称是否有效
+	if new_state_name.is_empty():
+		push_error("状态名称不能为空")
+		return
+	
+	# 检查状态是否存在
+	if not states.has(new_state_name):
+		push_error("状态不存在: %s" % new_state_name)
+		return
+	
+	# 检查新状态是否与当前状态相同
+	if current_state and current_state == states[new_state_name]:
+		return  # 避免重复切换到相同状态
+	
+	# 退出当前状态
 	if current_state:
 		current_state.exit()
 	
+	# 切换到新状态
 	current_state = states[new_state_name]
-	current_state.enter()
+	if current_state:
+		current_state.enter()
+	else:
+		push_error("状态对象为空: %s" % new_state_name)
 
 # 物理处理
 func _physics_process(delta):

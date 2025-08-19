@@ -187,28 +187,40 @@ func _load_resource_on_demand(resource_name: String, resource_type: ResourceType
 	var type_key = ResourceType.keys()[resource_type].to_lower() + "s"
 	
 	# 检查资源路径配置
-	if resource_paths.has(type_key) and resource_paths[type_key].has(resource_name):
-		var resource_path = resource_paths[type_key][resource_name]
-		
-		# 检查文件是否存在
-		if ResourceLoader.exists(resource_path):
-			var resource = load(resource_path)
-			if resource:
-				performance_stats["total_loads"] += 1
-				print("按需加载资源: %s" % resource_name)
-				return resource
+	if not resource_paths.has(type_key):
+		var error_msg = "Resource type not configured: %s" % type_key
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		return null
 	
-	return null
+	if not resource_paths[type_key].has(resource_name):
+		var error_msg = "Resource name not found in configuration: %s" % resource_name
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		return null
+	
+	var resource_path = resource_paths[type_key][resource_name]
+	
+	# 检查文件是否存在
+	if not ResourceLoader.exists(resource_path):
+		var error_msg = "Resource file does not exist: %s" % resource_path
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		return null
+	
+	# 尝试加载资源
+	var resource = load(resource_path)
+	if not resource:
+		var error_msg = "Failed to load resource from path: %s" % resource_path
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		return null
+	
+	performance_stats["total_loads"] += 1
+	print("按需加载资源成功: %s" % resource_name)
+	return resource
 
-# 按名称加载资源（用于预加载）
-func _load_resource_by_name(resource_name: String) -> void:
-	# 确定资源类型
-	for type_key in resource_paths:
-		if resource_paths[type_key].has(resource_name):
-			var resource_path = resource_paths[type_key][resource_name]
-			var resource_type = _get_resource_type_from_key(type_key)
-			load_resource_async(resource_path, resource_name, resource_type)
-			break
+
 
 # 从类型键获取资源类型枚举
 func _get_resource_type_from_key(type_key: String) -> ResourceType:
@@ -225,15 +237,55 @@ func _get_resource_type_from_key(type_key: String) -> ResourceType:
 			return ResourceType.OTHER
 
 # 异步加载资源
-func load_resource_async(resource_path: String, resource_name: String, resource_type: ResourceType) -> void:
+func load_resource_async(resource_path: String, resource_name: String, resource_type: ResourceType, options: Dictionary = {}) -> void:
+	# 增强的参数验证
+	if typeof(resource_path) != TYPE_STRING or resource_path.is_empty():
+		var error_msg = "无效的资源路径: %s" % str(resource_path)
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		_send_user_notification("资源加载错误", "资源路径无效", "error")
+		return
+	
+	if typeof(resource_name) != TYPE_STRING or resource_name.is_empty():
+		var error_msg = "无效的资源名称: %s (路径: %s)" % [str(resource_name), resource_path]
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		_send_user_notification("资源加载错误", "资源名称无效", "error")
+		return
+	
+	# 检查文件是否存在
+	if not ResourceLoader.exists(resource_path):
+		var error_msg = "资源文件不存在: %s" % resource_path
+		push_error(error_msg)
+		resource_load_failed.emit(resource_name, error_msg)
+		_send_user_notification("资源加载错误", "找不到资源文件: %s" % resource_path.get_file(), "error")
+		return
+	
+	# 检查资源是否已在缓存中
+	var cache_key = "%s_%s" % [ResourceType.keys()[resource_type], resource_name]
+	if resource_cache.has(cache_key):
+		print("资源已在缓存中: %s" % resource_name)
+		_send_user_notification("资源加载", "资源 %s 已缓存" % resource_name, "info")
+		return
+	
+	# 检查资源是否已在加载队列中
+	for request in loading_queue:
+		if request.name == resource_name and request.type == resource_type:
+			print("资源已在加载队列中: %s" % resource_name)
+			return
+	
 	var load_request = {
 		"path": resource_path,
 		"name": resource_name,
 		"type": resource_type,
-		"timestamp": Time.get_unix_time_from_system()
+		"timestamp": Time.get_unix_time_from_system(),
+		"retry_count": 0,
+		"max_retries": options.get("max_retries", 3),
+		"priority": options.get("priority", ResourcePriority.MEDIUM)
 	}
 	
 	loading_queue.append(load_request)
+	print("添加资源到加载队列: %s (类型: %s)" % [resource_name, ResourceType.keys()[resource_type]])
 	_process_loading_queue()
 
 # 处理加载队列
@@ -260,11 +312,74 @@ func _process_loading_queue() -> void:
 
 # 等待资源加载完成
 func _wait_for_resource_load(request: Dictionary) -> void:
+	# 记录加载开始时间
+	request["load_start_time"] = Time.get_unix_time_from_system()
+	
 	var load_timer = Timer.new()
 	load_timer.wait_time = 0.1
 	load_timer.timeout.connect(_check_load_progress.bind(request, load_timer))
 	add_child(load_timer)
 	load_timer.start()
+
+# 处理加载失败
+func _handle_load_failure(request: Dictionary, error_reason: String) -> void:
+	var retry_count = request.get("retry_count", 0)
+	var max_retries = request.get("max_retries", 3)
+	
+	# 检查是否可以重试
+	if retry_count < max_retries:
+		request["retry_count"] = retry_count + 1
+		var delay_time = pow(2, retry_count) * 0.5  # 指数退避：0.5s, 1s, 2s
+		
+		print("资源加载失败，%d秒后重试 (%d/%d): %s - %s" % [delay_time, retry_count + 1, max_retries, request.name, error_reason])
+		
+		# 延迟重试
+		var retry_timer = Timer.new()
+		retry_timer.wait_time = delay_time
+		retry_timer.one_shot = true
+		retry_timer.timeout.connect(_retry_load_resource.bind(request, retry_timer))
+		add_child(retry_timer)
+		retry_timer.start()
+	else:
+		# 重试次数用尽，最终失败
+		var final_error_msg = "资源加载最终失败 (重试%d次): %s - %s" % [max_retries, request.name, error_reason]
+		push_error(final_error_msg)
+		resource_load_failed.emit(request.name, final_error_msg)
+		performance_stats["failed_loads"] += 1
+		
+		# 发送用户友好的错误通知
+		_send_user_notification("资源加载失败", "无法加载 %s，请检查文件是否存在" % request.name, "error")
+
+# 重试加载资源
+func _retry_load_resource(request: Dictionary, timer: Timer) -> void:
+	timer.queue_free()
+	
+	# 重新检查文件是否存在
+	if not ResourceLoader.exists(request.path):
+		_handle_load_failure(request, "文件不存在")
+		return
+	
+	# 重新开始异步加载
+	ResourceLoader.load_threaded_request(request.path)
+	_wait_for_resource_load(request)
+
+# 发送用户通知
+func _send_user_notification(title: String, message: String, type: String = "info") -> void:
+	# 这里可以连接到UI系统显示通知
+	# 目前只在控制台输出
+	match type:
+		"error":
+			print("[错误] %s: %s" % [title, message])
+		"warning":
+			print("[警告] %s: %s" % [title, message])
+		"success":
+			print("[成功] %s: %s" % [title, message])
+		_:
+			print("[信息] %s: %s" % [title, message])
+	
+	# 如果有UI管理器，可以发送信号
+	# if UIManager:
+	#     UIManager.show_notification(title, message, type)
 
 # 检查加载进度
 func _check_load_progress(request: Dictionary, timer: Timer) -> void:
@@ -277,29 +392,29 @@ func _check_load_progress(request: Dictionary, timer: Timer) -> void:
 				_cache_resource(request.name, request.type, resource)
 				resource_loaded.emit(request.name, ResourceType.keys()[request.type])
 				performance_stats["total_loads"] += 1
+				print("资源加载成功: %s (类型: %s)" % [request.name, ResourceType.keys()[request.type]])
 			else:
-				var error_msg = "Failed to load resource: %s" % request.path
-				push_error(error_msg)
-				resource_load_failed.emit(request.name, error_msg)
-				performance_stats["failed_loads"] += 1
+				_handle_load_failure(request, "资源加载返回空值")
 			
 			timer.queue_free()
 			is_loading = false
 			_process_loading_queue()
 		
 		ResourceLoader.THREAD_LOAD_FAILED:
-			var error_msg = "Resource loading failed: %s" % request.path
-			push_error(error_msg)
-			resource_load_failed.emit(request.name, error_msg)
-			performance_stats["failed_loads"] += 1
-			
+			_handle_load_failure(request, "资源加载失败")
 			timer.queue_free()
 			is_loading = false
 			_process_loading_queue()
 		
 		ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-			# 继续等待
-			pass
+			# 继续等待，但检查超时
+			var current_time = Time.get_unix_time_from_system()
+			var load_time = current_time - request.get("load_start_time", current_time)
+			if load_time > 30.0:  # 30秒超时
+				_handle_load_failure(request, "资源加载超时")
+				timer.queue_free()
+				is_loading = false
+				_process_loading_queue()
 
 # 缓存资源（优化版）
 func _cache_resource(resource_name: String, resource_type: ResourceType, resource: Resource) -> void:
@@ -472,9 +587,49 @@ func get_performance_stats() -> Dictionary:
 
 # 预加载资源列表
 func preload_resources(resource_list: Array[Dictionary]) -> void:
+	if resource_list.is_empty():
+		print("[警告] 预加载资源列表为空")
+		return
+	
+	var valid_resources = []
+	var invalid_resources = []
+	
+	# 验证所有资源信息
 	for resource_info in resource_list:
-		if resource_info.has("path") and resource_info.has("name") and resource_info.has("type"):
-			load_resource_async(resource_info.path, resource_info.name, resource_info.type)
+		if not resource_info.has("path") or not resource_info.has("name") or not resource_info.has("type"):
+			invalid_resources.append("缺少必要字段: %s" % str(resource_info))
+			continue
+			
+		if resource_info.path.is_empty():
+			invalid_resources.append("空路径: %s" % resource_info.name)
+			continue
+			
+		if resource_info.name.is_empty():
+			invalid_resources.append("空名称: %s" % resource_info.path)
+			continue
+			
+		if not ResourceLoader.exists(resource_info.path):
+			invalid_resources.append("文件不存在: %s" % resource_info.path)
+			continue
+			
+		valid_resources.append(resource_info)
+	
+	# 报告验证结果
+	if not invalid_resources.is_empty():
+		var error_msg = "预加载验证发现 %d 个无效资源:\n%s" % [invalid_resources.size(), "\n".join(invalid_resources)]
+		push_warning(error_msg)
+		_send_user_notification("资源预加载警告", "发现 %d 个无效资源" % invalid_resources.size(), "warning")
+	
+	if valid_resources.is_empty():
+		_send_user_notification("资源预加载失败", "没有有效的资源可以加载", "error")
+		return
+	
+	# 开始预加载有效资源
+	print("开始预加载 %d 个资源..." % valid_resources.size())
+	_send_user_notification("资源预加载", "正在预加载 %d 个资源" % valid_resources.size(), "info")
+	
+	for resource_info in valid_resources:
+		load_resource_async(resource_info.path, resource_info.name, resource_info.type)
 
 # 清理指定类型的缓存
 func clear_cache_by_type(resource_type: ResourceType) -> void:
