@@ -25,6 +25,10 @@ func _ready():
     if GameState:
         GameState.coins_changed.connect(_on_coins_changed)
 
+func init_skills():
+    """公共接口：初始化技能系统"""
+    _initialize_skills()
+
 func _initialize_skills():
     """初始化所有技能数据"""
     # 冲刺技能

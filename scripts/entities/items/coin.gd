@@ -86,7 +86,7 @@ func _show_floating_text(player):
 	var text = "金币+" + str(coin_value)
 	
 	# 使用飘字管理器创建排列的飘字效果
-	var text_manager = FloatingTextManager.get_instance()
+	var text_manager = preload("res://scripts/managers/floating_text_manager.gd").get_instance()
 	text_manager.create_arranged_floating_text(world_position, text, game_root)
 
 # 当动画播放完成后，移除金币

@@ -70,8 +70,16 @@ func _setup_audio_buses() -> void:
 
 # 设置淡入淡出动画
 func _setup_fade_tween() -> void:
+	# 在Godot 4中，Tween应该在需要时创建，而不是预先创建
+	# _fade_tween将在需要时通过_get_fade_tween()获取
+	pass
+
+# 获取或创建淡入淡出Tween
+func _get_fade_tween() -> Tween:
+	if _fade_tween and _fade_tween.is_valid():
+		return _fade_tween
 	_fade_tween = create_tween()
-	# Tween在Godot 4中不需要add_child
+	return _fade_tween
 
 # 设置清理计时器
 func _setup_cleanup_timer() -> void:
@@ -319,18 +327,19 @@ func _reset_audio_player(player: AudioStreamPlayer) -> void:
 
 # 淡入音乐
 func _fade_in_music(music_player: AudioStreamPlayer) -> void:
-	if _fade_tween:
-		_fade_tween.tween_property(music_player, "volume_db", 0.0, _fade_duration)
+	var tween = _get_fade_tween()
+	tween.tween_property(music_player, "volume_db", 0.0, _fade_duration)
 
 # 淡出音频
 func _fade_out_audio(audio_player: AudioStreamPlayer, callback: Callable) -> void:
-	if _fade_tween:
-		_fade_tween.tween_property(audio_player, "volume_db", -80.0, _audio_config["fade_out_duration"])
-		_fade_tween.tween_callback(callback)
+	var tween = _get_fade_tween()
+	tween.tween_property(audio_player, "volume_db", -80.0, _audio_config["fade_out_duration"])
+	tween.tween_callback(callback)
 
 # 清理低优先级音效
-func _cleanup_low_priority_sfx(new_priority: float) -> void:
+func _cleanup_low_priority_sfx(_new_priority: float) -> void:
 	# 简单实现：移除最旧的音效
+	# TODO: 未来可以使用_new_priority参数来实现更智能的清理策略
 	if _active_sfx_players.size() > 0:
 		var oldest_id = _active_sfx_players.keys()[0]
 		stop_sfx(oldest_id, false)
