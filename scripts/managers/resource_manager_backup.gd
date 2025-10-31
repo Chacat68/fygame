@@ -517,7 +517,9 @@ func _update_memory_usage() -> void:
 	
 	# 动态内存阈值管理
 	var memory_threshold = 64 * 1024 * 1024  # 64MB基础阈值
-	if OS.get_static_memory_usage_by_type().size() > 0:
+	# 注意：在 Godot 4.x 中，get_static_memory_usage_by_type() 已被移除
+	# 使用 Performance 单例来获取内存信息
+	if Performance.get_monitor(Performance.MEMORY_STATIC) > 0:
 		# 根据系统内存动态调整
 		memory_threshold = min(memory_threshold * 2, 128 * 1024 * 1024)
 	

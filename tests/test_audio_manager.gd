@@ -127,7 +127,7 @@ func test_max_players_limit():
 		if player:
 			players.append(player)
 	
-	assert_le(audio_manager._active_sfx_players.size(), audio_manager._max_sfx_players, "活跃播放器数量不应超过最大限制")
+	assert_lte(audio_manager._active_sfx_players.size(), audio_manager._max_sfx_players, "活跃播放器数量不应超过最大限制")
 
 func test_signal_emissions():
 	# 测试信号发射

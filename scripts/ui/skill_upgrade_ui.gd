@@ -157,6 +157,8 @@ func _get_skill_description(skill_name: String, level: int) -> String:
 					return "增强冲刺：距离200，冷却2.5秒"
 				3:
 					return "完美冲刺：距离250，冷却2秒，冲刺时无敌"
+				_:
+					return "冲刺技能"
 		"wall_jump":
 			match level:
 				0:
@@ -167,6 +169,8 @@ func _get_skill_description(skill_name: String, level: int) -> String:
 					return "增强墙跳：可连续墙跳3次，墙跳力度增强"
 				3:
 					return "完美墙跳：可连续墙跳4次，墙跳恢复空中跳跃"
+				_:
+					return "墙跳技能"
 		"slide":
 			match level:
 				0:
@@ -177,6 +181,8 @@ func _get_skill_description(skill_name: String, level: int) -> String:
 					return "增强滑铲：伤害30，持续1.0秒，速度更快"
 				3:
 					return "完美滑铲：伤害40，持续1.2秒，可跳跃取消"
+				_:
+					return "滑铲技能"
 		_:
 			return "未知技能"
 

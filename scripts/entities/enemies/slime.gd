@@ -249,15 +249,13 @@ func _show_floating_text(player):
 	# 计算基础位置（在怪物头顶附近）
 	var base_position = global_position + Vector2(0, -15)
 	
-	# 使用飘字管理器创建排列的飘字效果
-	var text_manager = preload("res://scripts/managers/floating_text_manager.gd").get_instance()
-	
+	# 使用飘字管理器创建排列的飘字效果（直接使用 AutoLoad 单例）
 	# 创建击杀飘字
-	text_manager.create_arranged_floating_text(base_position, "击杀+1", game_root)
+	FloatingTextManager.create_arranged_floating_text(base_position, "击杀+1", game_root)
 	
 	# 创建金币飘字
 	var coin_value = config.coin_value if config else 1
-	text_manager.create_arranged_floating_text(base_position, "金币+" + str(coin_value), game_root)
+	FloatingTextManager.create_arranged_floating_text(base_position, "金币+" + str(coin_value), game_root)
 
 # 安全获取GameManager节点
 func _get_game_manager() -> Node:
