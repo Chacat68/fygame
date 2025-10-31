@@ -15,7 +15,7 @@ config/description="在帝国陨落百年后，曾被魔法屏障保护的遗忘
 config/version="1.0"
 config/tags=PackedStringArray("2d", "策略")
 run/main_scene="res://scenes/ui/game_start_screen.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]

@@ -21,23 +21,11 @@ var cleanup_timer: Timer                # 定期清理计时器
 var last_cleanup_time = 0.0             # 上次清理时间
 var cleanup_interval = 2.0              # 清理间隔（秒）
 
-# 单例实例
-static var instance: FloatingTextManager
+# AutoLoad 单例，无需手动实例化
 
-# 获取单例实例（优化版）
-static func get_instance() -> FloatingTextManager:
-	if not instance:
-		instance = FloatingTextManager.new()
-		# 将管理器添加到场景树中
-		var game_root = Engine.get_main_loop().get_root().get_node_or_null("Game")
-		if game_root:
-			game_root.add_child(instance)
-		else:
-			Engine.get_main_loop().get_root().add_child(instance)
-		
-		# 初始化定期清理
-		instance._setup_cleanup_timer()
-	return instance
+# 初始化函数
+func _ready():
+	_setup_cleanup_timer()
 
 # 设置定期清理计时器
 func _setup_cleanup_timer():

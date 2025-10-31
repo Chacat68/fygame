@@ -127,9 +127,6 @@ func _change_state(new_state_name: String):
 
 # 物理处理
 func _physics_process(delta):
-	# 更新技能冷却
-	skill_manager.update_cooldowns(delta)
-	
 	# 处理无敌状态
 	_handle_invincibility(delta)
 	

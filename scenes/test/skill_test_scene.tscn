@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c8x7qr2ywxve"]
+[gd_scene load_steps=6 format=3 uid="uid://bkm5n3p8qwrt2"]
 
 [ext_resource type="Script" path="res://scripts/test/skill_test_scene.gd" id="1_skill_test"]
 [ext_resource type="PackedScene" path="res://scenes/ui/skill_upgrade_ui.tscn" id="2_skill_ui"]
