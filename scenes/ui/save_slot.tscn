@@ -1,0 +1,76 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxv8kj5h2ydmw"]
+
+[ext_resource type="Script" path="res://scripts/ui/save_slot_ui.gd" id="1_0dmwp"]
+
+[node name="SaveSlot" type="PanelContainer"]
+custom_minimum_size = Vector2(400, 120)
+offset_right = 400.0
+offset_bottom = 120.0
+script = ExtResource("1_0dmwp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SlotLabel" type="Label" parent="VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "存档槽位 1"
+
+[node name="Info" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="SaveTimeLabel" type="Label" parent="VBoxContainer/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "保存时间: 2024-01-01 12:00"
+
+[node name="LevelLabel" type="Label" parent="VBoxContainer/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "关卡: 1"
+
+[node name="CoinsLabel" type="Label" parent="VBoxContainer/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "金币: 0"
+
+[node name="PlayTimeLabel" type="Label" parent="VBoxContainer/Info"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "游戏时长: 0分钟"
+
+[node name="EmptyLabel" type="Label" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 16
+text = "空存档槽位"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="LoadButton" type="Button" parent="VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(100, 32)
+layout_mode = 2
+text = "读取存档"
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(80, 32)
+layout_mode = 2
+text = "删除"
+
+[node name="NewGameButton" type="Button" parent="VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(100, 32)
+layout_mode = 2
+text = "新游戏"

@@ -13,6 +13,10 @@ func enter():
     # 禁用碰撞体，防止与其他物体交互
     if player.has_node("CollisionShape2D"):
         player.get_node("CollisionShape2D").set_deferred("disabled", true)
+    
+    # 更新死亡统计
+    if GameState:
+        GameState.add_death()
 
 func physics_process(delta: float):
     # 应用重力（如果需要的话）
@@ -31,6 +35,10 @@ func physics_process(delta: float):
         # 设置GameState中的复活标志
         if Engine.has_singleton("GameState"):
             Engine.get_singleton("GameState").set_player_respawning(true)
+        
+        # 触发自动保存（保存死亡前的进度）
+        if SaveManager:
+            SaveManager.trigger_auto_save()
         
         # 使用call_deferred延迟重新加载场景，确保在物理处理完成后执行
         player.get_tree().call_deferred("reload_current_scene")

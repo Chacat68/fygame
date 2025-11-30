@@ -207,6 +207,11 @@ func _perform_teleport(_body):
 	if not teleport_manager:
 		_initialize_managers()
 	
+	# 传送前自动保存游戏进度
+	if SaveManager:
+		SaveManager.trigger_auto_save()
+		print("[Portal] 传送前自动保存完成")
+	
 	# 如果指定了目标场景，直接传送到该场景
 	if destination_scene != "":
 		if teleport_manager:

@@ -1,5 +1,10 @@
 extends Node
 
+# 信号定义
+signal coins_changed(new_amount: int)
+signal level_changed(new_level: int)
+signal health_changed(new_health: int)
+
 # 全局游戏状态变量
 var player_respawning = false  # 玩家是否正在复活
 var current_level = 1         # 当前关卡编号
@@ -7,7 +12,11 @@ var max_unlocked_level = 1    # 最大已解锁关卡
 var total_coins = 0           # 玩家收集的总金币数
 var completed_levels = {}     # 已完成的关卡记录 {关卡编号: 是否完成}
 
-# 游戏存档文件路径
+# 统计数据
+var total_deaths: int = 0     # 总死亡次数
+var total_kills: int = 0      # 总击杀次数
+
+# 游戏存档文件路径（保留兼容性）
 const SAVE_FILE_PATH = "user://game_progress.json"
 
 # 设置玩家复活状态
@@ -117,3 +126,44 @@ func get_next_level():
 # 检查关卡是否已解锁
 func is_level_unlocked(level_number):
 	return level_number <= max_unlocked_level
+
+# ==================== 金币管理 ====================
+
+# 添加金币
+func add_coins(amount: int) -> void:
+	total_coins += amount
+	coins_changed.emit(total_coins)
+	print("[GameState] 金币增加: %d, 当前总数: %d" % [amount, total_coins])
+
+# 移除金币
+func remove_coins(amount: int) -> bool:
+	if total_coins >= amount:
+		total_coins -= amount
+		coins_changed.emit(total_coins)
+		print("[GameState] 金币减少: %d, 当前总数: %d" % [amount, total_coins])
+		return true
+	return false
+
+# 获取当前金币数
+func get_coins() -> int:
+	return total_coins
+
+# ==================== 统计数据 ====================
+
+# 增加死亡次数
+func add_death() -> void:
+	total_deaths += 1
+	print("[GameState] 死亡次数: %d" % total_deaths)
+
+# 增加击杀次数
+func add_kill() -> void:
+	total_kills += 1
+	print("[GameState] 击杀次数: %d" % total_kills)
+
+# 获取死亡次数
+func get_total_deaths() -> int:
+	return total_deaths
+
+# 获取击杀次数
+func get_total_kills() -> int:
+	return total_kills
