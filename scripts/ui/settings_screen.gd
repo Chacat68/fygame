@@ -158,11 +158,24 @@ func _apply_window_mode(mode: int) -> void:
 func _apply_resolution(index: int) -> void:
 	if index >= 0 and index < resolutions.size():
 		var resolution = resolutions[index]
+		
+		# 检查当前窗口模式，全屏模式下不改变窗口大小
+		var current_mode = DisplayServer.window_get_mode()
+		if current_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
+			# 全屏模式下只更新视口大小
+			get_tree().root.content_scale_size = resolution
+			return
+		
+		# 窗口模式下同时设置窗口大小和视口大小
 		DisplayServer.window_set_size(resolution)
+		get_tree().root.content_scale_size = resolution
+		
 		# 居中窗口
 		var screen_size = DisplayServer.screen_get_size()
 		var window_pos = (screen_size - resolution) / 2
 		DisplayServer.window_set_position(window_pos)
+		
+		print("[设置] 分辨率已设置为: %dx%d" % [resolution.x, resolution.y])
 
 # 应用主音量
 func _apply_master_volume(volume: float) -> void:
