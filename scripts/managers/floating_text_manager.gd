@@ -123,7 +123,14 @@ func _reset_floating_text(floating_text: Node2D):
 func _cleanup_finished_texts():
 	for i in range(active_floating_texts.size() - 1, -1, -1):
 		var text_node = active_floating_texts[i]
-		if not is_instance_valid(text_node) or text_node.is_queued_for_deletion() or text_node.animation_finished:
+		# 检查节点是否有效
+		if not is_instance_valid(text_node):
+			# 节点已被释放，直接从列表移除
+			active_floating_texts.remove_at(i)
+			continue
+		
+		# 检查是否需要回收
+		if text_node.is_queued_for_deletion() or text_node.animation_finished:
 			# 回收到对象池
 			_recycle_floating_text(text_node)
 			active_floating_texts.remove_at(i)
