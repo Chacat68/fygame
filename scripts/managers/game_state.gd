@@ -27,10 +27,14 @@ func set_player_respawning(value):
 
 # 设置当前关卡
 func set_current_level(level_number):
+	var old_level = current_level
 	current_level = level_number
 	# 如果当前关卡大于最大已解锁关卡，更新最大已解锁关卡
 	if current_level > max_unlocked_level:
 		max_unlocked_level = current_level
+	# 发射关卡变化信号
+	if old_level != current_level:
+		level_changed.emit(current_level)
 	# 保存游戏进度
 	save_game_progress()
 
