@@ -53,6 +53,11 @@ func _on_quit_button_pressed():
 	# 退出游戏
 	get_tree().quit()
 
+# 设置按钮点击事件
+func _on_settings_button_pressed():
+	# 打开设置界面
+	get_tree().change_scene_to_file("res://scenes/ui/settings_screen.tscn")
+
 # 安全获取游戏状态节点的辅助方法
 func _get_game_state():
 	# 优先从自动加载中获取 GameState

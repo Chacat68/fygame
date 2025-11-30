@@ -41,9 +41,8 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [node name="SaveSlot" type="PanelContainer"]
-custom_minimum_size = Vector2(500, 140)
-offset_right = 500.0
-offset_bottom = 140.0
+custom_minimum_size = Vector2(0, 140)
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 script = ExtResource("1_0dmwp")
 
