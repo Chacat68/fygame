@@ -1,76 +1,161 @@
-[gd_scene load_steps=2 format=3 uid="uid://cxv8kj5h2ydmw"]
+[gd_scene load_steps=7 format=3 uid="uid://cxv8kj5h2ydmw"]
 
 [ext_resource type="Script" path="res://scripts/ui/save_slot_ui.gd" id="1_0dmwp"]
+[ext_resource type="FontFile" uid="uid://b6r7dxfqw7m1t" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font_bold"]
+[ext_resource type="FontFile" uid="uid://cgtm6q3wwjhm8" path="res://assets/fonts/PixelOperator8.ttf" id="3_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot"]
+bg_color = Color(0.15, 0.15, 0.2, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.32, 0.5, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.25, 0.24, 0.35, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.38, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.35, 0.33, 0.5, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.48, 0.7, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="SaveSlot" type="PanelContainer"]
-custom_minimum_size = Vector2(400, 120)
-offset_right = 400.0
-offset_bottom = 120.0
+custom_minimum_size = Vector2(500, 140)
+offset_right = 500.0
+offset_bottom = 140.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
 script = ExtResource("1_0dmwp")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
 
-[node name="Header" type="HBoxContainer" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="SlotLabel" type="Label" parent="VBoxContainer/Header"]
+[node name="SlotIcon" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "💾"
+
+[node name="SlotLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.95, 0.9, 0.7, 1)
+theme_override_fonts/font = ExtResource("2_font_bold")
+theme_override_font_sizes/font_size = 18
 text = "存档槽位 1"
 
-[node name="Info" type="VBoxContainer" parent="VBoxContainer"]
+[node name="Info" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 4
 
-[node name="SaveTimeLabel" type="Label" parent="VBoxContainer/Info"]
+[node name="SaveTimeLabel" type="Label" parent="MarginContainer/VBoxContainer/Info"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "保存时间: 2024-01-01 12:00"
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
+text = "🕐 保存时间: 2024-01-01 12:00"
 
-[node name="LevelLabel" type="Label" parent="VBoxContainer/Info"]
+[node name="InfoRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/Info"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "关卡: 1"
+theme_override_constants/separation = 24
 
-[node name="CoinsLabel" type="Label" parent="VBoxContainer/Info"]
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer/Info/InfoRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "金币: 0"
+theme_override_colors/font_color = Color(0.6, 0.85, 0.6, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
+text = "🗺️ 关卡: 1"
 
-[node name="PlayTimeLabel" type="Label" parent="VBoxContainer/Info"]
+[node name="CoinsLabel" type="Label" parent="MarginContainer/VBoxContainer/Info/InfoRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "游戏时长: 0分钟"
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
+text = "🪙 金币: 0"
 
-[node name="EmptyLabel" type="Label" parent="VBoxContainer"]
+[node name="PlayTimeLabel" type="Label" parent="MarginContainer/VBoxContainer/Info/InfoRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.75, 0.9, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 12
+text = "⏱️ 游戏时长: 0分钟"
+
+[node name="EmptyLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 16
-text = "空存档槽位"
+theme_override_colors/font_color = Color(0.5, 0.5, 0.55, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 14
+text = "📭 空存档槽位"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Buttons" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
-[node name="LoadButton" type="Button" parent="VBoxContainer/Buttons"]
-custom_minimum_size = Vector2(100, 32)
+[node name="LoadButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(110, 36)
 layout_mode = 2
-text = "读取存档"
+theme_override_colors/font_color = Color(0.9, 0.95, 0.9, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "▶ 读取存档"
 
-[node name="DeleteButton" type="Button" parent="VBoxContainer/Buttons"]
-custom_minimum_size = Vector2(80, 32)
+[node name="DeleteButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(80, 36)
 layout_mode = 2
-text = "删除"
+theme_override_colors/font_color = Color(0.95, 0.7, 0.7, 1)
+theme_override_colors/font_hover_color = Color(1, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "🗑 删除"
 
-[node name="NewGameButton" type="Button" parent="VBoxContainer/Buttons"]
-custom_minimum_size = Vector2(100, 32)
+[node name="NewGameButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
+custom_minimum_size = Vector2(110, 36)
 layout_mode = 2
-text = "新游戏"
+theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
+theme_override_colors/font_hover_color = Color(0.85, 0.95, 1, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+text = "🆕 新游戏"

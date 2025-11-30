@@ -44,7 +44,7 @@ static func create_new(slot: int = 0) -> SaveData:
 	save.completed_levels = {}
 	save.total_coins = 0
 	save.current_health = 100
-	save.unlocked_skills = []
+	save.unlocked_skills = [] as Array[String]
 	save.skill_levels = {}
 	save.music_volume = 1.0
 	save.sfx_volume = 1.0
@@ -76,7 +76,7 @@ static func from_dictionary(data: Dictionary) -> SaveData:
 	
 	# 技能数据
 	var skills_array = data.get("unlocked_skills", [])
-	save.unlocked_skills = []
+	save.unlocked_skills = [] as Array[String]
 	for skill in skills_array:
 		save.unlocked_skills.append(str(skill))
 	save.skill_levels = data.get("skill_levels", {})
@@ -185,7 +185,9 @@ func duplicate_save() -> SaveData:
 	copy.total_coins = total_coins
 	copy.current_health = current_health
 	
-	copy.unlocked_skills = unlocked_skills.duplicate()
+	copy.unlocked_skills = [] as Array[String]
+	for skill in unlocked_skills:
+		copy.unlocked_skills.append(skill)
 	copy.skill_levels = skill_levels.duplicate()
 	
 	copy.music_volume = music_volume

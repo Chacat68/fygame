@@ -8,10 +8,11 @@ signal save_created(slot: int)
 signal back_pressed()
 
 # UI组件引用
-@onready var title_label: Label = $Panel/VBoxContainer/TitleLabel
-@onready var slots_container: VBoxContainer = $Panel/VBoxContainer/SlotsContainer
-@onready var back_button: Button = $Panel/VBoxContainer/BackButton
+@onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/TitleContainer/TitleLabel
+@onready var slots_container: VBoxContainer = $Panel/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer
+@onready var back_button: Button = $Panel/MarginContainer/VBoxContainer/BackButton
 @onready var confirm_dialog: ConfirmationDialog = $ConfirmDialog
+@onready var panel: PanelContainer = $Panel
 
 # 存档槽位UI场景
 var save_slot_scene: PackedScene = preload("res://scenes/ui/save_slot.tscn")
@@ -19,6 +20,9 @@ var save_slot_scene: PackedScene = preload("res://scenes/ui/save_slot.tscn")
 # 当前操作
 var pending_action: String = ""
 var pending_slot: int = -1
+
+# 动画相关
+var tween: Tween
 
 func _ready() -> void:
 	# 连接返回按钮
@@ -31,6 +35,22 @@ func _ready() -> void:
 	
 	# 刷新存档列表
 	refresh_save_list()
+	
+	# 播放进入动画
+	_play_enter_animation()
+
+# 播放进入动画
+func _play_enter_animation() -> void:
+	if panel:
+		panel.modulate.a = 0
+		panel.scale = Vector2(0.95, 0.95)
+		
+		tween = create_tween()
+		tween.set_parallel(true)
+		tween.set_ease(Tween.EASE_OUT)
+		tween.set_trans(Tween.TRANS_BACK)
+		tween.tween_property(panel, "modulate:a", 1.0, 0.3)
+		tween.tween_property(panel, "scale", Vector2.ONE, 0.3)
 
 # 刷新存档列表
 func refresh_save_list() -> void:
