@@ -3,6 +3,7 @@ extends Node
 # 信号定义
 signal coins_changed(new_amount: int)
 signal level_changed(new_level: int)
+@warning_ignore("unused_signal")
 signal health_changed(new_health: int)
 
 # 全局游戏状态变量
