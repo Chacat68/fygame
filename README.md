@@ -27,7 +27,7 @@ fygame/
 │   ├── guides/                    # 使用指南
 │   └── system/                    # 系统文档
 ├── scenes/                        # Godot场景文件
-│   ├── levels/                    # 关卡场景 (level1.tscn, level2.tscn...)
+│   ├── levels/                    # 关卡场景 (lv2.tscn, lv3.tscn...)
 │   ├── player/                    # 玩家相关场景
 │   ├── enemies/                   # 敌人场景
 │   ├── ui/                        # 用户界面场景
@@ -125,12 +125,14 @@ fygame/
 **核心组件：**
 - **LevelConfig资源** (`scripts/systems/level_config.gd`) - 统一管理关卡配置信息
 - **LevelManager管理器** (`scripts/managers/level_manager.gd`) - 负责关卡加载、切换和状态管理
-- **关卡场景** (`scenes/levels/level*.tscn`) - 遵循标准命名规范
+- **关卡场景** (`scenes/levels/lv*.tscn`) - 遵循标准命名规范
 
 **关卡命名规范：**
-- 场景文件：`level1.tscn`, `level2.tscn`, `level3.tscn`
-- 脚本文件：`level1.gd`, `level2.gd`, `level3.gd`
+- 场景文件：`lv{数字}.tscn`（如：`lv2.tscn`, `lv3.tscn`）
+- 脚本文件：`level{数字}.gd`（如：`level2.gd`, `level3.gd`）
 - 统一的数字编号便于管理和扩展
+
+> 备注：当前项目场景从 `lv2.tscn` 开始，`lv1.tscn` 预留未使用。
 
 详细设计文档：[关卡设计指南](docs/design/integrated_level_design_guide.md)
 
@@ -179,7 +181,7 @@ fygame/
 ## 开发指南
 
 ### 添加新关卡
-1. 在 `scenes/levels/` 创建 `level{数字}.tscn`
+1. 在 `scenes/levels/` 创建 `lv{数字}.tscn`
 2. 在 `scripts/levels/` 创建对应脚本（如需要）
 3. 更新 `resources/level_config.tres`
 4. 更新 `docs/design/level_index.md`

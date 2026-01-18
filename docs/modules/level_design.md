@@ -107,8 +107,8 @@ NewLevel (Node2D)
    - 管理关卡进度和分数系统
 
 3. **关卡命名规范**
-   - 场景文件：`level1.tscn`, `level2.tscn`, `level3.tscn`
-   - 脚本文件：`level1.gd`, `level2.gd`, `level3.gd`
+   - 场景文件：`lv{数字}.tscn`（如：`lv2.tscn`, `lv3.tscn`）
+   - 脚本文件：`level{数字}.gd`（如：`level2.gd`, `level3.gd`）
    - 统一的数字编号便于管理和扩展
 
 ### TileMap设置
