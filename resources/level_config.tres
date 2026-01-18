@@ -8,12 +8,12 @@ levels = Array[Dictionary]([
 	{
 		"id": 1,
 		"name": "关卡1",
-		"scene_path": "res://scenes/levels/lv2.tscn",
+		"scene_path": "res://scenes/levels/lv1.tscn",
 		"script_path": "",
 		"theme": "基础教学",
 		"difficulty": "简单",
 		"status": "完成",
-		"description": "当前使用lv2作为关卡1的场景",
+		"description": "占位关卡场景",
 		"unlock_condition": "",
 		"target_score": 100,
 		"time_limit": 0
