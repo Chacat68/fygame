@@ -90,6 +90,7 @@ scenes/
 │   ├── portal.tscn               # 传送门场景
 │   └── slime.tscn                # 史莱姆敌人场景
 ├── levels/                        # 关卡场景
+│   ├── lv1.tscn                  # 关卡1场景文件
 │   ├── lv2.tscn                  # 关卡2场景文件
 │   └── lv3.tscn                  # 关卡3场景文件
 ├── managers/                      # 管理器场景
@@ -298,7 +299,7 @@ shaders/
 ## 文件命名规范
 
 ### 场景文件命名
-- 关卡场景：`lv{数字}.tscn`（如：lv2.tscn, lv3.tscn）
+- 关卡场景：`lv{数字}.tscn`（如：lv1.tscn, lv2.tscn, lv3.tscn）
 - 功能场景：`功能名称.tscn`（小写字母+下划线）
 - 组件场景：`组件名称.tscn`
 - 测试场景：`test_功能名称.tscn`

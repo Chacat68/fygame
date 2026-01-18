@@ -39,7 +39,7 @@ func _setup_test_portals():
 	# 配置场景传送门
 	if scene_portal:
 		scene_portal.configure_for_scene_teleport(
-			"res://scenes/levels/lv2.tscn",
+			"res://scenes/levels/lv1.tscn",
 			Vector2(200, 150)
 		)
 		scene_portal.position = Vector2(300, 100)

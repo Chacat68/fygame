@@ -27,7 +27,7 @@ func _setup_mock_level_config():
 		{
 			"id": 1,
 			"name": "测试关卡1",
-			"scene_path": "res://scenes/levels/lv2.tscn",
+			"scene_path": "res://scenes/levels/lv1.tscn",
 			"unlocked": true,
 			"completed": false
 		},

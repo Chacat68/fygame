@@ -41,7 +41,7 @@ func _ready():
     
     # 配置传送到指定场景
     portal.configure_for_scene_teleport(
-        "res://scenes/levels/lv2.tscn",
+        "res://scenes/levels/lv1.tscn",
         Vector2(100, 200)  # 传送到的位置
     )
     
@@ -131,8 +131,8 @@ add_to_group("game_manager")
 传送门会输出详细的调试信息：
 ```
 传送门配置为关卡传送模式，目标关卡：2
-传送门配置为场景传送模式，目标场景：res://scenes/levels/lv2.tscn
-[TeleportManager] 场景传送完成：res://scenes/levels/lv2.tscn 位置：(100, 200)
+传送门配置为场景传送模式，目标场景：res://scenes/levels/lv1.tscn
+[TeleportManager] 场景传送完成：res://scenes/levels/lv1.tscn 位置：(100, 200)
 ```
 
 ## 示例场景
