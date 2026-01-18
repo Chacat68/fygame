@@ -67,7 +67,8 @@ func _check_script_organization():
 		"res://scripts/managers/",
 		"res://scripts/entities/",
 		"res://scripts/ui/",
-		"res://scripts/states/"
+		"res://scripts/systems/",
+		"res://scripts/entities/player/player_states/"
 	]
 	
 	for dir_path in script_dirs:
@@ -154,10 +155,10 @@ func _check_script_dependencies():
 	var critical_scripts = [
 		"res://scripts/managers/level_manager.gd",
 		"res://scripts/managers/resource_manager.gd",
-		"res://scripts/managers/game_config.gd",
-		"res://scripts/managers/level_config.gd",
-		"res://scripts/entities/player.gd",
-		"res://scripts/states/player_state.gd"
+		"res://scripts/systems/game_config.gd",
+		"res://scripts/systems/level_config.gd",
+		"res://scripts/entities/player/player.gd",
+		"res://scripts/entities/player/player_states/player_state.gd"
 	]
 	
 	for script_path in critical_scripts:
@@ -226,20 +227,25 @@ func _check_for_performance_issues():
 func _check_large_textures():
 	report_lines.append("#### 纹理大小检查")
 	
-	var texture_dir = "res://assets/sprites/"
-	if DirAccess.dir_exists_absolute(texture_dir):
-		var dir = DirAccess.open(texture_dir)
-		if dir:
-			dir.list_dir_begin()
-			var file_name = dir.get_next()
-			while file_name != "":
-				if file_name.ends_with(".png") or file_name.ends_with(".jpg"):
-					var file_path = texture_dir + file_name
-					var file_size = FileAccess.get_file_as_bytes(file_path).size()
-					if file_size > 1024 * 1024:  # 1MB
-						report_lines.append("⚠ 大型纹理: %s (%.2f MB)" % [file_name, file_size / (1024.0 * 1024.0)])
-						issues_found += 1
-				file_name = dir.get_next()
+	var texture_dirs = [
+		"res://assets/sprites/",
+		"res://assets/images/"
+	]
+	
+	for texture_dir in texture_dirs:
+		if DirAccess.dir_exists_absolute(texture_dir):
+			var dir = DirAccess.open(texture_dir)
+			if dir:
+				dir.list_dir_begin()
+				var file_name = dir.get_next()
+				while file_name != "":
+					if file_name.ends_with(".png") or file_name.ends_with(".jpg"):
+						var file_path = texture_dir + file_name
+						var file_size = FileAccess.get_file_as_bytes(file_path).size()
+						if file_size > 1024 * 1024:  # 1MB
+							report_lines.append("⚠ 大型纹理: %s (%.2f MB)" % [file_name, file_size / (1024.0 * 1024.0)])
+							issues_found += 1
+					file_name = dir.get_next()
 
 func _check_audio_file_sizes():
 	report_lines.append("#### 音频文件大小检查")

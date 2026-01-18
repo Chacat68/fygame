@@ -13,6 +13,11 @@ signal return_to_menu()
 @onready var settings_button: Button = $Panel/VBoxContainer/SettingsButton
 @onready var menu_button: Button = $Panel/VBoxContainer/MenuButton
 @onready var save_status_label: Label = $Panel/VBoxContainer/SaveStatusLabel
+@onready var panel: PanelContainer = $Panel
+
+# 设置界面
+var settings_scene: PackedScene = preload("res://scenes/ui/settings_screen.tscn")
+var settings_screen: Control
 
 # 暂停状态
 var is_paused: bool = false
@@ -38,7 +43,10 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	# ESC键切换暂停状态
 	if event.is_action_pressed("ui_cancel"):
-		toggle_pause()
+		if settings_screen and is_instance_valid(settings_screen):
+			_on_settings_back()
+		else:
+			toggle_pause()
 		get_viewport().set_input_as_handled()
 
 # 切换暂停状态
@@ -98,8 +106,18 @@ func _show_save_status(success: bool) -> void:
 
 # 设置按钮回调
 func _on_settings_pressed() -> void:
-	# TODO: 打开设置界面
-	print("[PauseMenu] 设置功能待实现")
+	if settings_screen and is_instance_valid(settings_screen):
+		return
+	
+	settings_screen = settings_scene.instantiate()
+	settings_screen.set("return_to_main_menu_on_back", false)
+	add_child(settings_screen)
+	
+	if panel:
+		panel.visible = false
+	
+	if settings_screen.has_signal("back_pressed"):
+		settings_screen.back_pressed.connect(_on_settings_back)
 
 # 返回主菜单按钮回调
 func _on_menu_pressed() -> void:
@@ -115,3 +133,12 @@ func _on_menu_pressed() -> void:
 	
 	# 切换到主菜单
 	get_tree().change_scene_to_file("res://scenes/ui/game_start_screen.tscn")
+
+# 关闭设置界面
+func _on_settings_back() -> void:
+	if settings_screen and is_instance_valid(settings_screen):
+		settings_screen.queue_free()
+		settings_screen = null
+
+	if panel:
+		panel.visible = true

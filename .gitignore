@@ -1,6 +1,11 @@
 # Godot 4+ specific ignores
 .godot/
 
+# Godot import artifacts
+.import/
+*.import
+*.tmp
+
 # macOS system files
 .DS_Store
 **/.DS_Store

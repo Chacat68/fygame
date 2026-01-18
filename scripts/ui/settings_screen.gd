@@ -6,6 +6,9 @@ extends Control
 signal settings_changed()
 signal back_pressed()
 
+# 返回行为控制
+@export var return_to_main_menu_on_back: bool = true
+
 # UI组件引用
 @onready var window_mode_option: OptionButton = $Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/WindowModeContainer/WindowModeOption
 @onready var resolution_option: OptionButton = $Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/ResolutionContainer/ResolutionOption
@@ -218,7 +221,8 @@ func _on_apply_pressed() -> void:
 func _on_back_pressed() -> void:
 	save_settings()
 	back_pressed.emit()
-	get_tree().change_scene_to_file("res://scenes/ui/game_start_screen.tscn")
+	if return_to_main_menu_on_back:
+		get_tree().change_scene_to_file("res://scenes/ui/game_start_screen.tscn")
 
 # 保存设置
 func save_settings() -> void:

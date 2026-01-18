@@ -13,9 +13,13 @@ signal back_pressed()
 @onready var back_button: Button = $Panel/MarginContainer/VBoxContainer/BackButton
 @onready var confirm_dialog: ConfirmationDialog = $ConfirmDialog
 @onready var panel: PanelContainer = $Panel
+@onready var error_label: Label = $Panel/MarginContainer/VBoxContainer/ErrorLabel
 
 # 存档槽位UI场景
 var save_slot_scene: PackedScene = preload("res://scenes/ui/save_slot.tscn")
+
+# 关卡配置
+const LEVEL_CONFIG_PATH := "res://resources/level_config.tres"
 
 # 当前操作
 var pending_action: String = ""
@@ -147,23 +151,14 @@ func _create_new_game(slot: int) -> void:
 func _start_game_from_save() -> void:
 	# 获取当前关卡
 	var level = GameState.current_level
-	var level_scene_path = "res://scenes/levels/lv%d.tscn" % level
-	
-	# 检查关卡是否存在
-	if ResourceLoader.exists(level_scene_path):
-		get_tree().change_scene_to_file(level_scene_path)
-	else:
-		# 如果关卡不存在，加载默认关卡
-		print("[SaveUI] 关卡 %d 不存在，加载默认关卡" % level)
-		get_tree().change_scene_to_file("res://scenes/levels/lv2.tscn")
+	var level_scene_path = _resolve_level_scene_path(level)
+	get_tree().change_scene_to_file(level_scene_path)
 
 # 开始新游戏
 func _start_new_game() -> void:
-	# 从第一关开始（如果lv1不存在则用lv2）
-	if ResourceLoader.exists("res://scenes/levels/lv1.tscn"):
-		get_tree().change_scene_to_file("res://scenes/levels/lv1.tscn")
-	else:
-		get_tree().change_scene_to_file("res://scenes/levels/lv2.tscn")
+	# 从第一关开始（根据配置或文件自动回退）
+	var level_scene_path = _resolve_level_scene_path(1)
+	get_tree().change_scene_to_file(level_scene_path)
 
 # 返回按钮回调
 func _on_back_pressed() -> void:
@@ -174,4 +169,30 @@ func _on_back_pressed() -> void:
 # 显示错误信息
 func _show_error(message: String) -> void:
 	push_error("[SaveUI] %s" % message)
-	# TODO: 显示错误提示UI
+	if not error_label:
+		return
+	
+	error_label.text = "✗ %s" % message
+	error_label.visible = true
+	
+	await get_tree().create_timer(2.0).timeout
+	if error_label:
+		error_label.visible = false
+
+# 解析关卡场景路径
+func _resolve_level_scene_path(level: int) -> String:
+	# 优先使用关卡配置资源
+	if ResourceLoader.exists(LEVEL_CONFIG_PATH):
+		var config = load(LEVEL_CONFIG_PATH)
+		if config and config is LevelConfig:
+			var configured_path = config.get_level_scene_path(level)
+			if configured_path != "" and ResourceLoader.exists(configured_path):
+				return configured_path
+
+	# 回退到约定命名
+	var fallback_path = "res://scenes/levels/lv%d.tscn" % level
+	if ResourceLoader.exists(fallback_path):
+		return fallback_path
+
+	# 最后回退到已知关卡
+	return "res://scenes/levels/lv2.tscn"
