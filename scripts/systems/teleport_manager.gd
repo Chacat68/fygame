@@ -17,6 +17,8 @@ var last_teleport_time: float = 0.0
 
 # 传送特效节点
 var tween: Tween
+var _flash_layer: CanvasLayer
+var _flash_rect: ColorRect
 
 # 初始化传送管理器
 func _ready():
@@ -249,9 +251,61 @@ func _play_teleport_effect(from_position: Vector2, to_position: Vector2):
 	# 目前只是简单的调试输出
 	if config.log_teleport_events:
 		print("[TeleportManager] 播放传送特效：从 ", from_position, " 到 ", to_position)
-	
-	# TODO: 添加实际的特效实现
-	# 例如：粒子系统、闪光效果、音效等
+
+	# 屏幕闪烁
+	if config.screen_flash_enabled:
+		_play_screen_flash()
+
+	# 轻量级玩家淡入淡出已经由主流程处理，这里避免重复处理
+	# 可在此扩展粒子、音效等效果
+
+# 屏幕闪烁效果
+func _play_screen_flash() -> void:
+	_ensure_flash_overlay()
+
+	if not _flash_rect:
+		return
+
+	var viewport_rect = get_viewport().get_visible_rect()
+	_flash_rect.size = viewport_rect.size
+	_flash_rect.position = Vector2.ZERO
+	_flash_rect.visible = true
+	_flash_rect.color = Color(1, 1, 1, 0.0)
+
+	var flash_tween = create_tween()
+	flash_tween.set_trans(Tween.TRANS_SINE)
+	flash_tween.set_ease(Tween.EASE_OUT)
+	flash_tween.tween_property(_flash_rect, "color:a", 0.6, 0.05)
+	flash_tween.set_ease(Tween.EASE_IN)
+	flash_tween.tween_property(_flash_rect, "color:a", 0.0, 0.2)
+	flash_tween.tween_callback(func():
+		if _flash_rect:
+			_flash_rect.visible = false
+	)
+
+func _ensure_flash_overlay() -> void:
+	if _flash_layer and is_instance_valid(_flash_layer):
+		return
+
+	var tree = get_tree()
+	if not tree:
+		return
+
+	_flash_layer = CanvasLayer.new()
+	_flash_layer.layer = 100
+	_flash_layer.name = "TeleportFlashLayer"
+
+	_flash_rect = ColorRect.new()
+	_flash_rect.name = "TeleportFlashRect"
+	_flash_rect.anchor_left = 0.0
+	_flash_rect.anchor_top = 0.0
+	_flash_rect.anchor_right = 1.0
+	_flash_rect.anchor_bottom = 1.0
+	_flash_rect.visible = false
+	_flash_rect.color = Color(1, 1, 1, 0.0)
+
+	_flash_layer.add_child(_flash_rect)
+	tree.root.add_child(_flash_layer)
 
 # 获取当前配置
 func get_config() -> TeleportConfig:
