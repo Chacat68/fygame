@@ -15,6 +15,9 @@ var breathing_tween: Tween
 # var rotation_tween: Tween  # 旋转动画已禁用
 var particle_tween: Tween
 
+# 是否启用明暗呼吸效果（根据时间自动切换明暗）
+@export var enable_breathing_effect: bool = false
+
 # 管理器引用
 var teleport_manager: TeleportManager
 var level_manager: LevelManager
@@ -97,11 +100,14 @@ func _start_idle_animation():
 	# 获取传送门精灵
 	var portal_sprite = get_node_or_null("PortalSprite")
 	if portal_sprite:
-		# 创建呼吸效果动画
-		breathing_tween = create_tween()
-		breathing_tween.set_loops() # 无限循环
-		breathing_tween.tween_property(portal_sprite, "modulate", Color(1.3, 1.3, 1.3, 1.0), 1.5)
-		breathing_tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.5)
+		# 创建呼吸效果动画（可选）
+		if enable_breathing_effect:
+			breathing_tween = create_tween()
+			breathing_tween.set_loops() # 无限循环
+			breathing_tween.tween_property(portal_sprite, "modulate", Color(1.3, 1.3, 1.3, 1.0), 1.5)
+			breathing_tween.tween_property(portal_sprite, "modulate", Color(1.0, 1.0, 1.0, 1.0), 1.5)
+		else:
+			portal_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	
 		# 旋转动画已禁用 - 根据用户要求移除旋转效果
 		# rotation_tween = create_tween()
