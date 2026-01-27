@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://cset7k2m5iaxn"]
 
 [ext_resource type="Script" path="res://scripts/ui/settings_screen.gd" id="1_settings"]
-[ext_resource type="FontFile" uid="uid://b6r7dxfqw7m1t" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font_bold"]
-[ext_resource type="FontFile" uid="uid://cgtm6q3wwjhm8" path="res://assets/fonts/PixelOperator8.ttf" id="3_font"]
+[ext_resource type="FontFile" uid="uid://cqtu6tjh1hcr6" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font_bold"]
+[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="3_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.12, 0.12, 0.16, 0.95)

@@ -148,12 +148,12 @@ func _on_sfx_volume_changed(value: float) -> void:
 # 应用窗口模式
 func _apply_window_mode(mode: int) -> void:
 	match mode:
-		0:  # 窗口化
+		0: # 窗口化
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
-		1:  # 全屏
+		1: # 全屏
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		2:  # 无边框窗口
+		2: # 无边框窗口
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 
@@ -175,6 +175,7 @@ func _apply_resolution(index: int) -> void:
 		
 		# 居中窗口
 		var screen_size = DisplayServer.screen_get_size()
+		@warning_ignore("integer_division")
 		var window_pos = (screen_size - resolution) / 2
 		DisplayServer.window_set_position(window_pos)
 		
@@ -189,7 +190,7 @@ func _apply_master_volume(volume: float) -> void:
 	# 如果有音频管理器，也更新它
 	var audio_manager = get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method("set_bus_volume"):
-		audio_manager.set_bus_volume(0, volume)  # 0 = MASTER
+		audio_manager.set_bus_volume(0, volume) # 0 = MASTER
 
 # 应用音乐音量
 func _apply_music_volume(volume: float) -> void:
@@ -199,7 +200,7 @@ func _apply_music_volume(volume: float) -> void:
 	
 	var audio_manager = get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method("set_bus_volume"):
-		audio_manager.set_bus_volume(1, volume)  # 1 = MUSIC
+		audio_manager.set_bus_volume(1, volume) # 1 = MUSIC
 
 # 应用音效音量
 func _apply_sfx_volume(volume: float) -> void:
@@ -209,7 +210,7 @@ func _apply_sfx_volume(volume: float) -> void:
 	
 	var audio_manager = get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method("set_bus_volume"):
-		audio_manager.set_bus_volume(2, volume)  # 2 = SFX
+		audio_manager.set_bus_volume(2, volume) # 2 = SFX
 
 # 应用按钮点击
 func _on_apply_pressed() -> void:

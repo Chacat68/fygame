@@ -158,6 +158,7 @@ func _start_game_from_save() -> void:
 func _start_new_game() -> void:
 	# 从第一关开始（根据配置或文件自动回退）
 	var level_scene_path = _resolve_level_scene_path(1)
+	print("[SaveUI] 新游戏场景路径: %s" % level_scene_path)
 	get_tree().change_scene_to_file(level_scene_path)
 
 # 返回按钮回调
@@ -194,5 +195,5 @@ func _resolve_level_scene_path(level: int) -> String:
 	if ResourceLoader.exists(fallback_path):
 		return fallback_path
 
-	# 最后回退到已知关卡
-	return "res://scenes/levels/lv2.tscn"
+	# 最后回退到第一关
+	return "res://scenes/levels/lv1.tscn"

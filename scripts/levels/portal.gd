@@ -156,6 +156,7 @@ func _update_particle_amount(amount: int, particles: CPUParticles2D):
 func _on_body_entered(body):
 	# 检查是否为玩家，并且传送门激活且未在传送中
 	if body.is_in_group("player") and is_active and not is_teleporting:
+		print("[Portal] 玩家进入传送门! 目标: ", destination_scene if destination_scene != "" else "下一关")
 		# 设置传送标志，防止重复触发
 		is_teleporting = true
 		is_active = false
