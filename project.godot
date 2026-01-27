@@ -8,6 +8,10 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="小王子冒险记"
@@ -15,7 +19,7 @@ config/description="在帝国陨落百年后，曾被魔法屏障保护的遗忘
 config/version="1.0"
 config/tags=PackedStringArray("2d", "策略")
 run/main_scene="res://scenes/ui/game_start_screen.tscn"
-config/features=PackedStringArray("4.5", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
