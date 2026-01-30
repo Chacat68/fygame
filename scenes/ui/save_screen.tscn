@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://b3vxqe2yw5nqm"]
 
 [ext_resource type="Script" path="res://scripts/ui/save_screen.gd" id="1_save"]
-[ext_resource type="FontFile" uid="uid://cqtu6tjh1hcr6" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font_bold"]
-[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="3_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="2_font_bold"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="3_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 bg_color = Color(0.12, 0.12, 0.16, 0.95)

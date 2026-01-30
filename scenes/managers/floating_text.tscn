@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c8qvt5xp3q6y7"]
 
 [ext_resource type="Script" path="res://scripts/systems/floating_text.gd" id="1_yvnqm"]
-[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="2_yvnqm"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="2_yvnqm"]
 
 [node name="FloatingText" type="Node2D"]
 z_index = 10

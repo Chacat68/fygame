@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dvqr6a4qm1u23" path="res://scripts/entities/items/coin_counter.gd" id="1_ixnqm"]
 [ext_resource type="Texture2D" uid="uid://dxd7ual10slyf" path="res://assets/sprites/coin_icon.png" id="2_yev5y"]
-[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="3_ixnqm"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="3_ixnqm"]
 [ext_resource type="Texture2D" uid="uid://2e7v3oohbml0" path="res://assets/sprites/heart_icon.svg" id="4_heart"]
 [ext_resource type="Texture2D" uid="uid://dkorhj4jus0nv" path="res://assets/sprites/sword_icon.svg" id="5_sword"]
 [ext_resource type="Texture2D" uid="uid://cu15w8teeyy3" path="res://assets/sprites/coin_icon_enhanced.svg" id="6_coin_enhanced"]

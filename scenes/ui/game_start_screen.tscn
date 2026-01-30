@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://r4mry36ygjrc"]
 
 [ext_resource type="Script" uid="uid://brj8melw5o5hj" path="res://scripts/ui/game_start_screen.gd" id="1_start"]
-[ext_resource type="FontFile" uid="uid://cqtu6tjh1hcr6" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_font"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="2_font"]
 [ext_resource type="Texture2D" uid="uid://cvuy04lypoh8k" path="res://assets/images/home2.png" id="2_k3ftq"]
 [ext_resource type="Texture2D" uid="uid://lo2hbtgl6k6o" path="res://assets/ui/Large tiles/Thin outline/tile_0000.png" id="4_button_normal"]
 [ext_resource type="Texture2D" uid="uid://djoqfls3f6868" path="res://assets/ui/Large tiles/Thin outline/tile_0007.png" id="5_button_hover"]
