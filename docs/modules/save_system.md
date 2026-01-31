@@ -272,6 +272,6 @@ get_tree().change_scene_to_file("res://scenes/ui/save_screen.tscn")
 
 ---
 
-**文档版本**: v1.0  
-**最后更新**: 2024年12月  
+**文档版本**: v1.1  
+**最后更新**: 2026年2月  
 **维护者**: FyGame 开发团队

@@ -60,3 +60,9 @@
 - 位置容差：`player_bottom >= enemy_top - 5 and player_bottom <= enemy_top + 10`
 - 玩家底部偏移：`global_position.y + 8`
 - 怪物头顶偏移：`global_position.y - 8`
+
+---
+
+**文档版本**: v1.1  
+**最后更新**: 2026年2月  
+**维护者**: FyGame 开发团队
