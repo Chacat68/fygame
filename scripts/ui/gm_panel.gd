@@ -17,6 +17,8 @@ extends PanelContainer
 # 状态
 var god_mode: bool = false
 var is_collapsed: bool = false
+var expanded_height: float = 440.0  # 展开时的高度
+var collapsed_height: float = 60.0  # 收起时的高度
 
 func _ready() -> void:
 	# 连接 GameState 信号
@@ -24,6 +26,9 @@ func _ready() -> void:
 		GameState.debug_mode_changed.connect(_on_debug_mode_changed)
 		# 初始化显示状态
 		visible = GameState.debug_mode
+	
+	# 记录展开高度
+	expanded_height = size.y
 	
 	# 初始化值
 	_refresh_values()
@@ -68,6 +73,14 @@ func _update_panel_state() -> void:
 		separator.visible = not is_collapsed
 	if toggle_button:
 		toggle_button.text = "▶ GM" if is_collapsed else "▼ 收起"
+	
+	# 调整面板高度
+	if is_collapsed:
+		custom_minimum_size.y = collapsed_height
+		size.y = collapsed_height
+	else:
+		custom_minimum_size.y = 0
+		size.y = expanded_height
 
 # 金币数量改变
 func _on_coin_input_value_changed(value: float) -> void:
@@ -99,6 +112,21 @@ func _on_speed_slider_value_changed(value: float) -> void:
 	Engine.time_scale = value
 	_update_speed_label()
 	print("[GM] 游戏速度: %.1fx" % value)
+
+# 传送到上一关
+func _on_prev_level_button_pressed() -> void:
+	if GameState:
+		var prev_level = GameState.current_level - 1
+		if prev_level < 1:
+			print("[GM] 已经是第一关")
+			return
+		var level_path = "res://scenes/levels/lv%d.tscn" % prev_level
+		if ResourceLoader.exists(level_path):
+			GameState.current_level = prev_level
+			get_tree().change_scene_to_file(level_path)
+			print("[GM] 传送到关卡: %d" % prev_level)
+		else:
+			print("[GM] 关卡不存在: %s" % level_path)
 
 # 传送到下一关
 func _on_next_level_button_pressed() -> void:
