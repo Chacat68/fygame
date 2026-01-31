@@ -23,26 +23,40 @@
 ```
 fygame/
 ├── docs/                          # 项目文档目录
-│   ├── design/                    # 设计文档
+│   ├── modules/                   # 模块设计文档
 │   ├── guides/                    # 使用指南
-│   └── system/                    # 系统文档
+│   ├── development/               # 开发文档
+│   └── testing/                   # 测试文档
 ├── scenes/                        # Godot场景文件
-│   ├── levels/                    # 关卡场景 (lv2.tscn, lv3.tscn...)
-│   ├── player/                    # 玩家相关场景
-│   ├── enemies/                   # 敌人场景
+│   ├── levels/                    # 关卡场景 (lv1.tscn, lv2.tscn, lv3.tscn)
+│   ├── entities/                  # 游戏实体场景 (player, coin, slime等)
+│   ├── managers/                  # 管理器场景
 │   ├── ui/                        # 用户界面场景
-│   └── environment/               # 环境元素场景
+│   ├── debug/                     # 调试场景
+│   └── test/                      # 测试场景
 ├── scripts/                       # GDScript脚本文件
+│   ├── autoload/                  # 自动加载脚本
+│   ├── entities/                  # 实体脚本 (player, enemies, items)
 │   ├── managers/                  # 管理器脚本
 │   ├── systems/                   # 系统脚本
-│   ├── player/                    # 玩家相关脚本
-│   └── utils/                     # 工具脚本
+│   ├── levels/                    # 关卡脚本
+│   ├── ui/                        # UI脚本
+│   ├── utils/                     # 工具脚本
+│   └── debug/                     # 调试脚本
 ├── resources/                     # Godot资源文件
 ├── assets/                        # 原始资源文件
 │   ├── sprites/                   # 精灵图片
 │   ├── sounds/                    # 音效文件
 │   ├── music/                     # 背景音乐
-│   └── fonts/                     # 字体文件
+│   ├── fonts/                     # 字体文件
+│   ├── images/                    # 图片资源
+│   └── ui/                        # UI资源
+├── addons/                        # Godot插件
+│   ├── gut/                       # GUT测试框架
+│   └── teleport_system/           # 传送系统插件
+├── tests/                         # 测试文件目录
+├── tools/                         # 开发工具目录
+├── shaders/                       # 着色器文件
 └── project.godot                  # Godot项目配置文件
 ```
 
@@ -144,13 +158,17 @@ fygame/
 
 | 模块 | 脚本路径 | 主要功能 |
 |------|----------|----------|
-| **角色控制** | `scripts/player/player.gd` | 动画状态机、物理运动、信号通信 |
-| **敌人AI** | `scripts/enemies/slime.gd` | 自动转向、射线检测、移动控制 |
+| **角色控制** | `scripts/entities/player/player.gd` | 动画状态机、物理运动、信号通信 |
+| **玩家状态机** | `scripts/entities/player/player_states/` | 状态管理（idle, run, jump, dash等） |
+| **敌人AI** | `scripts/entities/enemies/slime.gd` | 自动转向、射线检测、移动控制 |
 | **游戏管理** | `scripts/managers/game_manager.gd` | 场景切换、分数统计、状态管理 |
-| **收集系统** | `scripts/collectibles/coin.gd`<br>`scripts/ui/coin_counter.gd` | 金币收集、分数显示、音效反馈 |
-| **死亡区域** | `scripts/environment/killzone.gd` | 碰撞检测、死亡处理 |
-| **反馈系统** | `scripts/utils/floating_text.gd` | 动态文本、动画效果、视觉反馈 |
-| **传送系统** | `scripts/systems/teleport_*.gd` | 传送门管理、场景切换、特效 |
+| **收集系统** | `scripts/entities/items/coin.gd`<br>`scripts/entities/items/coin_counter.gd` | 金币收集、分数显示、音效反馈 |
+| **死亡区域** | `scripts/levels/killzone.gd` | 碰撞检测、死亡处理 |
+| **反馈系统** | `scripts/systems/floating_text.gd`<br>`scripts/managers/floating_text_manager.gd` | 动态文本、动画效果、视觉反馈 |
+| **传送系统** | `scripts/systems/teleport_manager.gd`<br>`scripts/systems/teleport_config.gd` | 传送门管理、场景切换、特效 |
+| **音频系统** | `scripts/managers/audio_manager.gd` | 音效播放、背景音乐、音量控制 |
+| **存档系统** | `scripts/managers/save_manager.gd`<br>`scripts/systems/save_data.gd` | 游戏存档、进度保存、存档槽位 |
+| **技能系统** | `scripts/systems/skill_manager.gd` | 技能管理、技能升级 |
 
 **设计原则：**
 - 按功能模块分类组织
@@ -204,20 +222,36 @@ fygame/
 
 ### 设计文档
 - [项目结构说明](docs/PROJECT_STRUCTURE.md)
-- [关卡设计指南](docs/design/integrated_level_design_guide.md)
-- [关卡索引](docs/design/level_index.md)
-- [传送系统设计](docs/design/teleport_system_design.md)
-- [敌人AI和战斗系统](docs/design/enemy_ai_and_combat.md)
+- [项目总设计文档](docs/PROJECT_DESIGN.md)
+- [关卡设计指南](docs/modules/level_design.md)
+- [关卡索引](docs/modules/level_index.md)
+- [传送系统设计](docs/modules/teleport_system.md)
+- [敌人AI和战斗系统](docs/modules/enemy_ai_combat.md)
+- [技能系统设计](docs/modules/skill_system.md)
+- [玩家状态机设计](docs/modules/player_state_machine.md)
 
 ### 使用指南
 - [传送门使用指南](docs/guides/PORTAL_TELEPORT_GUIDE.md)
 - [传送系统测试指南](docs/guides/TELEPORT_TEST_GUIDE.md)
 - [浮动文本优化指南](docs/guides/FLOATING_TEXT_OPTIMIZATION.md)
+- [技能系统使用指南](docs/guides/SKILL_SYSTEM_USAGE_GUIDE.md)
+- [技能系统扩展指南](docs/guides/SKILL_SYSTEM_EXTENSION_GUIDE.md)
+- [技能系统演示指南](docs/guides/SKILL_SYSTEM_DEMO_GUIDE.md)
+- [技能系统FAQ](docs/guides/SKILL_SYSTEM_FAQ.md)
 
 ### 系统文档
 - [传送系统更新日志](docs/guides/TELEPORT_SYSTEM_CHANGELOG.md)
-- [优化指南](OPTIMIZATION_GUIDE.md)
-- [项目重构计划](PROJECT_RESTRUCTURE_PLAN.md)
+- [音频系统模块](docs/modules/audio_system.md)
+- [配置系统模块](docs/modules/config_system.md)
+- [UI系统模块](docs/modules/ui_system.md)
+- [游戏机制模块](docs/modules/game_mechanics.md)
+
+### 开发文档
+- [技能系统代码审查清单](docs/development/SKILL_SYSTEM_CODE_REVIEW_CHECKLIST.md)
+- [技能系统性能优化](docs/development/SKILL_SYSTEM_PERFORMANCE_OPTIMIZATION.md)
+
+### 测试文档
+- [技能系统测试计划](docs/testing/SKILL_SYSTEM_TEST_PLAN.md)
 
 ## 扩展规划
 
