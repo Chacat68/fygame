@@ -406,6 +406,15 @@ func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
 	is_teleporting = false
 	teleport_completed.emit(new_player, spawn_position)
 	
+	# 进入新关卡时自动存档
+	if SaveManager:
+		# 更新当前关卡信息
+		var current_save = SaveManager.get_current_save()
+		if current_save:
+			current_save.current_level = scene_path
+		SaveManager.trigger_auto_save()
+		print("[TeleportManager] 进入新关卡，已自动存档")
+	
 	# 输出调试信息
 	if config.log_teleport_events:
 		print("[TeleportManager] 场景传送完成：", scene_path, " 位置：", spawn_position)

@@ -35,7 +35,7 @@ func _on_body_shape_entered(_body_id, _body, _body_shape, _local_shape):
 	_collect_coin(_body)
 
 # 处理金币收集逻辑
-func _collect_coin(body = null):
+func _collect_coin(_body = null):
 	var error_messages = []
 	
 	# 增加金币计数
@@ -54,11 +54,6 @@ func _collect_coin(body = null):
 	if sound_player:
 		sound_player.play()
 	
-	# 显示飘字效果
-	if body and body is CharacterBody2D:
-		# 使用call_deferred确保在安全的时间添加子节点
-		call_deferred("_show_floating_text", body)
-	
 	# 显示收集信息
 	if not popup_shown:
 		print("金币已收集！")
@@ -67,28 +62,6 @@ func _collect_coin(body = null):
 	# 输出任何错误信息
 	for message in error_messages:
 		print(message)
-
-# 显示飘字效果
-func _show_floating_text(player):
-	# 确保玩家仍然有效
-	if not is_instance_valid(player):
-		return
-		
-	# 获取游戏场景根节点
-	# 获取场景根节点，避免Game节点的position偏移影响飘字位置
-	var game_root = get_tree().current_scene
-	if not game_root:
-		game_root = get_tree().get_root()
-	
-	# 计算世界坐标中的位置（在玩家头顶附近）
-	var world_position = player.global_position + Vector2(0, -15)
-	
-	# 设置飘字文本
-	var coin_value = config.coin_value if config else 1
-	var text = "金币+" + str(coin_value)
-	
-	# 使用飘字管理器创建排列的飘字效果（直接使用 AutoLoad 单例）
-	FloatingTextManager.create_arranged_floating_text(world_position, text, game_root)
 
 # 当动画播放完成后，移除金币
 func _on_animation_player_animation_finished(_anim_name):

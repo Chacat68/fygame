@@ -208,14 +208,11 @@ func _change_state(new_state):
 # 注释：旧的头部碰撞处理函数已移除，现在使用玩家端的踩踏检测
 
 # 怪物死亡处理
-func _die(player):
+func _die(_player):
 	# 切换到死亡状态
 	current_state = EnemyState.DEAD
 	# 标记为已死亡（保留兼容性）
 	is_dead = true
-	
-	# 显示击杀得分文本
-	_show_floating_text(player)
 	
 	# 播放死亡动画（如果有的话）
 	# 这里可以添加死亡动画播放代码
@@ -243,28 +240,6 @@ func _die(player):
 			if ui.has_method("add_coin"):
 				var coin_value = config.coin_value if config else 1
 				ui.add_coin(coin_value)
-
-# 显示飘字效果
-func _show_floating_text(player):
-	# 确保玩家仍然有效
-	if not is_instance_valid(player):
-		return
-		
-	# 获取场景根节点，避免Game节点的position偏移影响飘字位置
-	var game_root = get_tree().current_scene
-	if not game_root:
-		game_root = get_tree().get_root()
-	
-	# 计算基础位置（在怪物头顶附近）
-	var base_position = global_position + Vector2(0, -15)
-	
-	# 使用飘字管理器创建排列的飘字效果（直接使用 AutoLoad 单例）
-	# 创建击杀飘字
-	FloatingTextManager.create_arranged_floating_text(base_position, "击杀+1", game_root)
-	
-	# 创建金币飘字
-	var coin_value = config.coin_value if config else 1
-	FloatingTextManager.create_arranged_floating_text(base_position, "金币+" + str(coin_value), game_root)
 
 # 安全获取UI节点
 func _get_ui_node() -> Node:
