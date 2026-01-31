@@ -31,18 +31,32 @@ func set_button_focus():
 # 更新继续冒险按钮状态
 func _update_continue_button_state():
 	var continue_button = get_node_or_null("ButtonContainer/ContinueButton")
-	if continue_button and SaveManager:
-		# 检查是否有任何存档
-		var has_any_save = false
-		for i in range(SaveManager.MAX_SAVE_SLOTS):
-			if SaveManager.has_save(i):
-				has_any_save = true
-				break
-		
-		# 如果没有存档，禁用或隐藏继续按钮
-		continue_button.disabled = not has_any_save
-		if not has_any_save:
-			continue_button.tooltip_text = "没有找到存档"
+	if not continue_button:
+		print("[GameStartScreen] 找不到继续冒险按钮")
+		return
+	
+	if not SaveManager:
+		print("[GameStartScreen] SaveManager不可用")
+		continue_button.disabled = true
+		continue_button.tooltip_text = "存档系统不可用"
+		return
+	
+	# 检查是否有任何存档
+	var has_any_save = false
+	for i in range(SaveManager.MAX_SAVE_SLOTS):
+		if SaveManager.has_save(i):
+			has_any_save = true
+			print("[GameStartScreen] 找到存档，槽位: %d" % i)
+			break
+	
+	# 如果没有存档，禁用继续按钮
+	continue_button.disabled = not has_any_save
+	if not has_any_save:
+		continue_button.tooltip_text = "没有找到存档"
+		print("[GameStartScreen] 没有找到任何存档，禁用继续按钮")
+	else:
+		continue_button.tooltip_text = ""
+		print("[GameStartScreen] 存档可用，启用继续按钮")
 
 # 头杆帧处理（用于调试点击超时）
 func _process(delta: float) -> void:
@@ -90,6 +104,19 @@ func _on_start_button_pressed():
 # 继续冒险按钮点击事件
 func _on_continue_button_pressed():
 	if not SaveManager:
+		print("[GameStartScreen] SaveManager不可用")
+		get_tree().change_scene_to_file("res://scenes/ui/save_screen.tscn")
+		return
+	
+	# 再次检查是否有存档
+	var has_any_save = false
+	for i in range(SaveManager.MAX_SAVE_SLOTS):
+		if SaveManager.has_save(i):
+			has_any_save = true
+			break
+	
+	if not has_any_save:
+		print("[GameStartScreen] 没有找到存档，打开存档界面")
 		get_tree().change_scene_to_file("res://scenes/ui/save_screen.tscn")
 		return
 	

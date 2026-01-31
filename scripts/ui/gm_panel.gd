@@ -6,7 +6,7 @@ extends PanelContainer
 # 组件引用
 @onready var coin_input: SpinBox = $VBox/ContentBox/CoinRow/CoinInput
 @onready var kill_input: SpinBox = $VBox/ContentBox/KillRow/KillInput
-@onready var level_input: SpinBox = $VBox/ContentBox/LevelRow/LevelInput
+@onready var level_input: SpinBox = $VBox/ContentBox/LevelNumRow/LevelInput
 @onready var god_mode_check: CheckBox = $VBox/ContentBox/GodModeCheck
 @onready var speed_slider: HSlider = $VBox/ContentBox/SpeedRow/SpeedSlider
 @onready var speed_label: Label = $VBox/ContentBox/SpeedRow/SpeedValue
@@ -17,8 +17,8 @@ extends PanelContainer
 # 状态
 var god_mode: bool = false
 var is_collapsed: bool = false
-var expanded_height: float = 440.0  # 展开时的高度
-var collapsed_height: float = 60.0  # 收起时的高度
+var expanded_height: float = 570.0  # 展开时的高度
+var collapsed_height: float = 80.0  # 收起时的高度
 
 func _ready() -> void:
 	# 连接 GameState 信号
