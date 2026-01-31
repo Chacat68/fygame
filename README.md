@@ -50,9 +50,11 @@ fygame/
 
 ## 游戏截图
 
-![游戏截图1](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/20250629135358423.png?imageSlim)
+![游戏截图1](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/20260201034300170.webp?imageSlim)
 
-![游戏截图2](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/uPic/nyFavE.png)
+![游戏截图2](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/20260201034328059.webp?imageSlim)
+
+![游戏截图3](https://blog-1259751088.cos.ap-shanghai.myqcloud.com/20260201034409861.webp?imageSlim)
 
 
 
