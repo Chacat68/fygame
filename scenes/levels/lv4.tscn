@@ -1,0 +1,509 @@
+[gd_scene load_steps=20 format=3]
+
+[ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/managers/game_manager.tscn" id="1_game_manager"]
+[ext_resource type="Script" uid="uid://c1b4frqkv0k58" path="res://scripts/managers/game_manager.gd" id="2_game_manager_script"]
+[ext_resource type="PackedScene" uid="uid://dxvj5qbsn4e8p" path="res://scenes/ui/ui.tscn" id="3_ui"]
+[ext_resource type="PackedScene" uid="uid://b7bo874oatdkj" path="res://scenes/entities/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" uid="uid://bt3xk5tjyby52" path="res://scenes/entities/killzone.tscn" id="5_killzone"]
+[ext_resource type="PackedScene" uid="uid://bedut538hiyon" path="res://scenes/entities/coin.tscn" id="7_coin"]
+[ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="8_slime"]
+[ext_resource type="Script" path="res://scripts/entities/hazards/spikes.gd" id="9_spikes"]
+[ext_resource type="Script" path="res://scripts/entities/hazards/saw_blade.gd" id="10_saw"]
+[ext_resource type="Script" path="res://scripts/entities/hazards/springboard.gd" id="11_spring"]
+[ext_resource type="Script" path="res://scripts/entities/hazards/crumbling_platform.gd" id="12_crumble"]
+[ext_resource type="Script" path="res://scripts/entities/hazards/interactive_door.gd" id="13_door"]
+[ext_resource type="Script" path="res://scripts/entities/hazards/pressure_switch.gd" id="14_switch"]
+[ext_resource type="PackedScene" uid="uid://djluvdrhxmyv7" path="res://scenes/entities/portal.tscn" id="15_portal"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_killzone"]
+
+[sub_resource type="GDScript" id="GDScript_portal_config_lv4"]
+script/source = "extends Node
+
+func _ready():
+	var portal = get_parent()
+	if portal and portal.has_method('configure_for_scene_teleport'):
+		print('关卡4完成！返回主菜单')
+		portal.configure_for_scene_teleport('res://scenes/ui/main_menu.tscn')
+"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(1200, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(96, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spike"]
+size = Vector2(48, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_saw"]
+radius = 16.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spring"]
+size = Vector2(32, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(16, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_switch"]
+size = Vector2(32, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(32, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_end"]
+size = Vector2(48, 48)
+
+[node name="lv4" type="Node2D"]
+
+[node name="GameManager" parent="." instance=ExtResource("1_game_manager")]
+script = ExtResource("2_game_manager_script")
+
+[node name="UI" parent="." instance=ExtResource("3_ui")]
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
+position = Vector2(-500, 0)
+
+[node name="GameCamera" type="Camera2D" parent="."]
+position = Vector2(0, -50)
+zoom = Vector2(2.5, 2.5)
+limit_left = -600
+limit_right = 800
+limit_top = -400
+limit_bottom = 200
+limit_smoothed = true
+
+[node name="Killzone" parent="." instance=ExtResource("5_killzone")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+position = Vector2(0, 300)
+shape = SubResource("WorldBoundaryShape2D_killzone")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_left = -650.0
+offset_top = -500.0
+offset_right = 850.0
+offset_bottom = 400.0
+color = Color(0.12, 0.12, 0.18, 1)
+
+[node name="LevelTitle" type="Label" parent="."]
+offset_left = -550.0
+offset_top = -200.0
+offset_right = -350.0
+offset_bottom = -170.0
+text = "关卡 4 - 机关地牢"
+label_settings = null
+
+[node name="Terrain" type="Node2D" parent="."]
+
+[node name="Ground" type="StaticBody2D" parent="Terrain"]
+position = Vector2(100, 100)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="GroundSprite" type="ColorRect" parent="Terrain/Ground"]
+offset_left = -600.0
+offset_top = -16.0
+offset_right = 600.0
+offset_bottom = 16.0
+color = Color(0.25, 0.2, 0.15, 1)
+
+[node name="Wall1" type="StaticBody2D" parent="Terrain"]
+position = Vector2(-600, 50)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Wall1"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="WallSprite" type="ColorRect" parent="Terrain/Wall1"]
+offset_left = -16.0
+offset_top = -50.0
+offset_right = 16.0
+offset_bottom = 50.0
+color = Color(0.2, 0.15, 0.1, 1)
+
+[node name="Wall2" type="StaticBody2D" parent="Terrain"]
+position = Vector2(700, 50)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Terrain/Wall2"]
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="WallSprite" type="ColorRect" parent="Terrain/Wall2"]
+offset_left = -16.0
+offset_top = -50.0
+offset_right = 16.0
+offset_bottom = 50.0
+color = Color(0.2, 0.15, 0.1, 1)
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Platform1" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-400, 40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="Platforms/Platform1"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="Platform2" type="StaticBody2D" parent="Platforms"]
+position = Vector2(-200, -20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="Platforms/Platform2"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="Platform3" type="StaticBody2D" parent="Platforms"]
+position = Vector2(0, -80)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform3"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="Platforms/Platform3"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="Platform4" type="StaticBody2D" parent="Platforms"]
+position = Vector2(200, -140)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform4"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="Platforms/Platform4"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="Platform5" type="StaticBody2D" parent="Platforms"]
+position = Vector2(400, -80)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform5"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="Platforms/Platform5"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="Platform6" type="StaticBody2D" parent="Platforms"]
+position = Vector2(550, 20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/Platform6"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="Platforms/Platform6"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.35, 0.3, 0.25, 1)
+
+[node name="Hazards" type="Node2D" parent="."]
+
+[node name="StaticSpikes1" type="Area2D" parent="Hazards" groups=["hazard"]]
+position = Vector2(-300, 84)
+script = ExtResource("9_spikes")
+spike_type = 0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/StaticSpikes1"]
+shape = SubResource("RectangleShape2D_spike")
+
+[node name="Sprite" type="Polygon2D" parent="Hazards/StaticSpikes1"]
+color = Color(0.6, 0.15, 0.15, 1)
+polygon = PackedVector2Array(-24, 8, -16, -8, -8, 8, 0, -8, 8, 8, 16, -8, 24, 8)
+
+[node name="StaticSpikes2" type="Area2D" parent="Hazards" groups=["hazard"]]
+position = Vector2(-100, 84)
+script = ExtResource("9_spikes")
+spike_type = 0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/StaticSpikes2"]
+shape = SubResource("RectangleShape2D_spike")
+
+[node name="Sprite" type="Polygon2D" parent="Hazards/StaticSpikes2"]
+color = Color(0.6, 0.15, 0.15, 1)
+polygon = PackedVector2Array(-24, 8, -16, -8, -8, 8, 0, -8, 8, 8, 16, -8, 24, 8)
+
+[node name="PeriodicSpikes1" type="Area2D" parent="Hazards" groups=["hazard"]]
+position = Vector2(100, 84)
+script = ExtResource("9_spikes")
+spike_type = 1
+extend_time = 2.0
+retract_time = 2.0
+warning_time = 0.5
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/PeriodicSpikes1"]
+shape = SubResource("RectangleShape2D_spike")
+
+[node name="Sprite" type="Polygon2D" parent="Hazards/PeriodicSpikes1"]
+color = Color(0.7, 0.25, 0.1, 1)
+polygon = PackedVector2Array(-24, 8, -16, -8, -8, 8, 0, -8, 8, 8, 16, -8, 24, 8)
+
+[node name="PeriodicSpikes2" type="Area2D" parent="Hazards" groups=["hazard"]]
+position = Vector2(300, 84)
+script = ExtResource("9_spikes")
+spike_type = 1
+extend_time = 2.0
+retract_time = 2.0
+warning_time = 0.5
+initial_delay = 1.0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/PeriodicSpikes2"]
+shape = SubResource("RectangleShape2D_spike")
+
+[node name="Sprite" type="Polygon2D" parent="Hazards/PeriodicSpikes2"]
+color = Color(0.7, 0.25, 0.1, 1)
+polygon = PackedVector2Array(-24, 8, -16, -8, -8, 8, 0, -8, 8, 8, 16, -8, 24, 8)
+
+[node name="MovingSaw1" type="Area2D" parent="Hazards" groups=["hazard"]]
+position = Vector2(-200, 50)
+script = ExtResource("10_saw")
+saw_type = 1
+rotation_speed = 300.0
+move_speed = 50.0
+move_distance = 60.0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/MovingSaw1"]
+shape = SubResource("CircleShape2D_saw")
+
+[node name="SawSprite" type="Polygon2D" parent="Hazards/MovingSaw1"]
+color = Color(0.5, 0.5, 0.55, 1)
+polygon = PackedVector2Array(16, 0, 12, 12, 0, 16, -12, 12, -16, 0, -12, -12, 0, -16, 12, -12)
+
+[node name="CircularSaw1" type="Area2D" parent="Hazards" groups=["hazard"]]
+position = Vector2(0, -30)
+script = ExtResource("10_saw")
+saw_type = 2
+rotation_speed = 400.0
+move_speed = 30.0
+circular_radius = 50.0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/CircularSaw1"]
+shape = SubResource("CircleShape2D_saw")
+
+[node name="SawSprite" type="Polygon2D" parent="Hazards/CircularSaw1"]
+color = Color(0.55, 0.55, 0.6, 1)
+polygon = PackedVector2Array(16, 0, 12, 12, 0, 16, -12, 12, -16, 0, -12, -12, 0, -16, 12, -12)
+
+[node name="Springboard1" type="Area2D" parent="Hazards" groups=["springboard"]]
+position = Vector2(-480, 92)
+script = ExtResource("11_spring")
+bounce_force = 450.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Springboard1"]
+shape = SubResource("RectangleShape2D_spring")
+
+[node name="Sprite" type="ColorRect" parent="Hazards/Springboard1"]
+offset_left = -16.0
+offset_top = -4.0
+offset_right = 16.0
+offset_bottom = 4.0
+color = Color(0.2, 0.65, 0.2, 1)
+
+[node name="Springboard2" type="Area2D" parent="Hazards" groups=["springboard"]]
+position = Vector2(200, -124)
+script = ExtResource("11_spring")
+bounce_force = 500.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Springboard2"]
+shape = SubResource("RectangleShape2D_spring")
+
+[node name="Sprite" type="ColorRect" parent="Hazards/Springboard2"]
+offset_left = -16.0
+offset_top = -4.0
+offset_right = 16.0
+offset_bottom = 4.0
+color = Color(0.25, 0.7, 0.25, 1)
+
+[node name="CrumblingPlatform1" type="AnimatableBody2D" parent="Hazards" groups=["crumbling_platform"]]
+position = Vector2(-100, -50)
+script = ExtResource("12_crumble")
+crumble_delay = 0.8
+respawn_time = 4.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/CrumblingPlatform1"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite2D" type="ColorRect" parent="Hazards/CrumblingPlatform1"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="CrumblingPlatform2" type="AnimatableBody2D" parent="Hazards" groups=["crumbling_platform"]]
+position = Vector2(100, -120)
+script = ExtResource("12_crumble")
+crumble_delay = 0.6
+respawn_time = 4.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/CrumblingPlatform2"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite2D" type="ColorRect" parent="Hazards/CrumblingPlatform2"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="CrumblingPlatform3" type="AnimatableBody2D" parent="Hazards" groups=["crumbling_platform"]]
+position = Vector2(300, -120)
+script = ExtResource("12_crumble")
+crumble_delay = 0.7
+respawn_time = 4.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/CrumblingPlatform3"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite2D" type="ColorRect" parent="Hazards/CrumblingPlatform3"]
+offset_left = -48.0
+offset_top = -8.0
+offset_right = 48.0
+offset_bottom = 8.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="PressureSwitch1" type="Area2D" parent="Hazards" groups=["switch"]]
+position = Vector2(400, -64)
+script = ExtResource("14_switch")
+linked_door_ids = ["exit_door"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/PressureSwitch1"]
+shape = SubResource("RectangleShape2D_switch")
+
+[node name="Sprite" type="ColorRect" parent="Hazards/PressureSwitch1"]
+offset_left = -16.0
+offset_top = -4.0
+offset_right = 16.0
+offset_bottom = 4.0
+color = Color(0.8, 0.75, 0.2, 1)
+
+[node name="SwitchLabel" type="Label" parent="Hazards/PressureSwitch1"]
+offset_left = -30.0
+offset_top = -25.0
+offset_right = 30.0
+offset_bottom = -5.0
+horizontal_alignment = 1
+text = "开关"
+
+[node name="ExitDoor" type="Node2D" parent="Hazards" groups=["door"]]
+position = Vector2(600, 50)
+script = ExtResource("13_door")
+door_type = 1
+door_id = "exit_door"
+
+[node name="DoorBody" type="StaticBody2D" parent="Hazards/ExitDoor"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/ExitDoor/DoorBody"]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="Sprite" type="ColorRect" parent="Hazards/ExitDoor"]
+offset_left = -8.0
+offset_top = -32.0
+offset_right = 8.0
+offset_bottom = 32.0
+color = Color(0.4, 0.25, 0.15, 1)
+
+[node name="DoorLabel" type="Label" parent="Hazards/ExitDoor"]
+offset_left = -30.0
+offset_top = -55.0
+offset_right = 30.0
+offset_bottom = -35.0
+horizontal_alignment = 1
+text = "出口门"
+
+[node name="Coins" type="Node2D" parent="."]
+
+[node name="Coin1" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(-400, 10)
+
+[node name="Coin2" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(-200, -50)
+
+[node name="Coin3" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(-100, -80)
+
+[node name="Coin4" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(0, -110)
+
+[node name="Coin5" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(100, -150)
+
+[node name="Coin6" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(200, -170)
+
+[node name="Coin7" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(300, -150)
+
+[node name="Coin8" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(400, -110)
+
+[node name="Coin9" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(550, -10)
+
+[node name="SecretCoin" parent="Coins" instance=ExtResource("7_coin")]
+position = Vector2(-550, 70)
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Slime1" parent="Enemies" instance=ExtResource("8_slime")]
+position = Vector2(500, 80)
+
+[node name="EndPortal" parent="." instance=ExtResource("15_portal")]
+position = Vector2(650, 60)
+
+[node name="PortalScript" type="Node" parent="EndPortal"]
+script = SubResource("GDScript_portal_config_lv4")
+
+[node name="HintLabels" type="Node2D" parent="."]
+
+[node name="Hint1" type="Label" parent="HintLabels"]
+offset_left = -520.0
+offset_top = 60.0
+offset_right = -380.0
+offset_bottom = 80.0
+text = "跳板可弹跳"
+
+[node name="Hint2" type="Label" parent="HintLabels"]
+offset_left = -350.0
+offset_top = 60.0
+offset_right = -210.0
+offset_bottom = 80.0
+text = "注意尖刺！"
+
+[node name="Hint3" type="Label" parent="HintLabels"]
+offset_left = -150.0
+offset_top = -80.0
+offset_right = -10.0
+offset_bottom = -60.0
+text = "易碎平台"
+
+[node name="Hint4" type="Label" parent="HintLabels"]
+offset_left = 50.0
+offset_top = 60.0
+offset_right = 190.0
+offset_bottom = 80.0
+text = "观察节奏"

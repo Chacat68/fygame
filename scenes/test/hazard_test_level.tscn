@@ -1,0 +1,223 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" uid="uid://hazard_spikes" path="res://scripts/entities/hazards/spikes.gd" id="1_spikes"]
+[ext_resource type="Script" uid="uid://hazard_sawblade" path="res://scripts/entities/hazards/saw_blade.gd" id="2_sawblade"]
+[ext_resource type="Script" uid="uid://hazard_spring" path="res://scripts/entities/hazards/springboard.gd" id="3_spring"]
+[ext_resource type="Script" uid="uid://hazard_crumble" path="res://scripts/entities/hazards/crumbling_platform.gd" id="4_crumble"]
+[ext_resource type="Script" uid="uid://hazard_door" path="res://scripts/entities/hazards/interactive_door.gd" id="5_door"]
+[ext_resource type="Script" uid="uid://hazard_switch" path="res://scripts/entities/hazards/pressure_switch.gd" id="6_switch"]
+[ext_resource type="Script" uid="uid://hazard_moving" path="res://scripts/entities/hazards/advanced_moving_platform.gd" id="7_moving"]
+[ext_resource type="Script" uid="uid://hazard_laser" path="res://scripts/entities/hazards/laser_beam.gd" id="8_laser"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spike"]
+size = Vector2(32, 16)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_saw"]
+radius = 16.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_platform"]
+size = Vector2(64, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(16, 48)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_switch"]
+size = Vector2(32, 8)
+
+[node name="HazardTestLevel" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = -200.0
+offset_top = -250.0
+offset_right = 200.0
+offset_bottom = -220.0
+horizontal_alignment = 1
+text = "关卡机关测试场景"
+label_settings = null
+
+[node name="Instructions" type="Label" parent="."]
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = -100.0
+text = "测试项目:
+1. 静态尖刺 - 持续造成伤害
+2. 周期尖刺 - 定时伸缩
+3. 旋转锯片 - 持续旋转
+4. 移动锯片 - 沿路径移动
+5. 弹簧跳板 - 将玩家弹起
+6. 破碎平台 - 踩上后崩塌
+7. 压力开关 + 门 - 踩开关开门
+8. 电梯平台 - 有玩家时移动
+9. 激光束 - 脉冲式激光"
+
+[node name="Ground" type="StaticBody2D" parent="."]
+position = Vector2(0, 100)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="ColorRect" type="ColorRect" parent="Ground"]
+offset_left = -300.0
+offset_top = -8.0
+offset_right = 300.0
+offset_bottom = 8.0
+color = Color(0.4, 0.4, 0.4, 1)
+
+[node name="StaticSpikes" type="Area2D" parent="." groups=["hazard"]]
+position = Vector2(-200, 84)
+script = ExtResource("1_spikes")
+spike_type = 0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticSpikes"]
+shape = SubResource("RectangleShape2D_spike")
+
+[node name="Sprite" type="ColorRect" parent="StaticSpikes"]
+offset_left = -16.0
+offset_top = -8.0
+offset_right = 16.0
+offset_bottom = 8.0
+color = Color(0.8, 0.2, 0.2, 1)
+
+[node name="PeriodicSpikes" type="Area2D" parent="." groups=["hazard"]]
+position = Vector2(-100, 84)
+script = ExtResource("1_spikes")
+spike_type = 1
+extend_time = 1.5
+retract_time = 1.0
+warning_time = 0.3
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PeriodicSpikes"]
+shape = SubResource("RectangleShape2D_spike")
+
+[node name="Sprite" type="ColorRect" parent="PeriodicSpikes"]
+offset_left = -16.0
+offset_top = -8.0
+offset_right = 16.0
+offset_bottom = 8.0
+color = Color(0.9, 0.3, 0.1, 1)
+
+[node name="StationarySaw" type="Area2D" parent="." groups=["hazard"]]
+position = Vector2(0, 50)
+script = ExtResource("2_sawblade")
+saw_type = 0
+rotation_speed = 360.0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StationarySaw"]
+shape = SubResource("CircleShape2D_saw")
+
+[node name="SawSprite" type="Sprite2D" parent="StationarySaw"]
+modulate = Color(0.6, 0.6, 0.6, 1)
+scale = Vector2(0.5, 0.5)
+
+[node name="MovingSaw" type="Area2D" parent="." groups=["hazard"]]
+position = Vector2(100, 50)
+script = ExtResource("2_sawblade")
+saw_type = 1
+rotation_speed = 360.0
+move_speed = 80.0
+move_distance = 100.0
+damage = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MovingSaw"]
+shape = SubResource("CircleShape2D_saw")
+
+[node name="SawSprite" type="Sprite2D" parent="MovingSaw"]
+modulate = Color(0.5, 0.5, 0.5, 1)
+scale = Vector2(0.5, 0.5)
+
+[node name="Springboard" type="Area2D" parent="." groups=["springboard"]]
+position = Vector2(-150, 92)
+script = ExtResource("3_spring")
+bounce_force = 500.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Springboard"]
+shape = SubResource("RectangleShape2D_switch")
+
+[node name="Sprite" type="ColorRect" parent="Springboard"]
+offset_left = -16.0
+offset_top = -4.0
+offset_right = 16.0
+offset_bottom = 4.0
+color = Color(0.2, 0.8, 0.2, 1)
+
+[node name="CrumblingPlatform" type="AnimatableBody2D" parent="." groups=["crumbling_platform"]]
+position = Vector2(200, 50)
+script = ExtResource("4_crumble")
+crumble_delay = 0.5
+respawn_time = 3.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CrumblingPlatform"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite2D" type="ColorRect" parent="CrumblingPlatform"]
+offset_left = -32.0
+offset_top = -8.0
+offset_right = 32.0
+offset_bottom = 8.0
+color = Color(0.6, 0.4, 0.2, 1)
+
+[node name="PressureSwitch" type="Area2D" parent="." groups=["switch"]]
+position = Vector2(-50, 92)
+script = ExtResource("6_switch")
+linked_door_ids = ["test_door"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PressureSwitch"]
+shape = SubResource("RectangleShape2D_switch")
+
+[node name="Sprite" type="ColorRect" parent="PressureSwitch"]
+offset_left = -16.0
+offset_top = -4.0
+offset_right = 16.0
+offset_bottom = 4.0
+color = Color(0.8, 0.8, 0.2, 1)
+
+[node name="SwitchDoor" type="Node2D" parent="." groups=["door"]]
+position = Vector2(50, 60)
+script = ExtResource("5_door")
+door_type = 1
+door_id = "test_door"
+
+[node name="DoorBody" type="StaticBody2D" parent="SwitchDoor"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SwitchDoor/DoorBody"]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="Sprite" type="ColorRect" parent="SwitchDoor"]
+offset_left = -8.0
+offset_top = -24.0
+offset_right = 8.0
+offset_bottom = 24.0
+color = Color(0.5, 0.3, 0.1, 1)
+
+[node name="ElevatorPlatform" type="AnimatableBody2D" parent="." groups=["moving_platform"]]
+position = Vector2(250, 80)
+script = ExtResource("7_moving")
+move_mode = 3
+move_speed = 60.0
+move_distance = 80.0
+move_direction = Vector2(0, -1)
+require_player = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElevatorPlatform"]
+shape = SubResource("RectangleShape2D_platform")
+
+[node name="Sprite" type="ColorRect" parent="ElevatorPlatform"]
+offset_left = -32.0
+offset_top = -8.0
+offset_right = 32.0
+offset_bottom = 8.0
+color = Color(0.3, 0.5, 0.7, 1)
+
+[node name="PulsingLaser" type="Node2D" parent="." groups=["laser"]]
+position = Vector2(-250, 0)
+script = ExtResource("8_laser")
+laser_type = 1
+laser_length = 150.0
+on_duration = 2.0
+off_duration = 1.5
+warning_time = 0.5
+damage = 1

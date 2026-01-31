@@ -43,6 +43,19 @@ levels = Array[Dictionary]([
 		"unlock_condition": "完成关卡2",
 		"target_score": 300,
 		"time_limit": 0
+	},
+	{
+		"id": 4,
+		"name": "机关地牢",
+		"scene_path": "res://scenes/levels/lv4.tscn",
+		"script_path": "",
+		"theme": "机关挑战",
+		"difficulty": "困难",
+		"status": "完成",
+		"description": "充满死亡细胞风格机关陷阱的关卡",
+		"unlock_condition": "完成关卡3",
+		"target_score": 400,
+		"time_limit": 0
 	}
 ])
 max_levels = 10
