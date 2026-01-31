@@ -31,7 +31,7 @@ var manager: Node
 
 func before_each():
 	# 创建新的管理器实例用于测试
-	manager = preload("res://scripts/managers/checkpoint_manager.gd").new()
+	manager = load("res://scripts/managers/checkpoint_manager.gd").new()
 	add_child(manager)
 
 func after_each():
