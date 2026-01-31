@@ -8,11 +8,11 @@ signal game_saved()
 signal return_to_menu()
 
 # UI组件引用
-@onready var resume_button: Button = $Panel/VBoxContainer/ResumeButton
-@onready var save_button: Button = $Panel/VBoxContainer/SaveButton
-@onready var settings_button: Button = $Panel/VBoxContainer/SettingsButton
-@onready var menu_button: Button = $Panel/VBoxContainer/MenuButton
-@onready var save_status_label: Label = $Panel/VBoxContainer/SaveStatusLabel
+@onready var resume_button: Button = $Panel/MarginContainer/VBoxContainer/ResumeButton
+@onready var save_button: Button = $Panel/MarginContainer/VBoxContainer/SaveButton
+@onready var settings_button: Button = $Panel/MarginContainer/VBoxContainer/SettingsButton
+@onready var menu_button: Button = $Panel/MarginContainer/VBoxContainer/MenuButton
+@onready var save_status_label: Label = $Panel/MarginContainer/VBoxContainer/SaveStatusLabel
 @onready var panel: PanelContainer = $Panel
 
 # 设置界面
