@@ -32,6 +32,7 @@ fygame/
 docs/
 ├── PROJECT_DESIGN.md             # 项目总设计文档
 ├── PROJECT_STRUCTURE.md          # 项目结构说明（本文档）
+├── README.md                     # 文档说明
 ├── modules/                      # 模块设计文档
 │   ├── README.md                 # 模块文档说明
 │   ├── audio_system.md           # 音频系统模块设计
@@ -41,6 +42,7 @@ docs/
 │   ├── level_design.md           # 关卡设计模块设计
 │   ├── level_index.md            # 关卡索引
 │   ├── player_state_machine.md   # 玩家状态机模块设计
+│   ├── save_system.md            # 存档系统模块设计
 │   ├── skill_system.md           # 技能系统模块设计
 │   ├── stomp_kill_feature.md     # 踩踏击杀功能设计
 │   ├── teleport_system.md        # 传送系统模块设计
@@ -53,6 +55,7 @@ docs/
 │   ├── SKILL_SYSTEM_DEMO_GUIDE.md # 技能系统演示指南
 │   ├── SKILL_SYSTEM_EXTENSION_GUIDE.md # 技能系统扩展指南
 │   ├── SKILL_SYSTEM_FAQ.md       # 技能系统FAQ
+│   ├── SKILL_SYSTEM_USAGE_GUIDE.md # 技能系统使用指南
 │   ├── TELEPORT_SYSTEM_CHANGELOG.md # 传送系统变更日志
 │   ├── TELEPORT_TEST_GUIDE.md    # 传送测试指南
 │   └── teleport_system_guide.md  # 传送系统使用指南
@@ -98,11 +101,20 @@ scenes/
 │   ├── game_manager.tscn         # 游戏管理器场景
 │   ├── game_state.tscn           # 游戏状态场景
 │   └── music.tscn                # 音乐管理器场景
+├── test/                          # 测试场景
+│   └── skill_test_scene.tscn     # 技能测试场景
 ├── ui/                           # 用户界面场景
 │   ├── game_start_screen.tscn    # 游戏开始界面
+│   ├── gm_panel.tscn             # GM面板
 │   ├── main_menu.tscn            # 主菜单界面
+│   ├── pause_menu.tscn           # 暂停菜单
+│   ├── save_screen.tscn          # 存档界面
+│   ├── save_slot.tscn            # 存档槽位
+│   ├── settings_screen.tscn      # 设置界面
+│   ├── skill_upgrade_ui.tscn     # 技能升级UI
 │   └── ui.tscn                   # 游戏内UI
 ├── game.tscn                     # 主游戏场景
+├── main_skill_scene.tscn         # 主技能场景
 └── test_portal.tscn              # 传送门测试场景
 ```
 
@@ -128,6 +140,19 @@ scripts/
 │   └── player/                    # 玩家相关脚本
 │       ├── player.gd             # 玩家控制脚本
 │       └── player_states/        # 玩家状态脚本目录
+│           ├── player_state.gd   # 状态基类
+│           ├── idle_state.gd     # 空闲状态
+│           ├── run_state.gd      # 跑步状态
+│           ├── jump_state.gd     # 跳跃状态
+│           ├── fall_state.gd     # 下落状态
+│           ├── dash_state.gd     # 冲刺状态
+│           ├── slide_state.gd    # 滑行状态
+│           ├── wall_slide_state.gd # 贴墙滑行状态
+│           ├── wall_jump_state.gd  # 踩墙跳状态
+│           ├── hurt_state.gd     # 受伤状态
+│           └── death_state.gd    # 死亡状态
+├── examples/                      # 示例脚本
+│   └── audio_manager_example.gd  # 音频管理器示例
 ├── levels/                        # 关卡脚本
 │   ├── killzone.gd               # 死亡区域脚本
 │   ├── level2.gd                 # 关卡2脚本
@@ -135,20 +160,38 @@ scripts/
 │   ├── mountain_cave_level.gd    # 山洞关卡脚本
 │   └── portal.gd                 # 传送门脚本
 ├── managers/                      # 管理器脚本
+│   ├── audio_manager.gd          # 音频管理器
 │   ├── floating_text_manager.gd  # 飘字管理器
 │   ├── game_manager.gd           # 游戏管理器
 │   ├── game_state.gd             # 游戏状态管理器
 │   ├── level_manager.gd          # 关卡管理器
-│   └── resource_manager.gd       # 资源管理器
+│   ├── resource_manager.gd       # 资源管理器
+│   └── save_manager.gd           # 存档管理器
+├── player/                        # 玩家状态脚本（备用）
+│   └── states/                   # 状态脚本目录
+│       ├── dash_state.gd         # 冲刺状态
+│       ├── slide_state.gd        # 滑行状态
+│       ├── wall_slide_state.gd   # 贴墙滑行状态
+│       └── wall_jump_state.gd    # 踩墙跳状态
 ├── systems/                       # 系统脚本
 │   ├── floating_text.gd          # 飘字系统
 │   ├── game_config.gd            # 游戏配置系统
 │   ├── level_config.gd           # 关卡配置系统
+│   ├── save_data.gd              # 存档数据系统
+│   ├── skill_manager.gd          # 技能管理系统
 │   ├── teleport_config.gd        # 传送配置系统
 │   └── teleport_manager.gd       # 传送管理器
+├── test/                          # 测试脚本
+│   └── skill_test_scene.gd       # 技能测试场景脚本
 ├── ui/                           # UI脚本
 │   ├── game_start_screen.gd      # 游戏开始界面脚本
-│   └── main_menu.gd              # 主菜单脚本
+│   ├── gm_panel.gd               # GM面板脚本
+│   ├── main_menu.gd              # 主菜单脚本
+│   ├── pause_menu.gd             # 暂停菜单脚本
+│   ├── save_screen.gd            # 存档界面脚本
+│   ├── save_slot_ui.gd           # 存档槽位UI脚本
+│   ├── settings_screen.gd        # 设置界面脚本
+│   └── skill_upgrade_ui.gd       # 技能升级UI脚本
 └── utils/                        # 工具脚本
     ├── config_hot_reload.gd      # 配置热重载工具
     ├── config_sync_tool.gd       # 配置同步工具
@@ -183,7 +226,8 @@ resources/
 assets/
 ├── fonts/                        # 字体文件
 │   ├── PixelOperator8-Bold.ttf  # 像素字体（粗体）
-│   └── PixelOperator8.ttf        # 像素字体（常规）
+│   ├── PixelOperator8.ttf        # 像素字体（常规）
+│   └── WenQuanYi_Bitmap_Song_12px.ttf # 文泉驿点阵宋体
 ├── images/                       # 图片资源
 │   ├── beijing.png               # 北京背景图
 │   ├── beijing.tres              # 北京纹理资源
@@ -258,6 +302,7 @@ tests/
 │   ├── test_teleport.gd          # 传送功能测试
 │   └── test_tween_fix.gd         # 补间修复测试
 ├── README.md                     # 测试说明文档
+├── test_audio_manager.gd         # 音频管理器测试
 ├── test_gut_installation.gd      # GUT安装测试
 ├── test_level_manager.gd         # 关卡管理器测试
 └── test_resource_manager.gd      # 资源管理器测试
