@@ -236,6 +236,9 @@ func _apply_respawn_effect():
 	current_health = MAX_HEALTH
 	health_changed.emit(current_health)
 	
+	# 发出重生信号
+	respawned.emit()
+	
 	# 应用闪烁效果
 	var tween = create_tween()
 	tween.tween_property(animated_sprite, "modulate:a", 0.5, 0.2)
