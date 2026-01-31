@@ -4,7 +4,7 @@ extends Area2D
 var config: GameConfig
 
 # 组件引用
-@onready var coin_counter = _get_ui_node()
+var coin_counter: Node = null
 @onready var animation_player = $AnimationPlayer
 @onready var sound_player = $CoinSound
 
@@ -18,6 +18,8 @@ var collected = false
 func _ready():
 	# 初始化配置
 	_init_config()
+	# 获取 UI 节点（延迟获取以确保场景树已准备好）
+	coin_counter = _get_ui_node()
 
 # 初始化配置
 func _init_config():
@@ -94,9 +96,17 @@ func _on_animation_player_animation_finished(_anim_name):
 
 # 安全获取UI节点
 func _get_ui_node() -> Node:
+	# 首先尝试在当前场景中查找 UI 节点
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		var ui = current_scene.get_node_or_null("UI")
+		if ui:
+			return ui
+	
+	# 尝试 /root/Game 路径（兼容旧结构）
 	var game_root = get_node_or_null("/root/Game")
 	if game_root:
 		return game_root.get_node_or_null("UI")
-	else:
-		# 如果Game节点不存在，尝试在当前场景中查找
-		return get_tree().get_first_node_in_group("ui")
+	
+	# 如果都找不到，尝试在 group 中查找
+	return get_tree().get_first_node_in_group("ui")

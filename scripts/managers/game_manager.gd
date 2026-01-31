@@ -6,8 +6,8 @@ var kill_count = 0
 var is_changing_scene = false  # 防止重复场景切换
 
 # 组件引用
-@onready var ui = _get_ui_node()
-@onready var portal = _get_portal_node()
+var ui: Node = null
+var portal: Node = null
 
 # 信号
 signal score_changed(new_score)
@@ -17,6 +17,9 @@ signal kill_count_changed(new_count)
 func _ready():
 	# 将自己添加到游戏管理器组，方便其他脚本查找
 	add_to_group("game_manager")
+	# 延迟获取 UI 和 Portal 节点
+	ui = _get_ui_node()
+	portal = _get_portal_node()
 	
 	# 注释掉重复的传送门信号连接，避免与 portal.gd 中的信号处理冲突
 	# 传送门的 body_entered 信号现在由 portal.gd 统一处理
@@ -52,8 +55,11 @@ func add_point():
 	
 	# 更新UI
 	if ui:
-		ui.add_coin()
-		ui.update_kill_count(kill_count)
+		# 增加金币（根据配置的金币价值）
+		var config = GameConfig.get_config()
+		var coin_value = config.coin_value if config else 1
+		ui.add_coin(coin_value)
+		ui.add_kill()
 
 # 重置游戏分数
 func reset_score():
@@ -90,12 +96,20 @@ func get_death_height():
 
 # 安全获取UI节点
 func _get_ui_node() -> Node:
+	# 首先尝试在当前场景中查找 UI 节点
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		var ui_node = current_scene.get_node_or_null("UI")
+		if ui_node:
+			return ui_node
+	
+	# 尝试 /root/Game 路径（兼容旧结构）
 	var game_root = get_node_or_null("/root/Game")
 	if game_root:
 		return game_root.get_node_or_null("UI")
-	else:
-		# 如果Game节点不存在，尝试在当前场景中查找
-		return get_tree().get_first_node_in_group("ui")
+	
+	# 如果都找不到，尝试在 group 中查找
+	return get_tree().get_first_node_in_group("ui")
 
 # 安全获取Portal节点
 func _get_portal_node() -> Node:

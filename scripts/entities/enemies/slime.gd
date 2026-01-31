@@ -230,10 +230,19 @@ func _die(player):
 	tween.tween_property(self, "modulate:a", 0, 0.5) # 淡出效果
 	tween.tween_callback(queue_free) # 完成后移除
 	
-	# 增加游戏分数
+	# 增加游戏分数和击杀计数
 	var game_manager = _get_game_manager()
 	if game_manager and game_manager.has_method("add_point"):
 		game_manager.add_point()
+	else:
+		# 如果找不到 GameManager，直接更新 UI
+		var ui = _get_ui_node()
+		if ui:
+			if ui.has_method("add_kill"):
+				ui.add_kill()
+			if ui.has_method("add_coin"):
+				var coin_value = config.coin_value if config else 1
+				ui.add_coin(coin_value)
 
 # 显示飘字效果
 func _show_floating_text(player):
@@ -256,6 +265,23 @@ func _show_floating_text(player):
 	# 创建金币飘字
 	var coin_value = config.coin_value if config else 1
 	FloatingTextManager.create_arranged_floating_text(base_position, "金币+" + str(coin_value), game_root)
+
+# 安全获取UI节点
+func _get_ui_node() -> Node:
+	# 首先尝试在当前场景中查找 UI 节点
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		var ui = current_scene.get_node_or_null("UI")
+		if ui:
+			return ui
+	
+	# 尝试 /root/Game 路径（兼容旧结构）
+	var game_root = get_node_or_null("/root/Game")
+	if game_root:
+		return game_root.get_node_or_null("UI")
+	
+	# 如果都找不到，尝试在 group 中查找
+	return get_tree().get_first_node_in_group("ui")
 
 # 安全获取GameManager节点
 func _get_game_manager() -> Node:

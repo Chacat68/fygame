@@ -32,7 +32,9 @@ var critical_sounds = {
 	"jump": preload("res://assets/sounds/jump.wav"),
 	"hurt": preload("res://assets/sounds/hurt.wav"),
 	"coin": preload("res://assets/sounds/coin.wav"),
-	"tap": preload("res://assets/sounds/tap.wav")
+	"tap": preload("res://assets/sounds/tap.wav"),
+	"power_up": preload("res://assets/sounds/power_up.wav"),
+	"explosion": preload("res://assets/sounds/explosion.wav")
 }
 
 var critical_sprites = {
