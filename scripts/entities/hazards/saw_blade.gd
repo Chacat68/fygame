@@ -35,8 +35,8 @@ var _move_progress: float = 0.0
 var _circular_angle: float = 0.0
 var _path_follow: PathFollow2D = null
 
-# 锯片精灵（单独旋转）
-var _saw_sprite: Sprite2D = null
+# 锯片精灵（单独旋转）- 可以是 Sprite2D、Polygon2D 或其他 CanvasItem
+var _saw_sprite: CanvasItem = null
 
 func _hazard_ready() -> void:
 	_start_position = global_position
@@ -48,7 +48,10 @@ func _hazard_ready() -> void:
 	damage_cooldown = 0.3
 	
 	# 获取锯片精灵
-	_saw_sprite = $SawSprite if has_node("SawSprite") else animated_sprite
+	if has_node("SawSprite"):
+		_saw_sprite = $SawSprite
+	elif animated_sprite:
+		_saw_sprite = animated_sprite
 	
 	# 设置路径模式
 	if saw_type == SawType.PATH and path_node:

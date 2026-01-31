@@ -34,11 +34,21 @@ var _shake_offset: Vector2 = Vector2.ZERO
 
 # 组件引用
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D if has_node("CollisionShape2D") else null
-@onready var sprite: Sprite2D = $Sprite2D if has_node("Sprite2D") else null
 @onready var player_detector: Area2D = $PlayerDetector if has_node("PlayerDetector") else null
+
+# 精灵引用 - 延迟获取以支持多种类型
+var sprite: CanvasItem = null
 
 func _ready() -> void:
 	add_to_group("crumbling_platform")
+	
+	# 获取精灵节点 - 支持多种命名
+	if has_node("Sprite2D"):
+		sprite = get_node("Sprite2D")
+	elif has_node("Sprite"):
+		sprite = get_node("Sprite")
+	elif has_node("ColorRect"):
+		sprite = get_node("ColorRect")
 	
 	_original_position = position
 	
