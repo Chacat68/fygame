@@ -5,6 +5,7 @@ signal coins_changed(new_amount: int)
 signal level_changed(new_level: int)
 @warning_ignore("unused_signal")
 signal health_changed(new_health: int)
+signal debug_mode_changed(enabled: bool)
 
 # 全局游戏状态变量
 var player_respawning = false  # 玩家是否正在复活
@@ -12,6 +13,9 @@ var current_level = 1         # 当前关卡编号
 var max_unlocked_level = 1    # 最大已解锁关卡
 var total_coins = 0           # 玩家收集的总金币数
 var completed_levels = {}     # 已完成的关卡记录 {关卡编号: 是否完成}
+
+# 调试模式
+var debug_mode: bool = false  # 调试模式开关
 
 # 统计数据
 var total_deaths: int = 0     # 总死亡次数
@@ -25,6 +29,19 @@ func set_player_respawning(value):
 	player_respawning = value
 	# 打印调试信息
 	print("设置玩家复活状态: " + str(value))
+
+# 切换调试模式
+func toggle_debug_mode() -> void:
+	debug_mode = not debug_mode
+	debug_mode_changed.emit(debug_mode)
+	print("[GameState] 调试模式: %s" % ("ON" if debug_mode else "OFF"))
+
+# 设置调试模式
+func set_debug_mode(enabled: bool) -> void:
+	if debug_mode != enabled:
+		debug_mode = enabled
+		debug_mode_changed.emit(debug_mode)
+		print("[GameState] 调试模式: %s" % ("ON" if debug_mode else "OFF"))
 
 # 设置当前关卡
 func set_current_level(level_number):

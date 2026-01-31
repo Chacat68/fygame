@@ -1,0 +1,181 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/gm_panel.gd" id="1_gmpanel"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.1, 0.1, 0.15, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.8, 0.3, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="GMPanel" type="PanelContainer"]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -320.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 450.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+script = ExtResource("1_gmpanel")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+text = "GM 面板"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="CoinRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="CoinLabel" type="Label" parent="VBox/CoinRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.9, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "金币:"
+
+[node name="CoinInput" type="SpinBox" parent="VBox/CoinRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 99999.0
+step = 1.0
+
+[node name="KillRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="KillLabel" type="Label" parent="VBox/KillRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "击杀:"
+
+[node name="KillInput" type="SpinBox" parent="VBox/KillRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.0
+max_value = 99999.0
+step = 1.0
+
+[node name="LevelRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="VBox/LevelRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.5, 0.8, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "关卡:"
+
+[node name="LevelInput" type="SpinBox" parent="VBox/LevelRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 100.0
+step = 1.0
+
+[node name="SpeedRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="SpeedLabel" type="Label" parent="VBox/SpeedRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "速度:"
+
+[node name="SpeedSlider" type="HSlider" parent="VBox/SpeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 3.0
+step = 0.1
+value = 1.0
+
+[node name="SpeedValue" type="Label" parent="VBox/SpeedRow"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "1.0x"
+
+[node name="GodModeCheck" type="CheckBox" parent="VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 24
+text = "无敌模式"
+
+[node name="ButtonRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="AddCoinsButton" type="Button" parent="VBox/ButtonRow"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "+100金币"
+
+[node name="NextLevelButton" type="Button" parent="VBox/ButtonRow"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "下一关"
+
+[node name="ResetLevelButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "重置关卡"
+
+[node name="ToggleButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -90.0
+offset_top = -35.0
+offset_right = 0.0
+offset_bottom = 0.0
+theme_override_colors/font_color = Color(0.3, 1, 0.3, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 20
+text = "▼ 收起"
+
+[connection signal="value_changed" from="VBox/CoinRow/CoinInput" to="." method="_on_coin_input_value_changed"]
+[connection signal="value_changed" from="VBox/KillRow/KillInput" to="." method="_on_kill_input_value_changed"]
+[connection signal="value_changed" from="VBox/LevelRow/LevelInput" to="." method="_on_level_input_value_changed"]
+[connection signal="value_changed" from="VBox/SpeedRow/SpeedSlider" to="." method="_on_speed_slider_value_changed"]
+[connection signal="toggled" from="VBox/GodModeCheck" to="." method="_on_god_mode_check_toggled"]
+[connection signal="pressed" from="VBox/ButtonRow/AddCoinsButton" to="." method="_on_add_coins_button_pressed"]
+[connection signal="pressed" from="VBox/ButtonRow/NextLevelButton" to="." method="_on_next_level_button_pressed"]
+[connection signal="pressed" from="VBox/ResetLevelButton" to="." method="_on_reset_level_button_pressed"]
+[connection signal="pressed" from="ToggleButton" to="." method="_on_toggle_button_pressed"]
