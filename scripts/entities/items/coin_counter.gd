@@ -30,9 +30,6 @@ var teleport_manager: TeleportManagerClass
 @onready var kill_counter = $TopBar/KillCounter
 @onready var kill_label = $TopBar/KillCounter/KillCount
 @onready var top_bar = $TopBar
-@onready var test_button = $TestButton
-@onready var test_panel = $TestPanel
-@onready var teleport_button = $TestPanel/TestVBox/TeleportButton
 
 # 信号
 signal coins_changed(new_count)
@@ -65,11 +62,7 @@ func _ready():
 	# 设置UI元素的位置
 	update_position()
 	
-	# 连接测试按钮事件
-	if test_button:
-		test_button.pressed.connect(_on_test_button_pressed)
-	if teleport_button:
-		teleport_button.pressed.connect(_on_teleport_button_pressed)
+
 
 # 更新金币计数并发出信号（带滚动动画）
 func update_coin_count(value, animate: bool = true):
@@ -162,22 +155,7 @@ func set_margins(left: int, top: int):
 	margin_top = top
 	update_position()
 
-# 测试按钮点击事件
-func _on_test_button_pressed():
-	if test_panel:
-		test_panel.visible = !test_panel.visible
 
-# 传送到传送门按钮点击事件
-func _on_teleport_button_pressed():
-	if teleport_manager:
-		# 使用传送管理器执行传送
-		var success = teleport_manager.teleport_to_portal()
-		if success:
-			# 隐藏测试面板
-			if test_panel:
-				test_panel.visible = false
-	else:
-		print("[CoinCounter] 错误：传送管理器未初始化")
 
 # 传送开始回调
 func _on_teleport_started(player: Node2D, destination: Vector2):

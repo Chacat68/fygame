@@ -96,58 +96,6 @@ anchor_bottom = 1.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_counter_bg")
 z_index = -1
 
-[node name="TestButton" type="Button" parent="."]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -100.0
-offset_top = 15.0
-offset_right = -15.0
-offset_bottom = 45.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_constants/outline_size = 0
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBoxTexture_button_normal")
-theme_override_styles/hover = SubResource("StyleBoxTexture_button_hover")
-text = "测试"
-
-[node name="TestPanel" type="Panel" parent="."]
-visible = false
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -200.0
-offset_top = 50.0
-offset_right = -15.0
-offset_bottom = 145.0
-modulate = Color(1, 1, 1, 0.9)
-
-[node name="TestVBox" type="VBoxContainer" parent="TestPanel"]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 175.0
-offset_bottom = 85.0
-theme_override_constants/separation = 5
-
-[node name="TeleportButton" type="Button" parent="TestPanel/TestVBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_constants/outline_size = 0
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("StyleBoxTexture_button_normal")
-theme_override_styles/hover = SubResource("StyleBoxTexture_button_hover")
-text = "传送到传送门"
-
 [node name="KillCounter" type="HBoxContainer" parent="TopBar"]
 layout_mode = 2
 theme_override_constants/separation = 8
