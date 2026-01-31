@@ -11,12 +11,16 @@
 [ext_resource type="Texture2D" uid="uid://bkl87xo2u4wji" path="res://assets/ui/Large tiles/Thin outline/tile_0037.png" id="9_panel_bg"]
 [ext_resource type="PackedScene" uid="uid://dkm3v8xqw2hep" path="res://scenes/ui/pause_menu.tscn" id="10_pause_menu"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_counter_bg"]
-texture = ExtResource("9_panel_bg")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_counter_bg"]
+bg_color = Color(0, 0, 0, 0.5)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_left = 8
+corner_radius_bottom_right = 8
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_button_normal"]
 texture = ExtResource("7_button_normal")
@@ -84,7 +88,7 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_counter_bg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_counter_bg")
 z_index = -1
 
 [node name="TestButton" type="Button" parent="."]
@@ -174,7 +178,7 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_counter_bg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_counter_bg")
 z_index = -1
 
 [node name="PauseMenu" parent="." instance=ExtResource("10_pause_menu")]

@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://dsmp6enbdqgyo" path="res://assets/sprites/world_tileset.png" id="6_bad7j"]
 [ext_resource type="PackedScene" uid="uid://bedut538hiyon" path="res://scenes/entities/coin.tscn" id="7_ncfo1"]
 [ext_resource type="PackedScene" uid="uid://cbn8s4tmx1k7b" path="res://scenes/entities/platform.tscn" id="8_vv22t"]
-[ext_resource type="FontFile" uid="uid://cuuwxnn2nrftr" path="res://assets/fonts/PixelOperator8.ttf" id="9_1g1ox"]
+[ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="9_1g1ox"]
 [ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="10_4m06h"]
 [ext_resource type="PackedScene" uid="uid://bqhqxnhqxnhqx" path="res://scenes/entities/portal.tscn" id="11_dculb"]
 
@@ -317,9 +317,12 @@ offset_right = 111.0
 offset_bottom = -40.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("9_1g1ox")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 text = "按空格键跳"
 
 [node name="Monster" type="Node" parent="." unique_id=468891952]
