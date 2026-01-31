@@ -57,6 +57,7 @@ func _init_config():
 
 # 信号
 signal health_changed(new_health)
+signal respawned  # 玩家重生信号
 
 # 复活效果标志 - 使用AutoLoad模式在场景重载后保持
 var should_apply_respawn_effect = false
@@ -68,6 +69,11 @@ func _ready():
 	
 	# 将玩家添加到player组，便于后续查找
 	add_to_group("player")
+	
+	# 注册初始出生点到检查点管理器
+	var checkpoint_manager = get_node_or_null("/root/CheckpointManager")
+	if checkpoint_manager:
+		checkpoint_manager.set_initial_spawn_position(global_position)
 	
 	# 初始化状态
 	_init_states()
@@ -237,7 +243,18 @@ func _apply_respawn_effect():
 	tween.tween_property(animated_sprite, "modulate:a", 0.5, 0.2)
 	tween.tween_property(animated_sprite, "modulate:a", 1.0, 0.2)
 
-
+## 开始无敌状态（指定持续时间）
+func start_invincibility(duration: float = -1.0):
+	is_invincible = true
+	invincibility_timer = 0.0
+	
+	# 如果指定了持续时间，临时修改无敌时间
+	if duration > 0:
+		var original_time = INVINCIBILITY_TIME
+		INVINCIBILITY_TIME = duration
+		# 使用定时器恢复原始无敌时间
+		await get_tree().create_timer(duration).timeout
+		INVINCIBILITY_TIME = original_time
 
 # 注释：原有的重复函数已被移除，使用上面的take_damage函数实现
 

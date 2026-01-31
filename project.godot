@@ -30,6 +30,7 @@ ResourceManager="*res://scripts/autoload/resource_manager_autoload.gd"
 AudioManager="*res://scripts/managers/audio_manager.gd"
 FloatingTextManager="*res://scripts/managers/floating_text_manager.gd"
 SaveManager="*res://scripts/managers/save_manager.gd"
+CheckpointManager="*res://scripts/managers/checkpoint_manager.gd"
 
 [display]
 
