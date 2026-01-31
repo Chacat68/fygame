@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dxvj5qbsn4e8p"]
+[gd_scene load_steps=14 format=3 uid="uid://dxvj5qbsn4e8p"]
 
 [ext_resource type="Script" uid="uid://dvqr6a4qm1u23" path="res://scripts/entities/items/coin_counter.gd" id="1_ixnqm"]
 [ext_resource type="Texture2D" uid="uid://dxd7ual10slyf" path="res://assets/sprites/coin_icon.png" id="2_yev5y"]
@@ -64,8 +64,10 @@ stretch_mode = 5
 [node name="CoinText" type="Label" parent="TopBar/CoinCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 56
 text = "金币："
@@ -74,8 +76,10 @@ vertical_alignment = 1
 [node name="CoinCount" type="Label" parent="TopBar/CoinCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 56
 text = "0"
@@ -101,8 +105,10 @@ offset_right = -15.0
 offset_bottom = 45.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxTexture_button_normal")
@@ -131,8 +137,10 @@ theme_override_constants/separation = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.8, 0.8, 0.8, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxTexture_button_normal")
@@ -154,8 +162,10 @@ stretch_mode = 5
 [node name="KillText" type="Label" parent="TopBar/KillCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 56
 text = "击杀："
@@ -164,8 +174,10 @@ vertical_alignment = 1
 [node name="KillCount" type="Label" parent="TopBar/KillCounter"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
 theme_override_font_sizes/font_size = 56
 text = "0"
