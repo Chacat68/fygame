@@ -9,7 +9,7 @@ signal back_pressed()
 
 # UI组件引用
 @onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/TitleContainer/TitleLabel
-@onready var slots_container: VBoxContainer = $Panel/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer
+@onready var slots_container: HBoxContainer = $Panel/MarginContainer/VBoxContainer/ScrollContainer/SlotsContainer
 @onready var back_button: Button = $Panel/MarginContainer/VBoxContainer/BackButton
 @onready var confirm_dialog: ConfirmationDialog = $ConfirmDialog
 @onready var panel: PanelContainer = $Panel

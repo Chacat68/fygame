@@ -13,14 +13,15 @@ func _ready():
 
 # 设置按钮焦点的辅助函数
 func set_button_focus():
-	if has_node("MenuPanel/VBoxContainer/StartButton"):
-		$MenuPanel/VBoxContainer/StartButton.grab_focus()
+	var start_btn = get_node_or_null("VBoxContainer/ButtonContainer/StartButton")
+	if start_btn:
+		start_btn.grab_focus()
 	else:
 		print("警告：无法找到开始按钮节点")
 
 # 更新继续冒险按钮状态
 func _update_continue_button_state():
-	var continue_button = get_node_or_null("MenuPanel/VBoxContainer/ContinueButton")
+	var continue_button = get_node_or_null("VBoxContainer/ButtonContainer/ContinueButton")
 	if continue_button and SaveManager:
 		# 检查是否有任何存档
 		var has_any_save = false

@@ -9,18 +9,22 @@ signal back_pressed()
 # 返回行为控制
 @export var return_to_main_menu_on_back: bool = true
 
-# UI组件引用
-@onready var window_mode_option: OptionButton = $Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/WindowModeContainer/WindowModeOption
-@onready var resolution_option: OptionButton = $Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/ResolutionContainer/ResolutionOption
-@onready var master_volume_slider: HSlider = $Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MasterVolumeContainer/MasterVolumeSlider
-@onready var master_volume_value: Label = $Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MasterVolumeContainer/MasterVolumeValue
-@onready var music_volume_slider: HSlider = $Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MusicVolumeContainer/MusicVolumeSlider
-@onready var music_volume_value: Label = $Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MusicVolumeContainer/MusicVolumeValue
-@onready var sfx_volume_slider: HSlider = $Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/SFXVolumeContainer/SFXVolumeSlider
-@onready var sfx_volume_value: Label = $Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/SFXVolumeContainer/SFXVolumeValue
-@onready var apply_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonsContainer/ApplyButton
-@onready var back_button: Button = $Panel/MarginContainer/VBoxContainer/ButtonsContainer/BackButton
-@onready var panel: PanelContainer = $Panel
+# UI组件引用 - 画面设置
+@onready var window_mode_option: OptionButton = $CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent/WindowModeContainer/WindowModeOption
+@onready var resolution_option: OptionButton = $CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent/ResolutionContainer/ResolutionOption
+
+# UI组件引用 - 音量设置
+@onready var master_volume_slider: HSlider = $CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MasterVolumeContainer/MasterVolumeSlider
+@onready var master_volume_value: Label = $CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MasterVolumeContainer/MasterVolumeValue
+@onready var music_volume_slider: HSlider = $CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MusicVolumeContainer/MusicVolumeSlider
+@onready var music_volume_value: Label = $CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MusicVolumeContainer/MusicVolumeValue
+@onready var sfx_volume_slider: HSlider = $CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/SFXVolumeContainer/SFXVolumeSlider
+@onready var sfx_volume_value: Label = $CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/SFXVolumeContainer/SFXVolumeValue
+
+# UI组件引用 - 按钮
+@onready var apply_button: Button = $CenterContainer/MainVBox/ButtonsContainer/ApplyButton
+@onready var back_button: Button = $CenterContainer/MainVBox/ButtonsContainer/BackButton
+@onready var main_vbox: VBoxContainer = $CenterContainer/MainVBox
 
 # 分辨率列表
 var resolutions: Array[Vector2i] = [
@@ -78,16 +82,13 @@ func _connect_signals() -> void:
 
 # 播放进入动画
 func _play_enter_animation() -> void:
-	if panel:
-		panel.modulate.a = 0
-		panel.scale = Vector2(0.95, 0.95)
+	if main_vbox:
+		main_vbox.modulate.a = 0
 		
 		tween = create_tween()
-		tween.set_parallel(true)
 		tween.set_ease(Tween.EASE_OUT)
-		tween.set_trans(Tween.TRANS_BACK)
-		tween.tween_property(panel, "modulate:a", 1.0, 0.3)
-		tween.tween_property(panel, "scale", Vector2.ONE, 0.3)
+		tween.set_trans(Tween.TRANS_CUBIC)
+		tween.tween_property(main_vbox, "modulate:a", 1.0, 0.4)
 
 # 应用设置到UI
 func _apply_settings_to_ui() -> void:
@@ -162,16 +163,24 @@ func _apply_resolution(index: int) -> void:
 	if index >= 0 and index < resolutions.size():
 		var resolution = resolutions[index]
 		
-		# 检查当前窗口模式，全屏模式下不改变窗口大小
+		# 检查是否在编辑器嵌入模式下运行
+		if OS.has_feature("editor"):
+			var window_flags = DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_RESIZE_DISABLED)
+			if window_flags:
+				print("[设置] 编辑器嵌入模式下无法调整窗口大小，请导出游戏或使用独立窗口测试")
+				return
+		
+		# 检查当前窗口模式
 		var current_mode = DisplayServer.window_get_mode()
+		
 		if current_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
-			# 全屏模式下只更新视口大小
-			get_tree().root.content_scale_size = resolution
+			# 全屏模式下不需要改变窗口大小
+			print("[设置] 全屏模式下无法更改分辨率")
 			return
 		
-		# 窗口模式下同时设置窗口大小和视口大小
+		# 窗口模式下只改变窗口大小，不改变视口缩放
+		# 这样 canvas_items 拉伸模式会自动处理UI缩放
 		DisplayServer.window_set_size(resolution)
-		get_tree().root.content_scale_size = resolution
 		
 		# 居中窗口
 		var screen_size = DisplayServer.screen_get_size()
@@ -179,7 +188,7 @@ func _apply_resolution(index: int) -> void:
 		var window_pos = (screen_size - resolution) / 2
 		DisplayServer.window_set_position(window_pos)
 		
-		print("[设置] 分辨率已设置为: %dx%d" % [resolution.x, resolution.y])
+		print("[设置] 窗口大小已设置为: %dx%d" % [resolution.x, resolution.y])
 
 # 应用主音量
 func _apply_master_volume(volume: float) -> void:

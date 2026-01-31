@@ -3,46 +3,45 @@
 [ext_resource type="Script" path="res://scripts/ui/settings_screen.gd" id="1_settings"]
 [ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="2_font_bold"]
 [ext_resource type="FontFile" path="res://assets/fonts/WenQuanYi_Bitmap_Song_12px.ttf" id="3_font"]
+[ext_resource type="Texture2D" uid="uid://cvuy04lypoh8k" path="res://assets/images/home2.png" id="4_bg"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.12, 0.12, 0.16, 0.95)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.4, 0.35, 0.6, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_section"]
+bg_color = Color(0.08, 0.12, 0.18, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.45, 0.7, 0.6)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_bg"]
 bg_color = Color(0.2, 0.2, 0.25, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
-bg_color = Color(0.5, 0.45, 0.7, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
-bg_color = Color(0.25, 0.24, 0.35, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.4, 0.38, 0.55, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slider_fill"]
+bg_color = Color(0.3, 0.55, 0.8, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+bg_color = Color(0.15, 0.22, 0.32, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.48, 0.7, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="SettingsScreen" type="Control"]
 layout_mode = 3
@@ -53,91 +52,91 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_settings")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.7)
+texture = ExtResource("4_bg")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="DarkOverlay" type="ColorRect" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -280.0
-offset_top = -240.0
-offset_right = 280.0
-offset_bottom = 240.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+color = Color(0, 0, 0, 0.6)
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
-theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 24
+theme_override_constants/separation = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 20
-
-[node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/MainVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.9, 0.7, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 56
 text = "⚙️ 游戏设置"
 horizontal_alignment = 1
 
-[node name="Separator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
-modulate = Color(0.4, 0.35, 0.6, 0.6)
+[node name="DisplaySection" type="PanelContainer" parent="CenterContainer/MainVBox"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_section")
 
-[node name="SettingsContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="DisplayMargin" type="MarginContainer" parent="CenterContainer/MainVBox/DisplaySection"]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 24
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
 
-[node name="DisplaySection" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="DisplayContent" type="VBoxContainer" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 
-[node name="DisplayLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection"]
+[node name="DisplayLabel" type="Label" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 36
 text = "🖥️ 画面设置"
 
-[node name="WindowModeContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection"]
+[node name="WindowModeContainer" type="HBoxContainer" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
-[node name="WindowModeLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/WindowModeContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="WindowModeLabel" type="Label" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent/WindowModeContainer"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "窗口模式"
 
-[node name="WindowModeOption" type="OptionButton" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/WindowModeContainer"]
-custom_minimum_size = Vector2(200, 36)
+[node name="WindowModeOption" type="OptionButton" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent/WindowModeContainer"]
+custom_minimum_size = Vector2(320, 56)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 item_count = 3
 popup/item_0/text = "窗口化"
@@ -146,25 +145,25 @@ popup/item_1/id = 1
 popup/item_2/text = "无边框窗口"
 popup/item_2/id = 2
 
-[node name="ResolutionContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection"]
+[node name="ResolutionContainer" type="HBoxContainer" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
-[node name="ResolutionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/ResolutionContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="ResolutionLabel" type="Label" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent/ResolutionContainer"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "分辨率"
 
-[node name="ResolutionOption" type="OptionButton" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/DisplaySection/ResolutionContainer"]
-custom_minimum_size = Vector2(200, 36)
+[node name="ResolutionOption" type="OptionButton" parent="CenterContainer/MainVBox/DisplaySection/DisplayMargin/DisplayContent/ResolutionContainer"]
+custom_minimum_size = Vector2(320, 56)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 26
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 item_count = 5
 popup/item_0/text = "1280 x 720"
@@ -177,135 +176,145 @@ popup/item_3/id = 3
 popup/item_4/text = "2560 x 1440"
 popup/item_4/id = 4
 
-[node name="AudioSection" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer"]
+[node name="AudioSection" type="PanelContainer" parent="CenterContainer/MainVBox"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_styles/panel = SubResource("StyleBoxFlat_section")
 
-[node name="AudioLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection"]
+[node name="AudioMargin" type="MarginContainer" parent="CenterContainer/MainVBox/AudioSection"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="AudioContent" type="VBoxContainer" parent="CenterContainer/MainVBox/AudioSection/AudioMargin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="AudioLabel" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.85, 1, 1)
 theme_override_fonts/font = ExtResource("2_font_bold")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 36
 text = "🔊 音量设置"
 
-[node name="MasterVolumeContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection"]
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
-[node name="MasterVolumeLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MasterVolumeContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="MasterVolumeLabel" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MasterVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "主音量"
 
-[node name="MasterVolumeSlider" type="HSlider" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MasterVolumeContainer"]
-custom_minimum_size = Vector2(180, 24)
+[node name="MasterVolumeSlider" type="HSlider" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MasterVolumeContainer"]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
 theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
 max_value = 100.0
 value = 80.0
 
-[node name="MasterVolumeValue" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MasterVolumeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="MasterVolumeValue" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MasterVolumeContainer"]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.9, 0.7, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "80%"
 horizontal_alignment = 2
 
-[node name="MusicVolumeContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection"]
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
-[node name="MusicVolumeLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MusicVolumeContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="MusicVolumeLabel" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MusicVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "音乐音量"
 
-[node name="MusicVolumeSlider" type="HSlider" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MusicVolumeContainer"]
-custom_minimum_size = Vector2(180, 24)
+[node name="MusicVolumeSlider" type="HSlider" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MusicVolumeContainer"]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
 theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
 max_value = 100.0
 value = 80.0
 
-[node name="MusicVolumeValue" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/MusicVolumeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="MusicVolumeValue" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/MusicVolumeContainer"]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.9, 0.7, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "80%"
 horizontal_alignment = 2
 
-[node name="SFXVolumeContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection"]
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 
-[node name="SFXVolumeLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/SFXVolumeContainer"]
-custom_minimum_size = Vector2(120, 0)
+[node name="SFXVolumeLabel" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/SFXVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "音效音量"
 
-[node name="SFXVolumeSlider" type="HSlider" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/SFXVolumeContainer"]
-custom_minimum_size = Vector2(180, 24)
+[node name="SFXVolumeSlider" type="HSlider" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/SFXVolumeContainer"]
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
 theme_override_styles/slider = SubResource("StyleBoxFlat_slider_bg")
 theme_override_styles/grabber_area = SubResource("StyleBoxFlat_slider_fill")
 theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_slider_fill")
 max_value = 100.0
 value = 100.0
 
-[node name="SFXVolumeValue" type="Label" parent="Panel/MarginContainer/VBoxContainer/SettingsContainer/AudioSection/SFXVolumeContainer"]
-custom_minimum_size = Vector2(50, 0)
+[node name="SFXVolumeValue" type="Label" parent="CenterContainer/MainVBox/AudioSection/AudioMargin/AudioContent/SFXVolumeContainer"]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.9, 0.7, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 28
 text = "100%"
 horizontal_alignment = 2
 
-[node name="Separator2" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
-modulate = Color(0.4, 0.35, 0.6, 0.4)
-layout_mode = 2
-
-[node name="ButtonsContainer" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="CenterContainer/MainVBox"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 24
+theme_override_constants/separation = 40
 
-[node name="ApplyButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(120, 44)
+[node name="ApplyButton" type="Button" parent="CenterContainer/MainVBox/ButtonsContainer"]
+custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.95, 0.9, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 text = "✓ 应用"
 
-[node name="BackButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ButtonsContainer"]
-custom_minimum_size = Vector2(120, 44)
+[node name="BackButton" type="Button" parent="CenterContainer/MainVBox/ButtonsContainer"]
+custom_minimum_size = Vector2(200, 64)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.85, 0.9, 1)
 theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("3_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
 text = "🔙 返回"

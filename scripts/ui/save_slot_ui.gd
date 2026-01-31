@@ -13,12 +13,12 @@ signal new_game_requested(slot: int)
 # UI组件引用
 @onready var slot_label: Label = $MarginContainer/VBoxContainer/Header/SlotLabel
 @onready var save_time_label: Label = $MarginContainer/VBoxContainer/Info/SaveTimeLabel
-@onready var level_label: Label = $MarginContainer/VBoxContainer/Info/InfoRow/LevelLabel
-@onready var coins_label: Label = $MarginContainer/VBoxContainer/Info/InfoRow/CoinsLabel
-@onready var play_time_label: Label = $MarginContainer/VBoxContainer/Info/InfoRow/PlayTimeLabel
+@onready var level_label: Label = $MarginContainer/VBoxContainer/Info/LevelLabel
+@onready var coins_label: Label = $MarginContainer/VBoxContainer/Info/CoinsLabel
+@onready var play_time_label: Label = $MarginContainer/VBoxContainer/Info/PlayTimeLabel
 @onready var load_button: Button = $MarginContainer/VBoxContainer/Buttons/LoadButton
-@onready var delete_button: Button = $MarginContainer/VBoxContainer/Buttons/DeleteButton
-@onready var new_game_button: Button = $MarginContainer/VBoxContainer/Buttons/NewGameButton
+@onready var delete_button: Button = $MarginContainer/VBoxContainer/Buttons/ButtonRow/DeleteButton
+@onready var new_game_button: Button = $MarginContainer/VBoxContainer/Buttons/ButtonRow/NewGameButton
 @onready var empty_label: Label = $MarginContainer/VBoxContainer/EmptyLabel
 @onready var info_container: VBoxContainer = $MarginContainer/VBoxContainer/Info
 

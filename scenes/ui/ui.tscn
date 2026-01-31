@@ -51,7 +51,7 @@ theme_override_constants/separation = 8
 alignment = 0
 
 [node name="CoinIcon" type="TextureRect" parent="TopBar/CoinCounter"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 texture = ExtResource("6_coin_enhanced")
 expand_mode = 1
@@ -61,9 +61,9 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 56
 text = "金币："
 vertical_alignment = 1
 
@@ -71,9 +71,9 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 56
 text = "0"
 vertical_alignment = 1
 
@@ -141,7 +141,7 @@ theme_override_constants/separation = 8
 alignment = 0
 
 [node name="KillIcon" type="TextureRect" parent="TopBar/KillCounter"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 texture = ExtResource("5_sword")
 expand_mode = 1
@@ -151,9 +151,9 @@ stretch_mode = 5
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 56
 text = "击杀："
 vertical_alignment = 1
 
@@ -161,9 +161,9 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
+theme_override_constants/outline_size = 4
 theme_override_fonts/font = ExtResource("3_ixnqm")
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 56
 text = "0"
 vertical_alignment = 1
 
