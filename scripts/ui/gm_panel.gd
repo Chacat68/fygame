@@ -4,14 +4,15 @@ extends PanelContainer
 # 提供调试功能，仅在调试模式下显示
 
 # 组件引用
-@onready var coin_input: SpinBox = $VBox/CoinRow/CoinInput
-@onready var kill_input: SpinBox = $VBox/KillRow/KillInput
-@onready var level_input: SpinBox = $VBox/LevelRow/LevelInput
-@onready var god_mode_check: CheckBox = $VBox/GodModeCheck
-@onready var speed_slider: HSlider = $VBox/SpeedRow/SpeedSlider
-@onready var speed_label: Label = $VBox/SpeedRow/SpeedValue
-@onready var vbox: VBoxContainer = $VBox
-@onready var toggle_button: Button = $ToggleButton
+@onready var coin_input: SpinBox = $VBox/ContentBox/CoinRow/CoinInput
+@onready var kill_input: SpinBox = $VBox/ContentBox/KillRow/KillInput
+@onready var level_input: SpinBox = $VBox/ContentBox/LevelRow/LevelInput
+@onready var god_mode_check: CheckBox = $VBox/ContentBox/GodModeCheck
+@onready var speed_slider: HSlider = $VBox/ContentBox/SpeedRow/SpeedSlider
+@onready var speed_label: Label = $VBox/ContentBox/SpeedRow/SpeedValue
+@onready var content_box: VBoxContainer = $VBox/ContentBox
+@onready var toggle_button: Button = $VBox/TitleRow/ToggleButton
+@onready var separator: HSeparator = $VBox/HSeparator
 
 # 状态
 var god_mode: bool = false
@@ -61,8 +62,10 @@ func _on_toggle_button_pressed() -> void:
 
 # 更新面板状态
 func _update_panel_state() -> void:
-	if vbox:
-		vbox.visible = not is_collapsed
+	if content_box:
+		content_box.visible = not is_collapsed
+	if separator:
+		separator.visible = not is_collapsed
 	if toggle_button:
 		toggle_button.text = "▶ GM" if is_collapsed else "▼ 收起"
 
