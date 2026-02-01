@@ -254,6 +254,9 @@ func _collect_game_state(slot: int) -> SaveData:
 	if GameState:
 		save_data.current_level = GameState.current_level
 		save_data.max_unlocked_level = GameState.max_unlocked_level
+		# 确保 max_unlocked_level >= current_level
+		if save_data.max_unlocked_level < save_data.current_level:
+			save_data.max_unlocked_level = save_data.current_level
 		save_data.total_coins = GameState.total_coins
 		save_data.completed_levels = GameState.completed_levels.duplicate()
 	
