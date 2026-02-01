@@ -30,7 +30,11 @@ ResourceManager="*res://scripts/autoload/resource_manager_autoload.gd"
 AudioManager="*res://scripts/managers/audio_manager.gd"
 FloatingTextManager="*res://scripts/managers/floating_text_manager.gd"
 SaveManager="*res://scripts/managers/save_manager.gd"
-CheckpointManager="*res://scripts/managers/checkpoint_manager.gd"
+CheckpointManager="*res://scripts/autoload/checkpoint_manager.gd"
+CollectibleManager="*res://scripts/autoload/collectible_manager.gd"
+AchievementManager="*res://scripts/autoload/achievement_manager.gd"
+GameStatsManager="*res://scripts/autoload/game_stats_manager.gd"
+ItemManager="*res://scripts/autoload/item_manager.gd"
 
 [display]
 
