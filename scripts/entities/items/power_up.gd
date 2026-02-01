@@ -1,7 +1,7 @@
 # 能力拾取物
 # 玩家拾取后获得临时或永久能力提升
 class_name PowerUp
-extends CollectibleBase
+extends "res://scripts/entities/items/collectible_base.gd"
 
 # 能力类型枚举
 enum PowerUpType {
@@ -43,8 +43,9 @@ func _ready() -> void:
 	_apply_power_color()
 
 func _register_to_manager() -> void:
-	if CollectibleManager:
-		CollectibleManager.register_collectible(self, CollectibleManager.CollectibleType.POWERUP)
+	var collectible_mgr = get_node_or_null("/root/CollectibleManager")
+	if collectible_mgr:
+		collectible_mgr.register_collectible(self, collectible_mgr.CollectibleType.POWERUP)
 
 func _apply_power_color() -> void:
 	var color = power_colors.get(power_type, Color.WHITE)
@@ -76,8 +77,9 @@ func _apply_collection_effect(player: Node) -> void:
 
 ## 速度提升
 func _apply_speed_boost(player: Node) -> void:
-	if ItemManager:
-		ItemManager._add_timed_effect("speed_boost", duration, strength)
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if item_mgr:
+		item_mgr._add_timed_effect("speed_boost", duration, strength)
 	
 	# 临时增加玩家速度（如果没有使用ItemManager）
 	if "SPEED" in player:
@@ -91,8 +93,9 @@ func _apply_speed_boost(player: Node) -> void:
 
 ## 跳跃提升
 func _apply_jump_boost(player: Node) -> void:
-	if ItemManager:
-		ItemManager._add_timed_effect("jump_boost", duration, strength)
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if item_mgr:
+		item_mgr._add_timed_effect("jump_boost", duration, strength)
 	
 	if "JUMP_VELOCITY" in player:
 		var original_jump = player.JUMP_VELOCITY
@@ -105,16 +108,18 @@ func _apply_jump_boost(player: Node) -> void:
 
 ## 无敌
 func _apply_invincibility(player: Node) -> void:
-	if ItemManager:
-		ItemManager._add_timed_effect("invincibility", duration, 1.0)
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if item_mgr:
+		item_mgr._add_timed_effect("invincibility", duration, 1.0)
 	
 	if player.has_method("start_invincibility"):
 		player.start_invincibility(duration)
 
 ## 双倍金币
 func _apply_double_coins() -> void:
-	if ItemManager:
-		ItemManager._add_timed_effect("double_coins", duration, 2.0)
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if item_mgr:
+		item_mgr._add_timed_effect("double_coins", duration, 2.0)
 
 ## 额外跳跃
 func _apply_extra_jump(player: Node) -> void:
@@ -129,8 +134,9 @@ func _apply_extra_jump(player: Node) -> void:
 ## 金币磁铁
 func _apply_magnet() -> void:
 	# 使用道具系统的磁铁效果
-	if ItemManager:
-		ItemManager.add_item("coin_magnet", 1)
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if item_mgr:
+		item_mgr.add_item("coin_magnet", 1)
 
 ## 生命恢复
 func _apply_health_regen(player: Node) -> void:
@@ -138,6 +144,7 @@ func _apply_health_regen(player: Node) -> void:
 		# 持续恢复生命
 		var total_heal = int(strength * 10)  # 总共恢复的生命
 		var heal_per_tick = 1
+		@warning_ignore("integer_division")
 		var tick_count = total_heal / heal_per_tick
 		var tick_interval = duration / tick_count
 		

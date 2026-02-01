@@ -7,7 +7,7 @@ extends Control
 @onready var effects_container: HBoxContainer = $MarginContainer/VBoxContainer/EffectsContainer
 
 # 关卡计时器引用
-var level_timer: LevelTimer
+var level_timer: Node
 
 # 效果图标
 var effect_icons: Dictionary = {}
@@ -20,9 +20,10 @@ func _ready() -> void:
 		level_timer.time_updated.connect(_on_time_updated)
 	
 	# 连接道具管理器信号
-	if ItemManager:
-		ItemManager.effect_applied.connect(_on_effect_applied)
-		ItemManager.effect_expired.connect(_on_effect_expired)
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if item_mgr:
+		item_mgr.effect_applied.connect(_on_effect_applied)
+		item_mgr.effect_expired.connect(_on_effect_expired)
 
 func _process(_delta: float) -> void:
 	# 更新效果剩余时间
@@ -35,6 +36,7 @@ func _on_time_updated(time: float) -> void:
 
 ## 格式化时间
 func _format_time(seconds: float) -> String:
+	@warning_ignore("integer_division")
 	var minutes = int(seconds) / 60
 	var secs = int(seconds) % 60
 	var ms = int((seconds - int(seconds)) * 100)
@@ -115,11 +117,12 @@ func _remove_effect_icon(effect_type: String) -> void:
 
 ## 更新效果计时器
 func _update_effect_timers() -> void:
-	if not ItemManager:
+	var item_mgr = get_node_or_null("/root/ItemManager")
+	if not item_mgr:
 		return
 	
 	for effect_type in effect_icons.keys():
-		var remaining = ItemManager.get_effect_remaining_time(effect_type)
+		var remaining = item_mgr.get_effect_remaining_time(effect_type)
 		var icon_container = effect_icons[effect_type]
 		var timer_label = icon_container.get_node_or_null("TimerLabel")
 		

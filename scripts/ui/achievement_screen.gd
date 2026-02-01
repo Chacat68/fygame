@@ -32,8 +32,9 @@ func _populate_achievements() -> void:
 	
 	# 获取所有成就
 	var achievements: Array[Dictionary] = []
-	if AchievementManager:
-		achievements = AchievementManager.get_all_achievements()
+	var achievement_mgr = get_node_or_null("/root/AchievementManager")
+	if achievement_mgr:
+		achievements = achievement_mgr.get_all_achievements()
 	
 	# 创建成就项
 	for achievement in achievements:
@@ -142,10 +143,11 @@ func _create_achievement_item(achievement: Dictionary) -> Control:
 
 ## 更新进度显示
 func _update_progress() -> void:
-	if not progress_label or not AchievementManager:
+	var achievement_mgr = get_node_or_null("/root/AchievementManager")
+	if not progress_label or not achievement_mgr:
 		return
 	
-	var progress = AchievementManager.get_unlock_progress()
+	var progress = achievement_mgr.get_unlock_progress()
 	progress_label.text = "已解锁: %d / %d (%.1f%%)" % [progress["unlocked"], progress["total"], progress["percentage"]]
 
 ## 播放进入动画

@@ -159,6 +159,7 @@ func _create_level_button(level: Dictionary) -> Control:
 
 ## 格式化时间
 func _format_time(seconds: float) -> String:
+	@warning_ignore("integer_division")
 	var minutes = int(seconds) / 60
 	var secs = int(seconds) % 60
 	var ms = int((seconds - int(seconds)) * 100)

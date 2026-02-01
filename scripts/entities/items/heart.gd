@@ -1,7 +1,7 @@
 # 心形收集品
 # 恢复玩家生命值
 class_name Heart
-extends CollectibleBase
+extends "res://scripts/entities/items/collectible_base.gd"
 
 @export_group("心形属性")
 @export var heal_amount: int = 25  # 恢复血量
@@ -21,8 +21,9 @@ func _ready() -> void:
 		animated_sprite.modulate = Color(1.0, 0.3, 0.3)
 
 func _register_to_manager() -> void:
-	if CollectibleManager:
-		CollectibleManager.register_collectible(self, CollectibleManager.CollectibleType.HEART)
+	var collectible_mgr = get_node_or_null("/root/CollectibleManager")
+	if collectible_mgr:
+		collectible_mgr.register_collectible(self, collectible_mgr.CollectibleType.HEART)
 
 func _apply_collection_effect(player: Node) -> void:
 	if not player:

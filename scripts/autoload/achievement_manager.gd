@@ -1,6 +1,6 @@
 # 成就管理器 (AutoLoad)
 # 负责管理游戏成就的解锁、进度追踪和通知
-class_name AchievementManagerClass
+class_name AchievementManager
 extends Node
 
 # 信号
@@ -11,7 +11,7 @@ signal all_achievements_unlocked()
 # 成就定义
 var achievements: Dictionary = {}
 var unlocked_achievements: Array[String] = []
-var achievement_progress: Dictionary = {}
+var achievement_progress_data: Dictionary = {}
 
 # 成就通知队列
 var notification_queue: Array[Dictionary] = []
@@ -185,7 +185,7 @@ func _register_achievement(achievement_id: String, data: Dictionary) -> void:
 	data["id"] = achievement_id
 	data["unlocked"] = false
 	achievements[achievement_id] = data
-	achievement_progress[achievement_id] = 0
+	achievement_progress_data[achievement_id] = 0
 
 ## 更新成就进度
 func update_progress(achievement_type: String, amount: int = 1, extra_data: Dictionary = {}) -> void:
@@ -203,8 +203,8 @@ func update_progress(achievement_type: String, amount: int = 1, extra_data: Dict
 			continue
 		
 		# 更新进度
-		achievement_progress[achievement_id] += amount
-		var current = achievement_progress[achievement_id]
+		achievement_progress_data[achievement_id] += amount
+		var current = achievement_progress_data[achievement_id]
 		var target = achievement["target"]
 		
 		achievement_progress.emit(achievement_id, current, target)
@@ -277,14 +277,14 @@ func _show_next_notification() -> void:
 ## 手动解锁成就（用于特殊条件）
 func unlock(achievement_id: String) -> void:
 	if achievement_id in achievements and achievement_id not in unlocked_achievements:
-		achievement_progress[achievement_id] = achievements[achievement_id]["target"]
+		achievement_progress_data[achievement_id] = achievements[achievement_id]["target"]
 		_unlock_achievement(achievement_id)
 
 ## 获取成就信息
 func get_achievement(achievement_id: String) -> Dictionary:
 	if achievements.has(achievement_id):
 		var data = achievements[achievement_id].duplicate()
-		data["progress"] = achievement_progress.get(achievement_id, 0)
+		data["progress"] = achievement_progress_data.get(achievement_id, 0)
 		return data
 	return {}
 
@@ -315,7 +315,7 @@ func is_unlocked(achievement_id: String) -> bool:
 func save_data() -> Dictionary:
 	return {
 		"unlocked_achievements": unlocked_achievements.duplicate(),
-		"achievement_progress": achievement_progress.duplicate()
+		"achievement_progress": achievement_progress_data.duplicate()
 	}
 
 ## 加载数据
@@ -328,11 +328,11 @@ func load_data(data: Dictionary) -> void:
 	
 	if data.has("achievement_progress"):
 		for key in data["achievement_progress"].keys():
-			achievement_progress[key] = data["achievement_progress"][key]
+			achievement_progress_data[key] = data["achievement_progress"][key]
 
 ## 重置所有成就（调试用）
 func reset_all() -> void:
 	unlocked_achievements.clear()
 	for achievement_id in achievements.keys():
 		achievements[achievement_id]["unlocked"] = false
-		achievement_progress[achievement_id] = 0
+		achievement_progress_data[achievement_id] = 0

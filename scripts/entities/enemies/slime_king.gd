@@ -1,7 +1,7 @@
 # 史莱姆王Boss
 # 大型史莱姆，会分裂成小史莱姆
 class_name SlimeKing
-extends EnemyBase
+extends "res://scripts/entities/enemies/enemy_base.gd"
 
 @export_group("史莱姆王特性")
 @export var jump_force: float = -350.0
@@ -162,8 +162,8 @@ func _spawn_mini_slimes() -> void:
 
 func _create_simple_mini_slime() -> Node2D:
 	# 创建简单的小史莱姆节点
-	var mini = CharacterBody2D.new()
-	mini.add_to_group("enemy")
+	var mini_slime_node = CharacterBody2D.new()
+	mini_slime_node.add_to_group("enemy")
 	
 	# 添加碰撞体
 	var collision = CollisionShape2D.new()
@@ -171,7 +171,7 @@ func _create_simple_mini_slime() -> Node2D:
 	shape.radius = 8
 	shape.height = 16
 	collision.shape = shape
-	mini.add_child(collision)
+	mini_slime_node.add_child(collision)
 	
 	# 添加精灵（如果有史莱姆精灵）
 	var sprite = Sprite2D.new()
@@ -179,11 +179,11 @@ func _create_simple_mini_slime() -> Node2D:
 	if slime_texture:
 		sprite.texture = slime_texture
 		sprite.scale = Vector2(0.5, 0.5)
-	mini.add_child(sprite)
+	mini_slime_node.add_child(sprite)
 	
 	# 添加简单的AI脚本
 	var script = load("res://scripts/entities/enemies/slime.gd") if ResourceLoader.exists("res://scripts/entities/enemies/slime.gd") else null
 	if script:
-		mini.set_script(script)
+		mini_slime_node.set_script(script)
 	
-	return mini
+	return mini_slime_node

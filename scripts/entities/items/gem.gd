@@ -1,7 +1,7 @@
 # 宝石收集品
 # 比金币更稀有的收集品
 class_name Gem
-extends CollectibleBase
+extends "res://scripts/entities/items/collectible_base.gd"
 
 @export_group("宝石属性")
 @export_enum("Ruby", "Emerald", "Sapphire", "Diamond") var gem_type: int = 0
@@ -29,8 +29,9 @@ func _ready() -> void:
 	_apply_gem_color()
 
 func _register_to_manager() -> void:
-	if CollectibleManager:
-		CollectibleManager.register_collectible(self, CollectibleManager.CollectibleType.GEM)
+	var collectible_mgr = get_node_or_null("/root/CollectibleManager")
+	if collectible_mgr:
+		collectible_mgr.register_collectible(self, collectible_mgr.CollectibleType.GEM)
 
 func _apply_gem_color() -> void:
 	var color = gem_colors[gem_type] if gem_type < gem_colors.size() else Color.WHITE
@@ -40,7 +41,7 @@ func _apply_gem_color() -> void:
 	elif animated_sprite:
 		animated_sprite.modulate = color
 
-func _apply_collection_effect(player: Node) -> void:
+func _apply_collection_effect(_player: Node) -> void:
 	# 添加金币
 	if GameState:
 		GameState.add_coins(value)

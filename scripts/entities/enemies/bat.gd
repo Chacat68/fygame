@@ -1,7 +1,7 @@
 # 蝙蝠敌人
 # 会飞行的敌人，可以在空中巡逻和追击玩家
 class_name Bat
-extends EnemyBase
+extends "res://scripts/entities/enemies/enemy_base.gd"
 
 @export_group("蝙蝠特性")
 @export var fly_speed: float = 60.0

@@ -1,7 +1,7 @@
 # 骷髅战士敌人
 # 近战敌人，会追击玩家并进行攻击
 class_name SkeletonWarrior
-extends EnemyBase
+extends "res://scripts/entities/enemies/enemy_base.gd"
 
 @export_group("骷髅特性")
 @export var attack_cooldown: float = 1.5

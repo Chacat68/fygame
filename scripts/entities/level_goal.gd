@@ -17,7 +17,8 @@ signal level_completed(goal: Node)
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D if has_node("CollisionShape2D") else null
 
 # 关卡计时器引用
-var level_timer: LevelTimer
+const LevelTimerScript = preload("res://scripts/systems/level_timer.gd")
+var level_timer: Node
 
 # 完成状态
 var is_completed: bool = false
@@ -29,7 +30,7 @@ func _ready() -> void:
 	# 查找或创建关卡计时器
 	level_timer = get_tree().get_first_node_in_group("level_timer")
 	if not level_timer:
-		level_timer = LevelTimer.new()
+		level_timer = LevelTimerScript.new()
 		level_timer.add_to_group("level_timer")
 		get_tree().current_scene.add_child(level_timer)
 		
@@ -58,7 +59,7 @@ func _on_body_entered(body: Node2D) -> void:
 		complete_level(body)
 
 ## 完成关卡
-func complete_level(player: Node = null) -> void:
+func complete_level(_player: Node = null) -> void:
 	if is_completed:
 		return
 	
@@ -147,11 +148,12 @@ func _unlock_next_level() -> void:
 			SaveManager.save_game()
 	
 	# 触发成就
-	if AchievementManager:
+	var achievement_mgr = get_node_or_null("/root/AchievementManager")
+	if achievement_mgr:
 		var current_level_id = 1
 		if level_timer:
 			current_level_id = level_timer.level_id
-		AchievementManager.update_progress("complete_level", 1, {"level_id": current_level_id})
+		achievement_mgr.update_progress("complete_level", 1, {"level_id": current_level_id})
 
 ## 显示完成界面
 func _show_completion_screen(score_data: Dictionary) -> void:

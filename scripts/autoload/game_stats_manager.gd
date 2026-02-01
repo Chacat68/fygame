@@ -1,7 +1,11 @@
 # 游戏统计管理器 (AutoLoad)
 # 负责追踪和管理所有游戏统计数据
-class_name GameStatsManagerClass
+class_name GameStatsManager
 extends Node
+
+# Autoload 引用
+func _get_achievement_manager() -> Node:
+	return get_node_or_null("/root/AchievementManager")
 
 # 信号
 signal stats_updated(stat_name: String, value: Variant)
@@ -129,8 +133,9 @@ func _check_milestones() -> void:
 			milestone_reached.emit(milestone["name"], milestone["value"])
 			
 			# 触发成就
-			if AchievementManager:
-				AchievementManager.update_progress(milestone["stat"], 0)
+			var achievement_mgr = _get_achievement_manager()
+			if achievement_mgr:
+				achievement_mgr.update_progress(milestone["stat"], 0)
 
 ## 增加统计
 func add_stat(stat_name: String, amount: int = 1) -> void:
@@ -157,23 +162,24 @@ func get_total_stat(stat_name: String) -> Variant:
 
 ## 同步成就进度
 func _sync_achievement_progress(stat_name: String, amount: int) -> void:
-	if not AchievementManager:
+	var achievement_mgr = _get_achievement_manager()
+	if not achievement_mgr:
 		return
 	
 	match stat_name:
 		"coins_collected":
-			AchievementManager.update_progress("collect_coins", amount)
+			achievement_mgr.update_progress("collect_coins", amount)
 		"enemies_killed":
-			AchievementManager.update_progress("kill_enemies", amount)
+			achievement_mgr.update_progress("kill_enemies", amount)
 		"deaths":
-			AchievementManager.update_progress("deaths", amount)
+			achievement_mgr.update_progress("deaths", amount)
 		"stomp_kills":
-			AchievementManager.update_progress("stomp_kills", amount)
+			achievement_mgr.update_progress("stomp_kills", amount)
 		"secrets_found":
-			AchievementManager.update_progress("find_secret", amount)
+			achievement_mgr.update_progress("find_secret", amount)
 
 ## 记录关卡完成
-func record_level_completion(level_id: int, time: float, stars: int, no_damage: bool) -> void:
+func record_level_completion(level_id: int, time: float, _stars: int, no_damage: bool) -> void:
 	session_stats["levels_completed"] += 1
 	
 	# 记录最快时间
@@ -184,17 +190,20 @@ func record_level_completion(level_id: int, time: float, stars: int, no_damage: 
 	# 记录无伤通关
 	if no_damage and level_key not in total_stats["perfect_levels"]:
 		total_stats["perfect_levels"].append(level_key)
-		if AchievementManager:
-			AchievementManager.update_progress("no_damage_level", 1)
+		var achievement_mgr = _get_achievement_manager()
+		if achievement_mgr:
+			achievement_mgr.update_progress("no_damage_level", 1)
 	
 	# 速通成就
 	if time <= 60.0:
-		if AchievementManager:
-			AchievementManager.update_progress("speedrun", 1)
+		var achievement_mgr2 = _get_achievement_manager()
+		if achievement_mgr2:
+			achievement_mgr2.update_progress("speedrun", 1)
 	
 	# 关卡完成成就
-	if AchievementManager:
-		AchievementManager.update_progress("complete_level", 1, {"level_id": level_id})
+	var achievement_mgr3 = _get_achievement_manager()
+	if achievement_mgr3:
+		achievement_mgr3.update_progress("complete_level", 1, {"level_id": level_id})
 
 ## 重置会话统计
 func reset_session_stats() -> void:
@@ -209,7 +218,9 @@ func reset_session_stats() -> void:
 ## 获取格式化的游戏时间
 func get_formatted_play_time() -> String:
 	var total_seconds = int(total_stats["total_play_time"])
+	@warning_ignore("integer_division")
 	var hours = total_seconds / 3600
+	@warning_ignore("integer_division")
 	var minutes = (total_seconds % 3600) / 60
 	var seconds = total_seconds % 60
 	return "%d小时 %d分 %d秒" % [hours, minutes, seconds]

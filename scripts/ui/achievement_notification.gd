@@ -17,11 +17,12 @@ func _ready() -> void:
 	notification_panel.visible = false
 	
 	# 连接成就管理器信号
-	if AchievementManager:
-		AchievementManager.achievement_unlocked.connect(_on_achievement_unlocked)
+	var achievement_mgr = get_node_or_null("/root/AchievementManager")
+	if achievement_mgr:
+		achievement_mgr.achievement_unlocked.connect(_on_achievement_unlocked)
 
 ## 成就解锁回调
-func _on_achievement_unlocked(achievement_id: String, achievement_data: Dictionary) -> void:
+func _on_achievement_unlocked(_achievement_id: String, achievement_data: Dictionary) -> void:
 	notification_queue.append(achievement_data)
 	
 	if not is_showing:

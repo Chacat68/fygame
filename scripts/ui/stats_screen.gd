@@ -31,8 +31,9 @@ func _populate_stats() -> void:
 	
 	# 获取统计数据
 	var stats = {}
-	if GameStatsManager:
-		stats = GameStatsManager.get_stats_summary()
+	var stats_mgr = get_node_or_null("/root/GameStatsManager")
+	if stats_mgr:
+		stats = stats_mgr.get_stats_summary()
 	
 	# 创建统计项
 	_add_stat_section("游戏进度")
@@ -51,8 +52,9 @@ func _populate_stats() -> void:
 	_add_stat_item("移动距离", stats.get("distance_km", "0.00 km"))
 	
 	# 成就进度
-	if AchievementManager:
-		var progress = AchievementManager.get_unlock_progress()
+	var achievement_mgr = get_node_or_null("/root/AchievementManager")
+	if achievement_mgr:
+		var progress = achievement_mgr.get_unlock_progress()
 		_add_stat_section("成就")
 		_add_stat_item("已解锁", "%d / %d (%.1f%%)" % [progress["unlocked"], progress["total"], progress["percentage"]])
 
@@ -69,12 +71,12 @@ func _add_stat_section(title: String) -> void:
 	stats_container.add_child(label)
 
 ## 添加统计项
-func _add_stat_item(name: String, value: String) -> void:
+func _add_stat_item(stat_name: String, value: String) -> void:
 	var hbox = HBoxContainer.new()
 	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var name_label_item = Label.new()
-	name_label_item.text = name
+	name_label_item.text = stat_name
 	name_label_item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label_item.add_theme_font_size_override("font_size", 16)
 	hbox.add_child(name_label_item)

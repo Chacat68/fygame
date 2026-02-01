@@ -1,7 +1,7 @@
 # 钥匙收集品
 # 用于开启门或宝箱
 class_name Key
-extends CollectibleBase
+extends "res://scripts/entities/items/collectible_base.gd"
 
 @export_group("钥匙属性")
 @export var key_id: String = "default"  # 钥匙ID，用于匹配特定的门
@@ -27,8 +27,9 @@ func _ready() -> void:
 	_apply_key_color()
 
 func _register_to_manager() -> void:
-	if CollectibleManager:
-		CollectibleManager.register_collectible(self, CollectibleManager.CollectibleType.KEY)
+	var collectible_mgr = get_node_or_null("/root/CollectibleManager")
+	if collectible_mgr:
+		collectible_mgr.register_collectible(self, collectible_mgr.CollectibleType.KEY)
 
 func _apply_key_color() -> void:
 	var color = key_colors[key_type] if key_type < key_colors.size() else Color.WHITE

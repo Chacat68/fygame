@@ -175,8 +175,9 @@ func calculate_score() -> Dictionary:
 
 ## 记录到统计系统
 func _record_to_stats(score_data: Dictionary) -> void:
-	if GameStatsManager:
-		GameStatsManager.record_level_completion(
+	var stats_mgr = get_node_or_null("/root/GameStatsManager")
+	if stats_mgr:
+		stats_mgr.record_level_completion(
 			score_data["level_id"],
 			score_data["elapsed_time"],
 			score_data["stars"],
@@ -185,6 +186,7 @@ func _record_to_stats(score_data: Dictionary) -> void:
 
 ## 格式化时间
 func format_time(seconds: float) -> String:
+	@warning_ignore("integer_division")
 	var minutes = int(seconds) / 60
 	var secs = int(seconds) % 60
 	var ms = int((seconds - int(seconds)) * 100)
