@@ -288,7 +288,8 @@ func _setup_moving_platform(platform: Node, platform_data: Dictionary):
 	# 创建AnimationLibrary
 	var anim_lib = AnimationLibrary.new()
 	
-	# 创建RESET动画
+	# 创建RESET动画（用于重置平台到初始位置）
+	# 使用0.001秒的极短时长实现即时重置效果
 	var reset_anim = Animation.new()
 	reset_anim.length = 0.001
 	var reset_track = reset_anim.add_track(Animation.TYPE_VALUE)
@@ -304,11 +305,13 @@ func _setup_moving_platform(platform: Node, platform_data: Dictionary):
 	var move_track = move_anim.add_track(Animation.TYPE_VALUE)
 	move_anim.track_set_path(move_track, ":position")
 	
-	# 获取移动目标
+	# 获取移动目标（计算相对偏移量）
 	var move_target = Vector2.ZERO
 	if platform_data.has("move_target"):
 		var target = platform_data["move_target"]
-		move_target = Vector2(target[0], target[1]) - Vector2(platform_data["position"][0], platform_data["position"][1])
+		var target_pos = Vector2(target[0], target[1])
+		var platform_pos = Vector2(platform_data["position"][0], platform_data["position"][1])
+		move_target = target_pos - platform_pos
 	
 	# 插入关键帧
 	move_anim.track_insert_key(move_track, 0.0, Vector2.ZERO)

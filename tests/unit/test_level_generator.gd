@@ -10,7 +10,8 @@ func before_each():
 	level_generator = LevelGenerator.new()
 	add_child_autofree(level_generator)
 	
-	# 等待场景预加载完成
+	# 等待一帧，确保LevelGenerator的_ready()方法完成场景预加载
+	# _ready()中调用_preload_scenes()需要在节点添加到树后执行
 	await wait_frames(1)
 	
 	# 准备测试数据

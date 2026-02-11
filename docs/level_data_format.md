@@ -394,4 +394,6 @@ var custom_level = loader.load_level_from_path("res://custom_levels/special.json
 - 生成器脚本：`scripts/systems/level_generator.gd`
 - 加载器脚本：`scripts/systems/level_loader.gd`
 - 示例数据：`resources/level_data/lv1_data.json`、`lv2_data.json`
-- 关卡配置：`scripts/systems/level_config.gd`、`resources/level_config.tres`
+- 测试脚本：`tests/unit/test_level_generator.gd`
+- 使用示例：`tests/examples/level_generator_example.gd`
+- 关卡元数据系统（已有）：`scripts/systems/level_config.gd`、`resources/level_config.tres`
