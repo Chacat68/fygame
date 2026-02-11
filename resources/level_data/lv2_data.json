@@ -1,0 +1,47 @@
+{
+  "level_id": 2,
+  "level_name": "关卡2",
+  "theme": "进阶挑战",
+  "difficulty": "中等",
+  "player": {
+    "position": [0, 0]
+  },
+  "camera": {
+    "position": [0, -6],
+    "zoom": [4, 4],
+    "limit_left": -200,
+    "limit_bottom": 120,
+    "smooth": true
+  },
+  "killzone": {
+    "y_position": 600
+  },
+  "coins": [
+    { "position": [223, -28] },
+    { "position": [301, -30] },
+    { "position": [217, -109] },
+    { "position": [80, -29] },
+    { "position": [-72, -132] },
+    { "position": [493, -101] }
+  ],
+  "platforms": [
+    { "position": [-137, -90], "is_moving": false },
+    {
+      "position": [-28, -90],
+      "is_moving": true,
+      "move_target": [12, -90],
+      "move_duration": 1.3,
+      "loop_mode": "pingpong"
+    }
+  ],
+  "enemies": [
+    { "type": "slime", "position": [168, -12] },
+    { "type": "slime", "position": [520, -91] },
+    { "type": "slime", "position": [664, -75] }
+  ],
+  "portal": {
+    "position": [1513, -87],
+    "destination_scene": "res://scenes/levels/lv3.tscn"
+  },
+  "tilemap_scene": "res://scenes/levels/lv2.tscn"
+}

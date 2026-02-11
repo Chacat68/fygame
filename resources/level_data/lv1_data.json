@@ -1,0 +1,35 @@
+{
+  "level_id": 1,
+  "level_name": "关卡1",
+  "theme": "新手教程",
+  "difficulty": "简单",
+  "player": {
+    "position": [0, 0]
+  },
+  "camera": {
+    "position": [0, -6],
+    "zoom": [4, 4],
+    "limit_left": -200,
+    "limit_bottom": 120,
+    "smooth": true
+  },
+  "killzone": {
+    "y_position": 600
+  },
+  "coins": [
+    { "position": [223, -28] },
+    { "position": [301, -30] },
+    { "position": [217, -109] }
+  ],
+  "platforms": [
+    { "position": [-137, -90], "is_moving": false }
+  ],
+  "enemies": [
+    { "type": "slime", "position": [168, -12] }
+  ],
+  "portal": {
+    "position": [1513, -87],
+    "destination_scene": "res://scenes/levels/lv2.tscn"
+  },
+  "tilemap_scene": "res://scenes/levels/lv1.tscn"
+}
