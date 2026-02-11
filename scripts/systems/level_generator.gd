@@ -307,11 +307,14 @@ func _setup_moving_platform(platform: Node, platform_data: Dictionary):
 	
 	# 获取移动目标（计算相对偏移量）
 	var move_target = Vector2.ZERO
-	if platform_data.has("move_target"):
+	if platform_data.has("move_target") and platform_data.has("position"):
 		var target = platform_data["move_target"]
 		var target_pos = Vector2(target[0], target[1])
 		var platform_pos = Vector2(platform_data["position"][0], platform_data["position"][1])
 		move_target = target_pos - platform_pos
+	elif platform_data.has("move_target"):
+		push_warning("[LevelGenerator] 移动平台缺少position字段，无法计算move_target偏移量")
+		return  # 跳过此平台的移动设置
 	
 	# 插入关键帧
 	move_anim.track_insert_key(move_track, 0.0, Vector2.ZERO)
@@ -379,7 +382,12 @@ func _create_portal(root: Node2D, portal_data: Dictionary):
 	# 配置目标场景（使用call_deferred确保portal的_ready已执行）
 	if portal_data.has("destination_scene"):
 		var dest = portal_data["destination_scene"]
-		portal.call_deferred("configure_for_scene_teleport", dest)
-		print("[LevelGenerator] Portal创建完成，目标: ", dest)
+		# 验证目标场景是否存在
+		if ResourceLoader.exists(dest):
+			portal.call_deferred("configure_for_scene_teleport", dest)
+			print("[LevelGenerator] Portal创建完成，目标: ", dest)
+		else:
+			push_warning("[LevelGenerator] 目标场景不存在: " + dest)
+			print("[LevelGenerator] Portal创建完成（目标场景无效）")
 	else:
 		print("[LevelGenerator] Portal创建完成（无目标配置）")

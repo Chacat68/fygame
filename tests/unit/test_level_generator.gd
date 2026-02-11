@@ -2,6 +2,7 @@ extends GutTest
 
 # LevelGenerator 单元测试
 # 测试数据驱动的关卡生成系统
+# 注：根据项目规范，代码注释使用中文
 
 var level_generator: LevelGenerator
 var test_level_data: Dictionary

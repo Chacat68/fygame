@@ -2,6 +2,7 @@ extends Node2D
 
 # 关卡生成器使用示例
 # 演示如何使用LevelLoader和LevelGenerator加载数据驱动的关卡
+# 注：根据项目规范，代码注释使用中文
 
 var level_loader: LevelLoader
 var current_level: Node2D
