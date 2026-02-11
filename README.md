@@ -152,6 +152,36 @@ fygame/
 
 详细设计文档：[关卡设计指南](docs/design/integrated_level_design_guide.md)
 
+### 数据驱动关卡生成系统（新）
+
+项目现在支持从JSON数据文件动态生成关卡，提供更灵活的关卡设计方式：
+
+**核心组件：**
+- **LevelGenerator** (`scripts/systems/level_generator.gd`) - 从JSON数据生成关卡场景
+- **LevelLoader** (`scripts/systems/level_loader.gd`) - 简化的关卡加载接口
+- **JSON数据文件** (`resources/level_data/lv*.json`) - 关卡配置数据
+
+**主要优势：**
+- ✅ 无需打开Godot编辑器即可修改关卡
+- ✅ JSON格式便于版本控制和查看diff
+- ✅ 支持批量创建和修改关卡
+- ✅ 非程序员也能参与关卡设计
+- ✅ 保留现有`.tscn`关卡，提供渐进式迁移路径
+
+**使用示例：**
+```gdscript
+# 使用LevelLoader加载关卡
+var loader = LevelLoader.new()
+var level = loader.load_level_from_data(2)  # 加载关卡2
+get_tree().root.add_child(level)
+
+# 或直接使用LevelGenerator
+var generator = LevelGenerator.new()
+var level = generator.generate_level_from_file("res://resources/level_data/lv2_data.json")
+```
+
+详细文档：[关卡数据格式说明](docs/level_data_format.md)
+
 ### 模块设计
 
 项目采用模块化设计，各功能模块独立开发和维护：
@@ -169,6 +199,7 @@ fygame/
 | **音频系统** | `scripts/managers/audio_manager.gd` | 音效播放、背景音乐、音量控制 |
 | **存档系统** | `scripts/managers/save_manager.gd`<br>`scripts/systems/save_data.gd` | 游戏存档、进度保存、存档槽位 |
 | **技能系统** | `scripts/systems/skill_manager.gd` | 技能管理、技能升级 |
+| **关卡生成系统** | `scripts/systems/level_generator.gd`<br>`scripts/systems/level_loader.gd` | 从JSON数据动态生成关卡、实体配置 |
 
 **设计原则：**
 - 按功能模块分类组织
@@ -201,6 +232,14 @@ fygame/
 ## 开发指南
 
 ### 添加新关卡
+
+**方法1：使用JSON数据文件（推荐）**
+1. 在 `resources/level_data/` 创建 `lv{数字}_data.json`
+2. 参考 `lv1_data.json` 或 `lv2_data.json` 编写关卡配置
+3. 使用 `LevelLoader` 或 `LevelGenerator` 加载关卡
+4. 详见：[关卡数据格式说明](docs/level_data_format.md)
+
+**方法2：传统场景方式**
 1. 在 `scenes/levels/` 创建 `lv{数字}.tscn`
 2. 在 `scripts/levels/` 创建对应脚本（如需要）
 3. 更新 `resources/level_config.tres`
