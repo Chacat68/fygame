@@ -1,6 +1,5 @@
 # 道具管理器 (AutoLoad)
 # 负责管理玩家的道具，包括使用道具、道具效果等
-class_name ItemManager
 extends Node
 
 # 信号

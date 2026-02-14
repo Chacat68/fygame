@@ -1,6 +1,5 @@
 # 收集品管理器 (AutoLoad)
 # 负责管理所有收集品的注册、状态和统计
-class_name CollectibleManager
 extends Node
 
 # 信号

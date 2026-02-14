@@ -110,6 +110,10 @@ func clear_all_checkpoints() -> void:
 func get_checkpoint_count() -> int:
 	return checkpoints.size()
 
+## 检查是否有活动的检查点
+func has_checkpoint() -> bool:
+	return active_checkpoint != null and is_instance_valid(active_checkpoint)
+
 ## 获取激活的检查点数量
 func get_activated_checkpoint_count() -> int:
 	var count = 0

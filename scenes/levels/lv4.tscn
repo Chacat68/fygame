@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://lv4_hazards_level"]
+[gd_scene format=3 uid="uid://g7s0dgjlsy15"]
 
 [ext_resource type="PackedScene" uid="uid://cftu6aj6xw1g4" path="res://scenes/managers/game_manager.tscn" id="1_game_manager"]
 [ext_resource type="Script" uid="uid://c1b4frqkv0k58" path="res://scripts/managers/game_manager.gd" id="2_game_manager_script"]
@@ -11,12 +11,12 @@
 [ext_resource type="PackedScene" uid="uid://debnrejanv7xy" path="res://scenes/entities/slime.tscn" id="9_slime"]
 [ext_resource type="PackedScene" uid="uid://bqhqxnhqxnhqx" path="res://scenes/entities/portal.tscn" id="10_portal"]
 [ext_resource type="Texture2D" uid="uid://csq0qo8ejiy68" path="res://assets/sprites/platforms.png" id="11_platforms_tex"]
-[ext_resource type="Script" path="res://scripts/entities/hazards/spikes.gd" id="12_spikes"]
-[ext_resource type="Script" path="res://scripts/entities/hazards/saw_blade.gd" id="13_saw"]
-[ext_resource type="Script" path="res://scripts/entities/hazards/springboard.gd" id="14_spring"]
-[ext_resource type="Script" path="res://scripts/entities/hazards/crumbling_platform.gd" id="15_crumble"]
-[ext_resource type="Script" path="res://scripts/entities/hazards/interactive_door.gd" id="16_door"]
-[ext_resource type="Script" path="res://scripts/entities/hazards/pressure_switch.gd" id="17_switch"]
+[ext_resource type="Script" uid="uid://bt28o8lqfxuhg" path="res://scripts/entities/hazards/spikes.gd" id="12_spikes"]
+[ext_resource type="Script" uid="uid://u31oi26vtriu" path="res://scripts/entities/hazards/saw_blade.gd" id="13_saw"]
+[ext_resource type="Script" uid="uid://d30btor6wxvnt" path="res://scripts/entities/hazards/springboard.gd" id="14_spring"]
+[ext_resource type="Script" uid="uid://denmmnm6dnkuu" path="res://scripts/entities/hazards/crumbling_platform.gd" id="15_crumble"]
+[ext_resource type="Script" uid="uid://csx6x3gjc125q" path="res://scripts/entities/hazards/interactive_door.gd" id="16_door"]
+[ext_resource type="Script" uid="uid://cvp3vy7atypnf" path="res://scripts/entities/hazards/pressure_switch.gd" id="17_switch"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_killzone"]
 
@@ -81,16 +81,6 @@ texture = ExtResource("6_tileset")
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_lv4")
 
-[sub_resource type="GDScript" id="GDScript_portal_config_lv4"]
-script/source = "extends Node
-
-func _ready():
-	var portal = get_parent()
-	if portal and portal.has_method('configure_for_scene_teleport'):
-		print('关卡4完成！返回主菜单')
-		portal.configure_for_scene_teleport('res://scenes/ui/main_menu.tscn')
-"
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_spike"]
 size = Vector2(32, 8)
 
@@ -109,213 +99,217 @@ size = Vector2(12, 48)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_switch"]
 size = Vector2(24, 4)
 
-[node name="lv4" type="Node2D"]
+[sub_resource type="GDScript" id="GDScript_portal_config_lv4"]
+script/source = "extends Node
 
-[node name="GameManager" parent="." instance=ExtResource("1_game_manager")]
+func _ready():
+	var portal = get_parent()
+	if portal and portal.has_method('configure_for_scene_teleport'):
+		print('关卡4完成！返回主菜单')
+		portal.configure_for_scene_teleport('res://scenes/ui/main_menu.tscn')
+"
+
+[node name="lv4" type="Node2D" unique_id=763281491]
+
+[node name="GameManager" parent="." unique_id=1678925880 instance=ExtResource("1_game_manager")]
 script = ExtResource("2_game_manager_script")
 
-[node name="UI" parent="." instance=ExtResource("3_ui")]
+[node name="UI" parent="." unique_id=2070351776 instance=ExtResource("3_ui")]
 margin_left = 80
 margin_top = 15
 
-[node name="Player" parent="." instance=ExtResource("4_player")]
+[node name="Player" parent="." unique_id=1356631783 instance=ExtResource("4_player")]
 position = Vector2(-200, 40)
 
-[node name="GameCamera" type="Camera2D" parent="."]
+[node name="GameCamera" type="Camera2D" parent="." unique_id=2068107798]
 position = Vector2(100, 0)
 zoom = Vector2(3, 3)
 limit_left = -300
-limit_right = 600
 limit_top = -300
+limit_right = 600
 limit_bottom = 200
 limit_smoothed = true
 
-[node name="Killzone" parent="." instance=ExtResource("5_killzone")]
+[node name="Killzone" parent="." unique_id=1088846782 instance=ExtResource("5_killzone")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Killzone" unique_id=299153485]
 position = Vector2(0, 250)
 shape = SubResource("WorldBoundaryShape2D_killzone")
 
-[node name="TileMap" type="Node" parent="."]
+[node name="TileMap" type="Node" parent="." unique_id=825346394]
 
-[node name="Terrain" type="TileMapLayer" parent="TileMap"]
+[node name="Terrain" type="TileMapLayer" parent="TileMap" unique_id=1621351142]
 tile_set = SubResource("TileSet_lv4")
 
-[node name="Platforms" type="Node" parent="."]
+[node name="Platforms" type="Node" parent="." unique_id=370540904]
 
-[node name="Platform1" parent="Platforms" instance=ExtResource("8_platform")]
+[node name="Platform1" parent="Platforms" unique_id=74429120 instance=ExtResource("8_platform")]
 position = Vector2(-100, 40)
 
-[node name="Platform2" parent="Platforms" instance=ExtResource("8_platform")]
+[node name="Platform2" parent="Platforms" unique_id=1083544937 instance=ExtResource("8_platform")]
 position = Vector2(50, 0)
 
-[node name="Platform3" parent="Platforms" instance=ExtResource("8_platform")]
+[node name="Platform3" parent="Platforms" unique_id=47137899 instance=ExtResource("8_platform")]
 position = Vector2(200, -40)
 
-[node name="Platform4" parent="Platforms" instance=ExtResource("8_platform")]
+[node name="Platform4" parent="Platforms" unique_id=498413702 instance=ExtResource("8_platform")]
 position = Vector2(350, 0)
 
-[node name="Platform5" parent="Platforms" instance=ExtResource("8_platform")]
+[node name="Platform5" parent="Platforms" unique_id=777940053 instance=ExtResource("8_platform")]
 position = Vector2(-150, -60)
 
-[node name="Hazards" type="Node" parent="."]
+[node name="Hazards" type="Node" parent="." unique_id=1807591469]
 
-[node name="Spikes1" type="Area2D" parent="Hazards"]
+[node name="Spikes1" type="Area2D" parent="Hazards" unique_id=1119807182]
 position = Vector2(-50, 88)
 script = ExtResource("12_spikes")
 damage = 15
 damage_cooldown = 0.8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Spikes1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Spikes1" unique_id=1231623507]
 shape = SubResource("RectangleShape2D_spike")
 
-[node name="Sprite2D" type="Sprite2D" parent="Hazards/Spikes1"]
+[node name="Sprite2D" type="Sprite2D" parent="Hazards/Spikes1" unique_id=1331289157]
 texture = ExtResource("6_tileset")
 region_enabled = true
 region_rect = Rect2(144, 48, 32, 16)
 
-[node name="Spikes2" type="Area2D" parent="Hazards"]
+[node name="Spikes2" type="Area2D" parent="Hazards" unique_id=1295550393]
 position = Vector2(100, 88)
 script = ExtResource("12_spikes")
 damage = 15
 damage_cooldown = 0.8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Spikes2"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Spikes2" unique_id=1272784938]
 shape = SubResource("RectangleShape2D_spike")
 
-[node name="Sprite2D" type="Sprite2D" parent="Hazards/Spikes2"]
+[node name="Sprite2D" type="Sprite2D" parent="Hazards/Spikes2" unique_id=1467203473]
 texture = ExtResource("6_tileset")
 region_enabled = true
 region_rect = Rect2(144, 48, 32, 16)
 
-[node name="SawBlade1" type="Area2D" parent="Hazards"]
+[node name="SawBlade1" type="Area2D" parent="Hazards" unique_id=1719360362]
 position = Vector2(0, 30)
 script = ExtResource("13_saw")
-damage = 25
 rotation_speed = 8.0
 move_speed = 50.0
-patrol_distance = 80.0
+damage = 25
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/SawBlade1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/SawBlade1" unique_id=1435239931]
 shape = SubResource("CircleShape2D_saw")
 
-[node name="SawSprite" type="Sprite2D" parent="Hazards/SawBlade1"]
+[node name="SawSprite" type="Sprite2D" parent="Hazards/SawBlade1" unique_id=1494982224]
 scale = Vector2(1.5, 1.5)
 texture = ExtResource("6_tileset")
 region_enabled = true
 region_rect = Rect2(128, 64, 16, 16)
 
-[node name="Springboard1" type="Area2D" parent="Hazards"]
+[node name="Springboard1" type="Area2D" parent="Hazards" unique_id=414524074]
 position = Vector2(-180, 88)
 script = ExtResource("14_spring")
 bounce_force = 400.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Springboard1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Springboard1" unique_id=1685437274]
 shape = SubResource("RectangleShape2D_spring")
 
-[node name="Sprite2D" type="Sprite2D" parent="Hazards/Springboard1"]
+[node name="Sprite2D" type="Sprite2D" parent="Hazards/Springboard1" unique_id=118671052]
+scale = Vector2(1.5, 0.6)
 texture = ExtResource("11_platforms_tex")
 region_enabled = true
 region_rect = Rect2(0, 0, 16, 10)
-scale = Vector2(1.5, 0.6)
 
-[node name="CrumblingPlatform1" type="AnimatableBody2D" parent="Hazards"]
+[node name="CrumblingPlatform1" type="AnimatableBody2D" parent="Hazards" unique_id=1122107671]
 position = Vector2(280, -20)
 script = ExtResource("15_crumble")
-crumble_delay = 0.5
-respawn_time = 3.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/CrumblingPlatform1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/CrumblingPlatform1" unique_id=1315019090]
 shape = SubResource("RectangleShape2D_crumble")
 
-[node name="Sprite" type="Sprite2D" parent="Hazards/CrumblingPlatform1"]
+[node name="Sprite" type="Sprite2D" parent="Hazards/CrumblingPlatform1" unique_id=173450483]
 texture = ExtResource("11_platforms_tex")
 region_enabled = true
 region_rect = Rect2(17, 0, 48, 10)
 
-[node name="Door1" type="StaticBody2D" parent="Hazards"]
+[node name="Door1" type="StaticBody2D" parent="Hazards" unique_id=576165084]
 position = Vector2(450, 60)
 script = ExtResource("16_door")
 door_id = "exit_door"
-door_type = 1
-is_open = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Door1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Door1" unique_id=2009893757]
 shape = SubResource("RectangleShape2D_door")
 
-[node name="DoorSprite" type="Sprite2D" parent="Hazards/Door1"]
+[node name="DoorSprite" type="Sprite2D" parent="Hazards/Door1" unique_id=746181874]
 scale = Vector2(0.75, 3)
 texture = ExtResource("6_tileset")
 region_enabled = true
 region_rect = Rect2(112, 0, 16, 16)
 
-[node name="Switch1" type="Area2D" parent="Hazards"]
+[node name="Switch1" type="Area2D" parent="Hazards" unique_id=1887561006]
 position = Vector2(380, 88)
 script = ExtResource("17_switch")
-linked_door_ids = ["exit_door"]
-one_time_use = false
+linked_door_ids = Array[String](["exit_door"])
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Switch1"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hazards/Switch1" unique_id=268931227]
 shape = SubResource("RectangleShape2D_switch")
 
-[node name="Sprite2D" type="Sprite2D" parent="Hazards/Switch1"]
+[node name="Sprite2D" type="Sprite2D" parent="Hazards/Switch1" unique_id=1717966404]
 texture = ExtResource("6_tileset")
 region_enabled = true
 region_rect = Rect2(96, 80, 24, 8)
 
-[node name="Coins" type="Node" parent="."]
+[node name="Coins" type="Node" parent="." unique_id=968993111]
 
-[node name="Coin1" parent="Coins" instance=ExtResource("7_coin")]
+[node name="Coin1" parent="Coins" unique_id=767266242 instance=ExtResource("7_coin")]
 position = Vector2(-100, 20)
 
-[node name="Coin2" parent="Coins" instance=ExtResource("7_coin")]
+[node name="Coin2" parent="Coins" unique_id=1400149875 instance=ExtResource("7_coin")]
 position = Vector2(50, -20)
 
-[node name="Coin3" parent="Coins" instance=ExtResource("7_coin")]
+[node name="Coin3" parent="Coins" unique_id=2047964795 instance=ExtResource("7_coin")]
 position = Vector2(200, -60)
 
-[node name="Coin4" parent="Coins" instance=ExtResource("7_coin")]
+[node name="Coin4" parent="Coins" unique_id=94624160 instance=ExtResource("7_coin")]
 position = Vector2(350, -20)
 
-[node name="Coin5" parent="Coins" instance=ExtResource("7_coin")]
+[node name="Coin5" parent="Coins" unique_id=918340260 instance=ExtResource("7_coin")]
 position = Vector2(280, -40)
 
-[node name="Enemies" type="Node" parent="."]
+[node name="Enemies" type="Node" parent="." unique_id=784810039]
 
-[node name="Slime1" parent="Enemies" instance=ExtResource("9_slime")]
+[node name="Slime1" parent="Enemies" unique_id=866010201 instance=ExtResource("9_slime")]
 position = Vector2(150, 80)
 
-[node name="Portal" parent="." instance=ExtResource("10_portal")]
+[node name="Portal" parent="." unique_id=319968686 instance=ExtResource("10_portal")]
 position = Vector2(500, 80)
 collision_mask = 2
 
-[node name="PortalScript" type="Node" parent="Portal"]
+[node name="PortalScript" type="Node" parent="Portal" unique_id=1133124592]
 script = SubResource("GDScript_portal_config_lv4")
 
-[node name="Labels" type="Node" parent="."]
+[node name="Labels" type="Node" parent="." unique_id=574686585]
 
-[node name="LevelTitle" type="Label" parent="Labels"]
+[node name="LevelTitle" type="Label" parent="Labels" unique_id=1162818872]
 offset_left = -250.0
 offset_top = -150.0
 offset_right = -50.0
 offset_bottom = -120.0
 text = "关卡 4 - 机关地牢"
 
-[node name="HintSpring" type="Label" parent="Labels"]
+[node name="HintSpring" type="Label" parent="Labels" unique_id=2019433944]
 offset_left = -200.0
 offset_top = 100.0
 offset_right = -100.0
 offset_bottom = 120.0
 text = "弹簧板"
 
-[node name="HintSwitch" type="Label" parent="Labels"]
+[node name="HintSwitch" type="Label" parent="Labels" unique_id=259598633]
 offset_left = 360.0
 offset_top = 100.0
 offset_right = 440.0
 offset_bottom = 120.0
 text = "踩下开关"
 
-[node name="HintCrumble" type="Label" parent="Labels"]
+[node name="HintCrumble" type="Label" parent="Labels" unique_id=196621083]
 offset_left = 250.0
 offset_top = -50.0
 offset_right = 330.0

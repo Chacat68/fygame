@@ -1,6 +1,5 @@
 # 成就管理器 (AutoLoad)
 # 负责管理游戏成就的解锁、进度追踪和通知
-class_name AchievementManager
 extends Node
 
 # 信号

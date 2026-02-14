@@ -1,6 +1,5 @@
 # 游戏统计管理器 (AutoLoad)
 # 负责追踪和管理所有游戏统计数据
-class_name GameStatsManager
 extends Node
 
 # Autoload 引用
