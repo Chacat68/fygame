@@ -109,6 +109,15 @@ func _build_ui():
 	btn_bar.add_theme_constant_override("separation", 4)
 	main_vbox.add_child(btn_bar)
 
+	# 随机模式专用按钮（仅随机模式可见）
+	_randomize_button = Button.new()
+	_randomize_button.text = "🎲 随机生成"
+	_randomize_button.pressed.connect(_on_randomize_pressed)
+	_randomize_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_randomize_button.visible = false
+	_apply_accent_style(_randomize_button)
+	btn_bar.add_child(_randomize_button)
+
 	_preview_button = Button.new()
 	_preview_button.text = "👁 预览"
 	_preview_button.disabled = true
@@ -326,22 +335,17 @@ func _build_random_page():
 	_rand_seed_input.tooltip_text = "0 = 真随机"
 	misc_row.add_child(_rand_seed_input)
 
-	_randomize_button = Button.new()
-	_randomize_button.text = "🎲 生成随机数据"
-	_randomize_button.pressed.connect(_on_randomize_pressed)
-	_apply_accent_style(_randomize_button)
-	misc_row.add_child(_randomize_button)
-
 # ── 模式切换 ──────────────────────────────────────────
 
 func _on_tab_changed(tab: int):
 	_current_mode = tab
 	_json_page.visible = (tab == 0)
 	_random_page.visible = (tab == 1)
+	_randomize_button.visible = (tab == 1)
 	if tab == 0:
 		_info_panel.text = "[color=gray]选择一个 JSON 文件开始...[/color]"
 	else:
-		_info_panel.text = "[color=gray]配置参数后点击「生成随机数据」...[/color]"
+		_info_panel.text = "[color=gray]配置参数后点击「🎲 随机生成」...[/color]"
 
 # ── JSON 模式事件 ─────────────────────────────────────
 
@@ -665,40 +669,42 @@ func _generate_scene():
 		_set_status("❌ 请设置输出路径", "red")
 		return
 
-	_set_status("⏳ 正在生成场景...", "yellow")
+	_set_status("⏳ 正在生成...", "yellow")
 
-	var generator = LevelGenerator.new()
-	add_child(generator)
-	await get_tree().process_frame
-
-	var root = generator.generate_level(_current_data)
-	if not root:
-		_set_status("❌ 场景生成失败", "red")
-		generator.queue_free()
+	# 1. 保存 JSON 数据文件
+	var json_path = output_path.replace(".tscn", ".json")
+	var json_str = JSON.stringify(_current_data, "\t")
+	var json_file = FileAccess.open(json_path, FileAccess.WRITE)
+	if not json_file:
+		_set_status("❌ 无法写入 JSON: " + json_path, "red")
 		return
+	json_file.store_string(json_str)
+	json_file.close()
 
-	_set_owner_recursive(root, root)
+	# 2. 生成最小 .tscn 文件（仅引用脚本 + JSON 路径）
+	# 这样完全不会有内联子场景的问题
+	var level_name = _current_data.get("level_name", "Level")
+	var tscn_content = '[gd_scene load_steps=2 format=3]
 
-	var packed = PackedScene.new()
-	var err = packed.pack(root)
-	if err == OK:
-		err = ResourceSaver.save(packed, output_path)
-		if err == OK:
-			_set_status("✅ 场景已保存: " + output_path, "green")
-			if editor_interface:
-				editor_interface.get_resource_filesystem().scan()
+[ext_resource type="Script" path="res://scripts/systems/level_runtime.gd" id="1"]
 
-			# 如果是随机模式，同时保存 JSON
-			if _current_mode == 1:
-				var json_path = output_path.replace(".tscn", ".json")
-				_save_json(json_path)
-		else:
-			_set_status("❌ 保存失败: 错误码 %d" % err, "red")
-	else:
-		_set_status("❌ 打包失败: 错误码 %d" % err, "red")
+[node name="%s" type="Node2D"]
+script = ExtResource("1")
+json_data_path = "%s"
+' % [level_name, json_path]
 
-	root.queue_free()
-	generator.queue_free()
+	var tscn_file = FileAccess.open(output_path, FileAccess.WRITE)
+	if not tscn_file:
+		_set_status("❌ 无法写入场景: " + output_path, "red")
+		return
+	tscn_file.store_string(tscn_content)
+	tscn_file.close()
+
+	# 3. 刷新编辑器
+	if editor_interface:
+		editor_interface.get_resource_filesystem().scan()
+
+	_set_status("✅ 已保存: %s + %s" % [output_path.get_file(), json_path.get_file()], "green")
 
 func _save_json(path: String):
 	var json_str = JSON.stringify(_current_data, "\t")
@@ -711,7 +717,11 @@ func _save_json(path: String):
 func _set_owner_recursive(node: Node, owner: Node):
 	for child in node.get_children():
 		child.owner = owner
-		_set_owner_recursive(child, owner)
+		# 如果子节点是从 .tscn 实例化的（有 scene_file_path），
+		# 不要递归设置其内部子节点的 owner，
+		# 这样 PackedScene.pack() 会保存为场景引用而非内联展开
+		if child.scene_file_path.is_empty():
+			_set_owner_recursive(child, owner)
 
 # ── 工具方法 ──────────────────────────────────────────
 
