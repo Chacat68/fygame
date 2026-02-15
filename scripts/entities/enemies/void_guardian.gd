@@ -235,6 +235,10 @@ func _update_health_bar():
 # ── 视觉构建 ──────────────────────────────────────────
 
 func _build_visual():
+	# 设置碰撞层（与 slime 一致：layer 4 = 敌人，mask 1 = 地面）
+	collision_layer = 4
+	collision_mask = 1
+	
 	# 碰撞形状（大型）
 	_collision = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
@@ -260,6 +264,8 @@ func _build_visual():
 	# 伤害区域
 	_damage_area = Area2D.new()
 	_damage_area.name = "DamageArea"
+	_damage_area.collision_layer = 0 # 不占碰撞层
+	_damage_area.collision_mask = 2 # 只检测玩家（layer 2）
 	var area_collision = CollisionShape2D.new()
 	var area_shape = RectangleShape2D.new()
 	area_shape.size = Vector2(52, 44)
