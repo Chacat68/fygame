@@ -45,8 +45,9 @@ func _ready():
 
 	var level_root = _generator.generate_level(data)
 	if level_root:
-		# 把生成的子节点全部移到自身下
-		for child in level_root.get_children():
+		# 先收集所有子节点（避免边遍历边移除导致跳过节点）
+		var children = level_root.get_children().duplicate()
+		for child in children:
 			level_root.remove_child(child)
 			add_child(child)
 		level_root.queue_free()

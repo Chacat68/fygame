@@ -398,6 +398,8 @@ func _apply_purple_slime(slime: Node):
 	if not sprite:
 		return
 
+	# 复制 SpriteFrames 避免修改共享资源影响其他 slime
+	sprite.sprite_frames = sprite.sprite_frames.duplicate()
 	sprite.sprite_frames.set_animation_speed("default", 10)
 
 	var texture = load("res://assets/sprites/slime_purple.png")

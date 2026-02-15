@@ -497,12 +497,17 @@ func _on_randomize_pressed():
 	# ── 陷阱 ──
 	var hazards = []
 	var hazard_types = ["spikes", "saw_blade", "springboard"]
+	var hazard_configs = {
+		"spikes": {"damage": 15, "damage_cooldown": 1.0},
+		"saw_blade": {"rotation_speed": 200.0, "saw_type": 1, "damage": 10},
+		"springboard": {"bounce_force": 500.0}
+	}
 	for i in range(int(_rand_hazard_count.value)):
 		var seg = segments[randi() % segments.size()]
 		var hx = seg["x"] + randf_range(20, seg["width"] - 20)
 		var hy = seg["y"] - 10
 		var htype = hazard_types[randi() % hazard_types.size()]
-		hazards.append({"type": htype, "position": [int(hx), int(hy)]})
+		hazards.append({"type": htype, "position": [int(hx), int(hy)], "config": hazard_configs[htype]})
 	if not hazards.is_empty():
 		_current_data["hazards"] = hazards
 
@@ -706,22 +711,6 @@ json_data_path = "%s"
 
 	_set_status("✅ 已保存: %s + %s" % [output_path.get_file(), json_path.get_file()], "green")
 
-func _save_json(path: String):
-	var json_str = JSON.stringify(_current_data, "\t")
-	var file = FileAccess.open(path, FileAccess.WRITE)
-	if file:
-		file.store_string(json_str)
-		file.close()
-		_set_status("✅ 已保存: .tscn + .json", "green")
-
-func _set_owner_recursive(node: Node, owner: Node):
-	for child in node.get_children():
-		child.owner = owner
-		# 如果子节点是从 .tscn 实例化的（有 scene_file_path），
-		# 不要递归设置其内部子节点的 owner，
-		# 这样 PackedScene.pack() 会保存为场景引用而非内联展开
-		if child.scene_file_path.is_empty():
-			_set_owner_recursive(child, owner)
 
 # ── 工具方法 ──────────────────────────────────────────
 
