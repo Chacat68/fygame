@@ -1,0 +1,126 @@
+{
+  "level_id": 103,
+  "level_name": "机关走廊",
+  "theme": "死亡细胞",
+  "difficulty": "困难",
+  "_comment": "经典机关迷宫关：狭长走廊中布满各种陷阱，考验操作精度",
+
+  "player": { "position": [0, 0] },
+  "camera": {
+    "position": [0, -6],
+    "zoom": [3.5, 3.5],
+    "limit_left": -50,
+    "limit_bottom": 120,
+    "smooth": true
+  },
+  "killzone": { "y_position": 300 },
+
+  "labels": [
+    { "position": [-30, -50],  "text": "注意脚下！" },
+    { "position": [250, -100], "text": "跳过锯片" },
+    { "position": [500, -80],  "text": "踩弹簧！" },
+    { "position": [750, -100], "text": "易碎！快跑！" },
+    { "position": [1000, -60], "text": "踩开关开门" }
+  ],
+
+  "coins": [
+    { "position": [80, -30] },
+    { "position": [160, -30] },
+    { "position": [300, -60] },
+    { "position": [400, -40] },
+    { "position": [520, -50] },
+    { "position": [600, -80] },
+    { "position": [700, -40] },
+    { "position": [850, -60] },
+    { "position": [950, -30] },
+    { "position": [1050, -40] }
+  ],
+
+  "platforms": [
+    { "position": [80, 20],   "is_moving": false },
+    { "position": [180, 10],  "is_moving": false },
+    { "position": [300, 0],   "is_moving": false },
+    { "position": [420, 10],  "is_moving": false },
+    { "position": [520, -10], "is_moving": false },
+    { "position": [620, 0],   "is_moving": false },
+    { "position": [720, 10],  "is_moving": false },
+    { "position": [850, 0],   "is_moving": false },
+    { "position": [950, 10],  "is_moving": false },
+    { "position": [1050, 0],  "is_moving": false }
+  ],
+
+  "hazards": [
+    {
+      "type": "spikes",
+      "position": [130, 60],
+      "config": { "damage": 10, "damage_cooldown": 1.0 }
+    },
+    {
+      "type": "spikes",
+      "position": [230, 60],
+      "config": { "damage": 10, "damage_cooldown": 1.0 }
+    },
+
+    {
+      "type": "saw_blade",
+      "position": [350, -20],
+      "config": { "rotation_speed": 360.0, "saw_type": 1, "move_distance": 80, "move_speed": 60.0, "damage": 20 }
+    },
+
+    {
+      "type": "springboard",
+      "position": [520, 30],
+      "config": { "bounce_force": 500.0 }
+    },
+
+    {
+      "type": "spikes",
+      "position": [580, 60],
+      "config": { "damage": 15 }
+    },
+
+    {
+      "type": "crumbling_platform",
+      "position": [750, -20],
+      "config": { "crumble_delay": 0.3, "respawn_time": 4.0 }
+    },
+    {
+      "type": "crumbling_platform",
+      "position": [800, -20],
+      "config": { "crumble_delay": 0.3, "respawn_time": 4.0 }
+    },
+
+    {
+      "type": "saw_blade",
+      "position": [900, -10],
+      "config": { "rotation_speed": 400.0, "damage": 25 }
+    },
+
+    {
+      "type": "pressure_switch",
+      "position": [1000, 50],
+      "config": { "linked_door_ids": ["corridor_exit"], "stay_activated": true }
+    },
+    {
+      "type": "interactive_door",
+      "position": [1100, 0],
+      "config": { "door_id": "corridor_exit", "door_type": 1 }
+    }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [420, -10], "is_purple": false },
+    { "type": "slime", "position": [620, -20], "is_purple": true },
+    { "type": "slime", "position": [950, -10], "is_purple": true }
+  ],
+
+  "checkpoints": [
+    { "position": [400, -20] },
+    { "position": [720, -10] }
+  ],
+
+  "portal": {
+    "position": [1150, -20],
+    "destination_scene": "res://scenes/levels/lv4.tscn"
+  }
+}

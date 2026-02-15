@@ -145,6 +145,16 @@ func _on_continue_pressed() -> void:
 	if next_level_id > 0:
 		var scene_path = "res://scenes/levels/lv%d.tscn" % next_level_id
 		if ResourceLoader.exists(scene_path):
+			# 尝试使用章节过渡
+			var transition = get_node_or_null("/root/ChapterTransition")
+			var data_path = "res://resources/level_data/lv%d_data.json" % next_level_id
+			if transition and FileAccess.file_exists(data_path):
+				var file = FileAccess.open(data_path, FileAccess.READ)
+				if file:
+					var json = JSON.new()
+					if json.parse(file.get_as_text()) == OK:
+						transition.show_from_level_data(json.data, func(): get_tree().change_scene_to_file(scene_path))
+						return
 			get_tree().change_scene_to_file(scene_path)
 
 ## 重试按钮回调

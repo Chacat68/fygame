@@ -1,0 +1,109 @@
+{
+  "level_id": 4,
+  "level_name": "第四章 · 虚空地牢",
+  "theme": "决意",
+  "difficulty": "困难",
+  "chapter": 4,
+  "chapter_title": "虚空地牢",
+  "chapter_quote": "每一步都可能是最后一步。",
+
+  "player": {
+    "position": [-200, 40]
+  },
+  "camera": {
+    "position": [100, 0],
+    "zoom": [3, 3],
+    "limit_left": -300,
+    "limit_bottom": 200,
+    "smooth": true
+  },
+  "killzone": {
+    "y_position": 250
+  },
+
+  "labels": [
+    { "position": [-250, -20],  "text": "「每一步都可能是最后一步。」" },
+    { "position": [-200, 100],  "text": "古老的弹簧装置…精灵族的遗物" },
+    { "position": [-60, 100],   "text": "尖刺！地面已不安全" },
+    { "position": [0, 10],      "text": "锯片还在转…千百年了" },
+    { "position": [250, -60],   "text": "踩上去就会碎裂…" },
+    { "position": [360, 100],   "text": "开关…也许能打开前方的路" },
+    { "position": [430, 30],    "text": "石碑：「当所有碎片归位，光芒将驱散虚空。」" },
+    { "position": [480, 60],    "text": "前方…虚空的气息越来越浓" }
+  ],
+
+  "coins": [
+    { "position": [-100, 20] },
+    { "position": [50, -20] },
+    { "position": [200, -60] },
+    { "position": [350, -20] },
+    { "position": [280, -40] }
+  ],
+  "platforms": [
+    { "position": [-100, 40], "is_moving": false },
+    { "position": [50, 0], "is_moving": false },
+    { "position": [200, -40], "is_moving": false },
+    { "position": [350, 0], "is_moving": false },
+    { "position": [-150, -60], "is_moving": false }
+  ],
+  "enemies": [
+    { "type": "slime", "position": [150, 80], "is_purple": true }
+  ],
+  "hazards": [
+    {
+      "type": "spikes",
+      "position": [-50, 88],
+      "config": { "damage": 15, "damage_cooldown": 0.8 }
+    },
+    {
+      "type": "spikes",
+      "position": [100, 88],
+      "config": { "damage": 15, "damage_cooldown": 0.8 }
+    },
+    {
+      "type": "saw_blade",
+      "position": [0, 30],
+      "config": { "rotation_speed": 8.0, "move_speed": 50.0, "damage": 25 }
+    },
+    {
+      "type": "springboard",
+      "position": [-180, 88],
+      "config": { "bounce_force": 400.0 }
+    },
+    {
+      "type": "crumbling_platform",
+      "position": [280, -20],
+      "config": {}
+    },
+    {
+      "type": "interactive_door",
+      "position": [450, 60],
+      "config": { "door_id": "exit_door" }
+    },
+    {
+      "type": "pressure_switch",
+      "position": [380, 88],
+      "config": { "linked_door_ids": ["exit_door"] }
+    }
+  ],
+
+  "checkpoints": [
+    { "position": [200, -60] }
+  ],
+
+  "portal": {
+    "position": [500, 80],
+    "destination_scene": "res://scenes/ui/main_menu.tscn"
+  },
+  "ground": {
+    "color": [0.25, 0.12, 0.12],
+    "border_color": [0.35, 0.15, 0.1],
+    "segments": [
+      { "x": -300, "y": 120, "width": 400, "height": 40 },
+      { "x": 200, "y": 100, "width": 120, "height": 40 },
+      { "x": 420, "y": 120, "width": 200, "height": 40 },
+      { "x": -300, "y": -20, "width": 100, "height": 180 },
+      { "x": 620, "y": -20, "width": 100, "height": 180 }
+    ]
+  }
+}

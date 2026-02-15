@@ -1,16 +1,42 @@
-# 通用关卡生成器
-# 从JSON数据文件动态生成关卡场景
+# 程序化关卡生成器
+# 从 JSON 数据文件动态生成关卡场景（唯一入口）
 class_name LevelGenerator
 extends Node
 
-# 场景缓存字典
+# 信号
+signal level_generated(root: Node2D)
+
+# 场景缓存
 var _scene_cache: Dictionary = {}
 
-# 预加载实体场景
+# hazard 类映射
+const HAZARD_CLASSES := {
+	"spikes": "Spikes",
+	"saw_blade": "SawBlade",
+	"springboard": "Springboard",
+	"crumbling_platform": "CrumblingPlatform",
+	"interactive_door": "InteractiveDoor",
+	"pressure_switch": "PressureSwitch",
+	"laser_beam": "LaserBeam",
+	"advanced_moving_platform": "AdvancedMovingPlatform"
+}
+
+# hazard 碰撞形状默认尺寸
+const HAZARD_SHAPES := {
+	"spikes": Vector2(32, 8),
+	"saw_blade": 12.0, # 圆形半径
+	"springboard": Vector2(24, 6),
+	"crumbling_platform": Vector2(48, 10),
+	"interactive_door": Vector2(12, 48),
+	"pressure_switch": Vector2(24, 4),
+	"laser_beam": Vector2.ZERO, # LaserBeam 自建组件
+	"advanced_moving_platform": Vector2(48, 10)
+}
+
 func _ready():
 	_preload_scenes()
 
-# 预加载所有实体场景到缓存
+# 预加载实体场景
 func _preload_scenes():
 	_scene_cache["player"] = preload("res://scenes/entities/player.tscn")
 	_scene_cache["coin"] = preload("res://scenes/entities/coin.tscn")
@@ -18,376 +44,591 @@ func _preload_scenes():
 	_scene_cache["slime"] = preload("res://scenes/entities/slime.tscn")
 	_scene_cache["killzone"] = preload("res://scenes/entities/killzone.tscn")
 	_scene_cache["portal"] = preload("res://scenes/entities/portal.tscn")
+	_scene_cache["checkpoint"] = preload("res://scenes/entities/checkpoint.tscn")
 	_scene_cache["game_manager"] = preload("res://scenes/managers/game_manager.tscn")
 	_scene_cache["ui"] = preload("res://scenes/ui/ui.tscn")
-	print("[LevelGenerator] 场景预加载完成")
 
-# 从JSON文件生成关卡
+# ── 公开接口 ──────────────────────────────────────────
+
+## 从 JSON 文件路径生成关卡
 func generate_level_from_file(json_path: String) -> Node2D:
 	var data = _load_json(json_path)
 	if data.is_empty():
-		push_error("[LevelGenerator] 无法加载关卡数据: " + json_path)
+		push_error("[LevelGenerator] 无法加载: " + json_path)
 		return null
 	return generate_level(data)
 
-# 从Dictionary数据生成关卡
+## 从 Dictionary 数据生成关卡
 func generate_level(data: Dictionary) -> Node2D:
-	if data.is_empty():
-		push_error("[LevelGenerator] 关卡数据为空")
+	if not _validate_data(data):
 		return null
-	
-	print("[LevelGenerator] 开始生成关卡: ", data.get("level_name", "未命名"))
-	
-	# 创建根节点
+
 	var root = Node2D.new()
 	root.name = "Level%d" % data.get("level_id", 0)
-	
-	# 按顺序创建关卡元素
-	_create_game_manager(root)
-	_create_ui(root)
-	
-	# 加载TileMap（如果有）
-	if data.has("tilemap_scene"):
-		_create_tilemap(root, data["tilemap_scene"])
-	
-	# 创建玩家
+
+	# 按顺序创建场景元素
+	_add_scene_node(root, "game_manager", "GameManager")
+	_add_scene_node(root, "ui", "UI")
+
+	# 纯程序化生成地形（不再依赖外部 .tscn）
+	if data.has("ground"):
+		_create_ground(root, data["ground"])
 	if data.has("player"):
 		_create_player(root, data["player"])
-	
-	# 创建相机
 	if data.has("camera"):
 		_create_camera(root, data["camera"])
-	
-	# 创建killzone
 	if data.has("killzone"):
 		_create_killzone(root, data["killzone"])
-	
-	# 创建金币
 	if data.has("coins"):
-		_create_coins(root, data["coins"])
-	
-	# 创建平台
+		_create_batch(root, "Coins", "coin", data["coins"])
 	if data.has("platforms"):
 		_create_platforms(root, data["platforms"])
-	
-	# 创建敌人
 	if data.has("enemies"):
 		_create_enemies(root, data["enemies"])
-	
-	# 创建传送门
+	if data.has("checkpoints"):
+		_create_batch(root, "Checkpoints", "checkpoint", data["checkpoints"])
+	if data.has("hazards"):
+		_create_hazards(root, data["hazards"])
+	if data.has("labels"):
+		_create_labels(root, data["labels"])
+	if data.has("boss"):
+		_create_boss(root, data["boss"])
 	if data.has("portal"):
 		_create_portal(root, data["portal"])
-	
-	print("[LevelGenerator] 关卡生成完成: ", root.name)
+
+	level_generated.emit(root)
 	return root
 
-# 加载JSON文件
+# ── JSON 加载与校验 ───────────────────────────────────
+
 func _load_json(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
-		push_error("[LevelGenerator] JSON文件不存在: " + path)
+		push_error("[LevelGenerator] JSON 文件不存在: " + path)
 		return {}
-	
+
 	var file = FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		push_error("[LevelGenerator] 无法打开JSON文件: " + path)
+		push_error("[LevelGenerator] 无法打开: " + path)
 		return {}
-	
-	var json_string = file.get_as_text()
-	file.close()
-	
+
 	var json = JSON.new()
-	var error = json.parse(json_string)
+	var error = json.parse(file.get_as_text())
+	file.close()
+
 	if error != OK:
-		push_error("[LevelGenerator] JSON解析错误 (行 %d): %s" % [json.get_error_line(), json.get_error_message()])
+		push_error("[LevelGenerator] JSON 解析错误 (行 %d): %s" % [json.get_error_line(), json.get_error_message()])
 		return {}
-	
+
 	return json.data
 
-# 创建游戏管理器
-func _create_game_manager(root: Node2D):
-	if not _scene_cache.has("game_manager"):
-		push_error("[LevelGenerator] GameManager场景未缓存")
-		return
-	
-	var game_manager = _scene_cache["game_manager"].instantiate()
-	game_manager.name = "GameManager"
-	root.add_child(game_manager)
-	
-	# 附加脚本（场景中应该已经有了，这里是确保）
-	if not game_manager.get_script():
-		var script = load("res://scripts/managers/game_manager.gd")
-		game_manager.set_script(script)
-	
-	print("[LevelGenerator] GameManager创建完成")
+## 校验关卡数据的必要字段
+func _validate_data(data: Dictionary) -> bool:
+	if data.is_empty():
+		push_error("[LevelGenerator] 关卡数据为空")
+		return false
 
-# 创建UI
-func _create_ui(root: Node2D):
-	if not _scene_cache.has("ui"):
-		push_error("[LevelGenerator] UI场景未缓存")
-		return
-	
-	var ui = _scene_cache["ui"].instantiate()
-	ui.name = "UI"
-	root.add_child(ui)
-	print("[LevelGenerator] UI创建完成")
+	if not data.has("level_id"):
+		push_error("[LevelGenerator] 缺少必要字段: level_id")
+		return false
 
-# 创建玩家
+	return true
+
+# ── 通用工具 ──────────────────────────────────────────
+
+## 实例化并添加一个缓存场景
+func _add_scene_node(root: Node2D, cache_key: String, node_name: String) -> Node:
+	if not _scene_cache.has(cache_key):
+		push_error("[LevelGenerator] 场景未缓存: " + cache_key)
+		return null
+	var node = _scene_cache[cache_key].instantiate()
+	node.name = node_name
+	root.add_child(node)
+	return node
+
+## 批量创建同类实体（金币 / 检查点等简单实体）
+func _create_batch(root: Node2D, container_name: String, cache_key: String, items: Array):
+	if not _scene_cache.has(cache_key):
+		push_error("[LevelGenerator] 场景未缓存: " + cache_key)
+		return
+
+	var container = Node2D.new()
+	container.name = container_name
+	root.add_child(container)
+
+	for item in items:
+		var node = _scene_cache[cache_key].instantiate()
+		if item.has("position"):
+			var pos = item["position"]
+			node.position = Vector2(pos[0], pos[1])
+		container.add_child(node)
+
+## 从 JSON 数组读取 Vector2
+func _parse_vec2(arr: Array) -> Vector2:
+	if arr.size() >= 2:
+		return Vector2(arr[0], arr[1])
+	return Vector2.ZERO
+
+## 递归清除节点 owner，避免跨场景挂载时的 inconsistent 警告
+func _clear_owner_recursive(node: Node):
+	node.owner = null
+	for child in node.get_children():
+		_clear_owner_recursive(child)
+
+# ── 特定实体创建 ──────────────────────────────────────
+
 func _create_player(root: Node2D, player_data: Dictionary):
-	if not _scene_cache.has("player"):
-		push_error("[LevelGenerator] Player场景未缓存")
-		return
-	
-	var player = _scene_cache["player"].instantiate()
-	player.name = "Player"
-	
-	# 设置位置
-	if player_data.has("position"):
-		var pos = player_data["position"]
-		player.position = Vector2(pos[0], pos[1])
-	
-	root.add_child(player)
-	print("[LevelGenerator] Player创建完成，位置: ", player.position)
+	var player = _add_scene_node(root, "player", "Player")
+	if player and player_data.has("position"):
+		player.position = _parse_vec2(player_data["position"])
 
-# 创建相机
 func _create_camera(root: Node2D, cam_data: Dictionary):
 	var camera = Camera2D.new()
 	camera.name = "Camera2D"
-	
-	# 设置位置
+
 	if cam_data.has("position"):
-		var pos = cam_data["position"]
-		camera.position = Vector2(pos[0], pos[1])
-	
-	# 设置缩放
+		camera.position = _parse_vec2(cam_data["position"])
 	if cam_data.has("zoom"):
-		var zoom = cam_data["zoom"]
-		camera.zoom = Vector2(zoom[0], zoom[1])
-	
-	# 设置限制
+		camera.zoom = _parse_vec2(cam_data["zoom"])
 	if cam_data.has("limit_left"):
 		camera.limit_left = cam_data["limit_left"]
 	if cam_data.has("limit_bottom"):
 		camera.limit_bottom = cam_data["limit_bottom"]
-	
-	# 设置平滑
 	if cam_data.has("smooth"):
 		camera.position_smoothing_enabled = cam_data["smooth"]
-	
-	root.add_child(camera)
-	print("[LevelGenerator] Camera2D创建完成")
 
-# 创建killzone
+	root.add_child(camera)
+
 func _create_killzone(root: Node2D, kz_data: Dictionary):
-	if not _scene_cache.has("killzone"):
-		push_error("[LevelGenerator] Killzone场景未缓存")
+	var killzone = _add_scene_node(root, "killzone", "Killzone")
+	if not killzone:
 		return
-	
-	var killzone = _scene_cache["killzone"].instantiate()
-	killzone.name = "Killzone"
-	
-	# 设置y位置
 	if kz_data.has("y_position"):
 		killzone.position.y = kz_data["y_position"]
-	
-	# 添加碰撞形状
-	var collision_shape = CollisionShape2D.new()
+
+	var collision = CollisionShape2D.new()
 	var shape = WorldBoundaryShape2D.new()
-	shape.normal = Vector2(0, -1)  # 向上的法线
-	collision_shape.shape = shape
-	killzone.add_child(collision_shape)
-	
-	root.add_child(killzone)
-	print("[LevelGenerator] Killzone创建完成，y位置: ", killzone.position.y)
+	shape.normal = Vector2(0, -1)
+	collision.shape = shape
+	killzone.add_child(collision)
 
-# 从子场景路径加载TileMap
-func _create_tilemap(root: Node2D, tilemap_scene_path: String):
-	if not ResourceLoader.exists(tilemap_scene_path):
-		push_warning("[LevelGenerator] TileMap场景不存在: " + tilemap_scene_path)
-		return
-	
-	# 加载场景并提取TileMap节点
-	var tilemap_scene = load(tilemap_scene_path)
-	if tilemap_scene:
-		var scene_instance = tilemap_scene.instantiate()
-		
-		# 查找TileMap节点
-		var tilemap = null
-		for child in scene_instance.get_children():
-			if child is TileMap:
-				tilemap = child
-				break
-		
-		if tilemap:
-			# 从原场景中移除并添加到新关卡
-			scene_instance.remove_child(tilemap)
-			root.add_child(tilemap)
-			print("[LevelGenerator] TileMap加载完成")
-		else:
-			push_warning("[LevelGenerator] 在场景中未找到TileMap: " + tilemap_scene_path)
-		
-		# 清理临时场景实例
-		scene_instance.queue_free()
+## 纯程序化生成地形
+## ground JSON 格式:
+## {
+##   "color": [r, g, b],          -- 地块颜色 (0-1)
+##   "border_color": [r, g, b],   -- 边框颜色 (可选)
+##   "segments": [
+##     { "x": -200, "y": 100, "width": 400, "height": 32 },
+##     { "x": 300, "y": 80, "width": 200, "height": 32 },
+##     ...
+##   ]
+## }
+func _create_ground(root: Node2D, ground_data: Dictionary):
+	var container = Node2D.new()
+	container.name = "Ground"
+	root.add_child(container)
 
-# 创建金币
-func _create_coins(root: Node2D, coins_data: Array):
-	if not _scene_cache.has("coin"):
-		push_error("[LevelGenerator] Coin场景未缓存")
-		return
-	
-	# 创建Coins容器
-	var coins_container = Node2D.new()
-	coins_container.name = "Coins"
-	root.add_child(coins_container)
-	
-	# 遍历创建金币
-	for coin_data in coins_data:
-		var coin = _scene_cache["coin"].instantiate()
-		
-		if coin_data.has("position"):
-			var pos = coin_data["position"]
-			coin.position = Vector2(pos[0], pos[1])
-		
-		coins_container.add_child(coin)
-	
-	print("[LevelGenerator] 创建了 %d 个金币" % coins_data.size())
+	# 解析颜色
+	var ground_color = Color(0.35, 0.25, 0.18) # 默认土地棕色
+	if ground_data.has("color"):
+		var c = ground_data["color"]
+		ground_color = Color(c[0], c[1], c[2])
 
-# 创建平台
+	var border_color = ground_color.darkened(0.3)
+	if ground_data.has("border_color"):
+		var bc = ground_data["border_color"]
+		border_color = Color(bc[0], bc[1], bc[2])
+
+	# 若没有 segments，生成默认地块
+	var segments = ground_data.get("segments", [])
+	if segments.is_empty():
+		segments = [
+			{"x": - 400, "y": 120, "width": 1200, "height": 40}
+		]
+
+	for i in range(segments.size()):
+		var seg = segments[i]
+		var x = float(seg.get("x", 0))
+		var y = float(seg.get("y", 120))
+		var w = float(seg.get("width", 200))
+		var h = float(seg.get("height", 32))
+
+		_create_ground_segment(container, i, Vector2(x, y), Vector2(w, h), ground_color, border_color)
+
+## 创建单个地块 segment（StaticBody2D + 可视化 + 碰撞）
+func _create_ground_segment(parent: Node2D, index: int, pos: Vector2, size: Vector2, color: Color, border_color: Color):
+	var body = StaticBody2D.new()
+	body.name = "Ground_%d" % index
+	body.position = pos + size / 2 # StaticBody 位置在中心
+	parent.add_child(body)
+
+	# 碰撞形状
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = size
+	collision.shape = shape
+	body.add_child(collision)
+
+	# 可视化地块（主体）
+	var rect = ColorRect.new()
+	rect.color = color
+	rect.size = size
+	rect.position = - size / 2
+	body.add_child(rect)
+
+	# 上表面草地/边框效果
+	var surface = ColorRect.new()
+	surface.color = border_color
+	surface.size = Vector2(size.x, 3)
+	surface.position = Vector2(-size.x / 2, -size.y / 2)
+	body.add_child(surface)
+
+	# 左侧边框
+	var left_border = ColorRect.new()
+	left_border.color = border_color
+	left_border.size = Vector2(2, size.y)
+	left_border.position = Vector2(-size.x / 2, -size.y / 2)
+	body.add_child(left_border)
+
+	# 右侧边框
+	var right_border = ColorRect.new()
+	right_border.color = border_color
+	right_border.size = Vector2(2, size.y)
+	right_border.position = Vector2(size.x / 2 - 2, -size.y / 2)
+	body.add_child(right_border)
+
+# ── 平台 ──────────────────────────────────────────────
+
 func _create_platforms(root: Node2D, platforms_data: Array):
 	if not _scene_cache.has("platform"):
-		push_error("[LevelGenerator] Platform场景未缓存")
+		push_error("[LevelGenerator] Platform 场景未缓存")
 		return
-	
-	# 创建Platforms容器
-	var platforms_container = Node2D.new()
-	platforms_container.name = "Platforms"
-	root.add_child(platforms_container)
-	
-	# 遍历创建平台
-	for platform_data in platforms_data:
-		var platform = _scene_cache["platform"].instantiate()
-		
-		if platform_data.has("position"):
-			var pos = platform_data["position"]
-			platform.position = Vector2(pos[0], pos[1])
-		
-		# 检查是否为移动平台
-		if platform_data.get("is_moving", false):
-			_setup_moving_platform(platform, platform_data)
-		
-		platforms_container.add_child(platform)
-	
-	print("[LevelGenerator] 创建了 %d 个平台" % platforms_data.size())
 
-# 设置移动平台
-func _setup_moving_platform(platform: Node, platform_data: Dictionary):
-	# 创建AnimationPlayer
+	var container = Node2D.new()
+	container.name = "Platforms"
+	root.add_child(container)
+
+	for pd in platforms_data:
+		var platform = _scene_cache["platform"].instantiate()
+
+		if pd.has("position"):
+			platform.position = _parse_vec2(pd["position"])
+
+		if pd.get("is_moving", false):
+			_setup_moving_platform(platform, pd)
+
+		container.add_child(platform)
+
+func _setup_moving_platform(platform: Node, pd: Dictionary):
 	var anim_player = AnimationPlayer.new()
 	anim_player.name = "AnimationPlayer"
 	platform.add_child(anim_player)
-	
-	# 创建AnimationLibrary
+
 	var anim_lib = AnimationLibrary.new()
-	
-	# 创建RESET动画（用于重置平台到初始位置）
-	# 使用0.001秒的极短时长实现即时重置效果
+
+	# RESET 动画
 	var reset_anim = Animation.new()
 	reset_anim.length = 0.001
 	var reset_track = reset_anim.add_track(Animation.TYPE_VALUE)
 	reset_anim.track_set_path(reset_track, ":position")
 	reset_anim.track_insert_key(reset_track, 0.0, Vector2.ZERO)
 	anim_lib.add_animation("RESET", reset_anim)
-	
-	# 创建move动画
+
+	# move 动画
+	var move_duration = pd.get("move_duration", 1.3)
 	var move_anim = Animation.new()
-	var move_duration = platform_data.get("move_duration", 1.3)
-	move_anim.length = move_duration * 2  # pingpong需要双倍长度
-	
+	move_anim.length = move_duration * 2
+
 	var move_track = move_anim.add_track(Animation.TYPE_VALUE)
 	move_anim.track_set_path(move_track, ":position")
-	
-	# 获取移动目标（计算相对偏移量）
+
+	# 计算移动目标（支持两种配置方式）
 	var move_target = Vector2.ZERO
-	if platform_data.has("move_target") and platform_data.has("position"):
-		var target = platform_data["move_target"]
-		var target_pos = Vector2(target[0], target[1])
-		var platform_pos = Vector2(platform_data["position"][0], platform_data["position"][1])
-		move_target = target_pos - platform_pos
-	elif platform_data.has("move_target"):
-		push_warning("[LevelGenerator] 移动平台缺少position字段，无法计算move_target偏移量")
-		return  # 跳过此平台的移动设置
-	
-	# 插入关键帧
+	if pd.has("move_target") and pd.has("position"):
+		var t = pd["move_target"]
+		var p = pd["position"]
+		move_target = Vector2(t[0], t[1]) - Vector2(p[0], p[1])
+	elif pd.has("move_distance"):
+		var dist = pd["move_distance"]
+		var dir = pd.get("move_direction", "horizontal")
+		match dir:
+			"horizontal":
+				move_target = Vector2(dist, 0)
+			"vertical":
+				move_target = Vector2(0, dist)
+	else:
+		move_target = Vector2(60, 0)
+
 	move_anim.track_insert_key(move_track, 0.0, Vector2.ZERO)
 	move_anim.track_insert_key(move_track, move_duration, move_target)
-	
-	# 设置循环模式
-	var loop_mode = platform_data.get("loop_mode", "pingpong")
-	if loop_mode == "pingpong":
-		move_anim.loop_mode = Animation.LOOP_PINGPONG
-	else:
-		move_anim.loop_mode = Animation.LOOP_LINEAR
-	
-	anim_lib.add_animation("move", move_anim)
-	
-	# 添加库到播放器
-	anim_player.add_animation_library("", anim_lib)
-	
-	# 播放动画
-	anim_player.play("move")
-	
-	print("[LevelGenerator] 设置移动平台: 目标=%s, 时长=%s" % [move_target, move_duration])
 
-# 创建敌人
+	var loop_mode = pd.get("loop_mode", "pingpong")
+	move_anim.loop_mode = Animation.LOOP_PINGPONG if loop_mode == "pingpong" else Animation.LOOP_LINEAR
+
+	anim_lib.add_animation("move", move_anim)
+	anim_player.add_animation_library("", anim_lib)
+	anim_player.play("move")
+
+# ── 敌人 ──────────────────────────────────────────────
+
 func _create_enemies(root: Node2D, enemies_data: Array):
-	# 创建Monster容器
-	var monsters_container = Node2D.new()
-	monsters_container.name = "Monster"
-	root.add_child(monsters_container)
-	
-	# 遍历创建敌人
-	for enemy_data in enemies_data:
-		var enemy_type = enemy_data.get("type", "slime")
-		
-		# 根据类型获取对应场景
+	var container = Node2D.new()
+	container.name = "Monster"
+	root.add_child(container)
+
+	for ed in enemies_data:
+		var enemy_type = ed.get("type", "slime")
 		if not _scene_cache.has(enemy_type):
 			push_warning("[LevelGenerator] 未知敌人类型: " + enemy_type)
 			continue
-		
-		var enemy = _scene_cache[enemy_type].instantiate()
-		
-		if enemy_data.has("position"):
-			var pos = enemy_data["position"]
-			enemy.position = Vector2(pos[0], pos[1])
-		
-		monsters_container.add_child(enemy)
-	
-	print("[LevelGenerator] 创建了 %d 个敌人" % enemies_data.size())
 
-# 创建传送门
-func _create_portal(root: Node2D, portal_data: Dictionary):
-	if not _scene_cache.has("portal"):
-		push_error("[LevelGenerator] Portal场景未缓存")
+		var enemy = _scene_cache[enemy_type].instantiate()
+
+		if ed.has("position"):
+			enemy.position = _parse_vec2(ed["position"])
+
+		# 紫色史莱姆变体
+		if ed.get("is_purple", false) and enemy_type == "slime":
+			_apply_purple_slime(enemy)
+
+		container.add_child(enemy)
+
+## 将普通史莱姆变为紫色变体（更快速度 + 紫色贴图）
+func _apply_purple_slime(slime: Node):
+	var sprite = slime.get_node_or_null("AnimatedSprite2D")
+	if not sprite:
 		return
-	
-	var portal = _scene_cache["portal"].instantiate()
-	portal.name = "Portal"
-	
-	# 设置位置
+
+	sprite.sprite_frames.set_animation_speed("default", 10)
+
+	var texture = load("res://assets/sprites/slime_purple.png")
+	if texture:
+		for i in range(sprite.sprite_frames.get_frame_count("default")):
+			var old_atlas = sprite.sprite_frames.get_frame_texture("default", i)
+			if old_atlas is AtlasTexture:
+				var new_atlas = AtlasTexture.new()
+				new_atlas.atlas = texture
+				new_atlas.region = old_atlas.region
+				sprite.sprite_frames.set_frame("default", i, new_atlas)
+
+	if "SPEED" in slime:
+		slime.SPEED = 60
+
+# ── Hazards（机关陷阱）────────────────────────────────
+
+func _create_hazards(root: Node2D, hazards_data: Array):
+	var container = Node2D.new()
+	container.name = "Hazards"
+	root.add_child(container)
+
+	for hd in hazards_data:
+		var hazard_type = hd.get("type", "")
+		if hazard_type.is_empty() or not HAZARD_CLASSES.has(hazard_type):
+			push_warning("[LevelGenerator] 未知 hazard 类型: " + hazard_type)
+			continue
+
+		var hazard = _create_hazard_node(hazard_type)
+		if not hazard:
+			continue
+
+		if hd.has("position"):
+			hazard.position = _parse_vec2(hd["position"])
+
+		# 应用自定义配置
+		if hd.has("config"):
+			_apply_hazard_config(hazard, hd["config"])
+
+		container.add_child(hazard)
+
+## 创建 hazard 节点实例
+func _create_hazard_node(hazard_type: String) -> Node:
+	match hazard_type:
+		"spikes":
+			return _new_spikes()
+		"saw_blade":
+			return _new_saw_blade()
+		"springboard":
+			return _new_springboard()
+		"crumbling_platform":
+			return _new_crumbling_platform()
+		"interactive_door":
+			return _new_interactive_door()
+		"pressure_switch":
+			return _new_pressure_switch()
+		"laser_beam":
+			return _new_laser_beam()
+		"advanced_moving_platform":
+			return _new_advanced_moving_platform()
+		_:
+			push_warning("[LevelGenerator] 未实现的 hazard 类型: " + hazard_type)
+			return null
+
+## 通用：将 config 字典映射到节点的 @export 属性
+func _apply_hazard_config(node: Node, config: Dictionary):
+	for key in config.keys():
+		if key in node:
+			var value = config[key]
+			node.set(key, value)
+
+# ── Hazard 工厂方法 ───────────────────────────────────
+
+func _new_spikes() -> Node:
+	var node = Spikes.new()
+	node.name = "Spikes"
+	_add_collision_rect(node, HAZARD_SHAPES["spikes"])
+	_add_placeholder_sprite(node, HAZARD_SHAPES["spikes"], Color(0.8, 0.2, 0.2))
+	return node
+
+func _new_saw_blade() -> Node:
+	var node = SawBlade.new()
+	node.name = "SawBlade"
+	_add_collision_circle(node, HAZARD_SHAPES["saw_blade"])
+	_add_placeholder_sprite_circle(node, HAZARD_SHAPES["saw_blade"], Color(0.9, 0.5, 0.0))
+	return node
+
+func _new_springboard() -> Node:
+	var node = Springboard.new()
+	node.name = "Springboard"
+	_add_collision_rect(node, HAZARD_SHAPES["springboard"])
+	_add_placeholder_sprite(node, HAZARD_SHAPES["springboard"], Color(0.2, 0.8, 0.2))
+	return node
+
+func _new_crumbling_platform() -> Node:
+	var node = CrumblingPlatform.new()
+	node.name = "CrumblingPlatform"
+	_add_collision_rect(node, HAZARD_SHAPES["crumbling_platform"])
+	_add_placeholder_sprite(node, HAZARD_SHAPES["crumbling_platform"], Color(0.6, 0.5, 0.3))
+	return node
+
+func _new_interactive_door() -> Node:
+	var node = InteractiveDoor.new()
+	node.name = "InteractiveDoor"
+	# InteractiveDoor 内部自建 DoorBody/CollisionShape2D
+	return node
+
+func _new_pressure_switch() -> Node:
+	var node = PressureSwitch.new()
+	node.name = "PressureSwitch"
+	_add_collision_rect(node, HAZARD_SHAPES["pressure_switch"])
+	_add_placeholder_sprite(node, HAZARD_SHAPES["pressure_switch"], Color(0.3, 0.7, 0.9))
+	return node
+
+func _new_laser_beam() -> Node:
+	var node = LaserBeam.new()
+	node.name = "LaserBeam"
+	# LaserBeam 在 _ready() 中自建所有组件
+	return node
+
+func _new_advanced_moving_platform() -> Node:
+	var node = AdvancedMovingPlatform.new()
+	node.name = "AdvancedMovingPlatform"
+	_add_collision_rect(node, HAZARD_SHAPES["advanced_moving_platform"])
+	_add_placeholder_sprite(node, HAZARD_SHAPES["advanced_moving_platform"], Color(0.5, 0.5, 0.7))
+	return node
+
+# ── Hazard 辅助：碰撞形状和占位精灵 ──────────────────
+
+func _add_collision_rect(node: Node, size: Vector2):
+	var collision = CollisionShape2D.new()
+	collision.name = "CollisionShape2D"
+	var shape = RectangleShape2D.new()
+	shape.size = size
+	collision.shape = shape
+	node.add_child(collision)
+
+func _add_collision_circle(node: Node, radius: float):
+	var collision = CollisionShape2D.new()
+	collision.name = "CollisionShape2D"
+	var shape = CircleShape2D.new()
+	shape.radius = radius
+	collision.shape = shape
+	node.add_child(collision)
+
+func _add_placeholder_sprite(node: Node, size: Vector2, color: Color):
+	var sprite = Sprite2D.new()
+	sprite.name = "Sprite2D"
+	# 使用 ColorRect 作为临时占位视觉
+	var rect = ColorRect.new()
+	rect.name = "PlaceholderVisual"
+	rect.size = size
+	rect.position = - size / 2
+	rect.color = color
+	node.add_child(rect)
+
+func _add_placeholder_sprite_circle(node: Node, radius: float, color: Color):
+	var rect = ColorRect.new()
+	rect.name = "PlaceholderVisual"
+	rect.size = Vector2(radius * 2, radius * 2)
+	rect.position = Vector2(-radius, -radius)
+	rect.color = color
+	node.add_child(rect)
+
+# ── Labels（提示文字）─────────────────────────────────
+
+func _create_labels(root: Node2D, labels_data: Array):
+	var container = Node2D.new()
+	container.name = "Labels"
+	root.add_child(container)
+
+	for ld in labels_data:
+		var label = Label.new()
+
+		if ld.has("name"):
+			label.name = ld["name"]
+		else:
+			label.name = "Label"
+
+		if ld.has("position"):
+			var pos = ld["position"]
+			label.position = Vector2(pos[0], pos[1])
+
+		label.text = ld.get("text", "")
+
+		if ld.has("font_size"):
+			label.add_theme_font_size_override("font_size", ld["font_size"])
+
+		if ld.has("color"):
+			var c = ld["color"]
+			label.add_theme_color_override("font_color", Color(c[0], c[1], c[2], c.get(3, 1.0) if c.size() > 3 else 1.0))
+
+		container.add_child(label)
+
+# ── 传送门 ────────────────────────────────────────────
+
+func _create_portal(root: Node2D, portal_data: Dictionary):
+	var portal = _add_scene_node(root, "portal", "Portal")
+	if not portal:
+		return
+
 	if portal_data.has("position"):
-		var pos = portal_data["position"]
-		portal.position = Vector2(pos[0], pos[1])
-	
-	root.add_child(portal)
-	
-	# 配置目标场景（使用call_deferred确保portal的_ready已执行）
+		portal.position = _parse_vec2(portal_data["position"])
+
 	if portal_data.has("destination_scene"):
 		var dest = portal_data["destination_scene"]
-		# 验证目标场景是否存在
-		if ResourceLoader.exists(dest):
-			portal.call_deferred("configure_for_scene_teleport", dest)
-			print("[LevelGenerator] Portal创建完成，目标: ", dest)
-		else:
+		# 使用 set() 安全赋值，避免脚本属性直接访问失败
+		portal.set("destination_scene", dest)
+		portal.set("next_level", -1)
+		if not ResourceLoader.exists(dest):
 			push_warning("[LevelGenerator] 目标场景不存在: " + dest)
-			print("[LevelGenerator] Portal创建完成（目标场景无效）")
-	else:
-		print("[LevelGenerator] Portal创建完成（无目标配置）")
+
+# ── Boss 生成 ─────────────────────────────────────────
+
+func _create_boss(root: Node2D, boss_data: Dictionary):
+	var boss_type = boss_data.get("type", "")
+	if boss_type != "void_guardian":
+		push_warning("[LevelGenerator] 未知 boss 类型: " + boss_type)
+		return
+
+	var boss = VoidGuardian.new()
+	boss.name = "VoidGuardian"
+
+	if boss_data.has("position"):
+		boss.position = _parse_vec2(boss_data["position"])
+
+	# 应用配置
+	if boss_data.has("config"):
+		var config = boss_data["config"]
+		for key in config.keys():
+			if key in boss:
+				boss.set(key, config[key])
+
+	root.add_child(boss)

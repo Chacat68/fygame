@@ -1,0 +1,87 @@
+{
+  "level_id": 102,
+  "level_name": "天空之塔",
+  "theme": "垂直攀爬",
+  "difficulty": "中等",
+  "_comment": "经典垂直攀爬关：从底部向上攀登，移动平台+高处金币+坠落死亡",
+
+  "player": { "position": [0, 300] },
+  "camera": {
+    "position": [0, 0],
+    "zoom": [3.5, 3.5],
+    "limit_left": -200,
+    "limit_bottom": 350,
+    "smooth": true
+  },
+  "killzone": { "y_position": 500 },
+
+  "labels": [
+    { "position": [-80, 280], "text": "向上攀爬！" },
+    { "position": [-30, 60],  "text": "移动平台" },
+    { "position": [50, -200], "text": "快到顶了！" }
+  ],
+
+  "coins": [
+    { "position": [-50, 240] },
+    { "position": [70, 240] },
+
+    { "position": [100, 180] },
+    { "position": [-80, 160] },
+
+    { "position": [0, 100] },
+    { "position": [120, 80] },
+    { "position": [-100, 60] },
+
+    { "position": [60, 0] },
+    { "position": [-60, -20] },
+
+    { "position": [0, -80] },
+    { "position": [100, -100] },
+    { "position": [-100, -120] },
+
+    { "position": [0, -180] },
+    { "position": [50, -200] },
+    { "position": [-50, -200] },
+
+    { "position": [0, -280] }
+  ],
+
+  "platforms": [
+    { "position": [-60, 270], "is_moving": false },
+    { "position": [60, 270],  "is_moving": false },
+
+    { "position": [100, 200], "is_moving": false },
+    { "position": [-80, 180], "is_moving": false },
+
+    { "position": [0, 120],   "is_moving": true, "move_distance": 80, "move_direction": "horizontal", "move_duration": 2.0 },
+
+    { "position": [120, 60],  "is_moving": false },
+    { "position": [-100, 40], "is_moving": false },
+
+    { "position": [0, -20],   "is_moving": true, "move_distance": 60, "move_direction": "horizontal", "move_duration": 1.5 },
+
+    { "position": [100, -80], "is_moving": false },
+    { "position": [-100, -100], "is_moving": false },
+
+    { "position": [0, -160],  "is_moving": true, "move_distance": 100, "move_direction": "horizontal", "move_duration": 2.5 },
+
+    { "position": [0, -250],  "is_moving": false }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [100, 180], "is_purple": false },
+    { "type": "slime", "position": [-80, 160], "is_purple": false },
+    { "type": "slime", "position": [120, 40],  "is_purple": true },
+    { "type": "slime", "position": [-100, -120], "is_purple": true }
+  ],
+
+  "checkpoints": [
+    { "position": [0, 100] },
+    { "position": [0, -100] }
+  ],
+
+  "portal": {
+    "position": [0, -300],
+    "destination_scene": "res://scenes/levels/lv3.tscn"
+  }
+}

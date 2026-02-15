@@ -1,0 +1,132 @@
+{
+  "level_id": 105,
+  "level_name": "史莱姆竞技场",
+  "theme": "Boss 战",
+  "difficulty": "噩梦",
+  "_comment": "Boss竞技场：封闭圆形场地，大量敌人波次，中央弹簧跳板，四角尖刺",
+
+  "player": { "position": [0, 0] },
+  "camera": {
+    "position": [200, 0],
+    "zoom": [2.5, 2.5],
+    "limit_left": -100,
+    "limit_bottom": 200,
+    "smooth": true
+  },
+  "killzone": { "y_position": 400 },
+
+  "labels": [
+    { "position": [150, -120], "text": "★ 竞技场 ★" },
+    { "position": [50, 120],   "text": "消灭所有敌人！" },
+    { "position": [300, 120],  "text": "利用弹簧跳板" }
+  ],
+
+  "coins": [
+    { "position": [50, -30] },
+    { "position": [150, -60] },
+    { "position": [250, -30] },
+    { "position": [350, -60] },
+
+    { "position": [100, 40] },
+    { "position": [200, -80] },
+    { "position": [300, 40] },
+
+    { "position": [50, -90] },
+    { "position": [200, -100] },
+    { "position": [350, -90] },
+
+    { "position": [100, -50] },
+    { "position": [300, -50] },
+    { "position": [200, -40] },
+    { "position": [200, 20] },
+    { "position": [200, -120] }
+  ],
+
+  "platforms": [
+    { "position": [-50, 40],  "is_moving": false },
+    { "position": [50, 80],   "is_moving": false },
+    { "position": [150, 60],  "is_moving": false },
+    { "position": [250, 60],  "is_moving": false },
+    { "position": [350, 80],  "is_moving": false },
+    { "position": [450, 40],  "is_moving": false },
+
+    { "position": [100, -20], "is_moving": false },
+    { "position": [200, -40], "is_moving": false },
+    { "position": [300, -20], "is_moving": false },
+
+    { "position": [100, -80], "is_moving": true, "move_distance": 60, "move_direction": "horizontal", "move_duration": 2.0 },
+    { "position": [300, -80], "is_moving": true, "move_distance": 60, "move_direction": "horizontal", "move_duration": 2.0 },
+
+    { "position": [200, -110], "is_moving": false }
+  ],
+
+  "hazards": [
+    {
+      "type": "spikes",
+      "position": [-50, 80],
+      "config": { "damage": 20, "damage_cooldown": 1.0 }
+    },
+    {
+      "type": "spikes",
+      "position": [450, 80],
+      "config": { "damage": 20, "damage_cooldown": 1.0 }
+    },
+
+    {
+      "type": "springboard",
+      "position": [100, 100],
+      "config": { "bounce_force": 600.0 }
+    },
+    {
+      "type": "springboard",
+      "position": [300, 100],
+      "config": { "bounce_force": 600.0 }
+    },
+    {
+      "type": "springboard",
+      "position": [200, 100],
+      "config": { "bounce_force": 700.0 }
+    },
+
+    {
+      "type": "saw_blade",
+      "position": [0, 10],
+      "config": { "rotation_speed": 300.0, "saw_type": 2, "circular_radius": 40.0, "damage": 15 }
+    },
+    {
+      "type": "saw_blade",
+      "position": [400, 10],
+      "config": { "rotation_speed": 300.0, "saw_type": 2, "circular_radius": 40.0, "damage": 15 }
+    },
+
+    {
+      "type": "interactive_door",
+      "position": [480, 0],
+      "config": { "door_id": "arena_exit", "door_type": 4 }
+    }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [100, 40],  "is_purple": false },
+    { "type": "slime", "position": [200, 40],  "is_purple": false },
+    { "type": "slime", "position": [300, 40],  "is_purple": false },
+
+    { "type": "slime", "position": [50, -20],  "is_purple": true },
+    { "type": "slime", "position": [150, -40], "is_purple": true },
+    { "type": "slime", "position": [250, -40], "is_purple": true },
+    { "type": "slime", "position": [350, -20], "is_purple": true },
+
+    { "type": "slime", "position": [100, -80], "is_purple": true },
+    { "type": "slime", "position": [200, -110], "is_purple": true },
+    { "type": "slime", "position": [300, -80], "is_purple": true }
+  ],
+
+  "checkpoints": [
+    { "position": [200, -10] }
+  ],
+
+  "portal": {
+    "position": [500, -20],
+    "destination_scene": "res://scenes/ui/main_menu.tscn"
+  }
+}

@@ -11,7 +11,7 @@ func _ready():
 # 固定关卡按钮点击事件
 func _on_fixed_level_button_pressed():
 	# 切换到固定关卡场景（山洞探险）
-	get_tree().change_scene_to_file("res://scenes/levels/mountain_cave_level.tscn")
+	get_tree().change_scene_to_file("res://scenes/levels/lv1.tscn")
 
 # 退出按钮点击事件
 func _on_quit_button_pressed():

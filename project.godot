@@ -35,6 +35,8 @@ CollectibleManager="*res://scripts/autoload/collectible_manager.gd"
 AchievementManager="*res://scripts/autoload/achievement_manager.gd"
 GameStatsManager="*res://scripts/autoload/game_stats_manager.gd"
 ItemManager="*res://scripts/autoload/item_manager.gd"
+ChapterTransition="*uid://dsw1qqfkmc3kh"
+DeathScreen="*uid://cpn7nh0761xok"
 
 [display]
 
@@ -43,9 +45,13 @@ window/size/viewport_height=1440
 window/size/borderless=true
 window/stretch/mode="canvas_items"
 
+[editor]
+
+version_control/autoload_on_startup=true
+
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/level_generator/plugin.cfg")
 
 [input]
 

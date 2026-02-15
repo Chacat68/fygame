@@ -17,14 +17,15 @@ extends PanelContainer
 # 状态
 var god_mode: bool = false
 var is_collapsed: bool = false
-var expanded_height: float = 570.0  # 展开时的高度
-var collapsed_height: float = 80.0  # 收起时的高度
+var expanded_height: float = 570.0 # 展开时的高度
+var collapsed_height: float = 80.0 # 收起时的高度
 
 func _ready() -> void:
-	# 连接 GameState 信号
-	if GameState:
+	# 连接 GameState 信号（避免重复连接）
+	if GameState and not GameState.debug_mode_changed.is_connected(_on_debug_mode_changed):
 		GameState.debug_mode_changed.connect(_on_debug_mode_changed)
 		# 初始化显示状态
+	if GameState:
 		visible = GameState.debug_mode
 	
 	# 记录展开高度

@@ -1,0 +1,170 @@
+{
+  "level_id": 3,
+  "level_name": "第三章 · 水晶矿洞",
+  "theme": "探索",
+  "difficulty": "困难",
+  "chapter": 3,
+  "chapter_title": "水晶矿洞",
+  "chapter_quote": "矿洞深处的光芒，来自水晶，还是陷阱？",
+
+  "player": {
+    "position": [0, 0]
+  },
+  "camera": {
+    "position": [0, -6],
+    "zoom": [4, 4],
+    "limit_left": -200,
+    "limit_bottom": 120,
+    "smooth": true
+  },
+  "killzone": {
+    "y_position": 600
+  },
+
+  "labels": [
+    { "position": [-60, -50],   "text": "「矿洞深处的光芒，来自水晶，还是陷阱？」" },
+    { "position": [160, 300],    "text": "矿壁中的水晶…闪烁着金色的光" },
+    { "position": [500, 260],    "text": "移动平台，看准时机！" },
+    { "position": [880, 210],    "text": "紫色的…越来越多了" },
+    { "position": [1000, 280],   "text": "向上攀爬！碎片就在上方" },
+    { "position": [1200, 260],   "text": "矿道深处传来低沉的声音…" },
+    { "position": [1340, 140],   "text": "「回去…这里不是你该来的地方…」" },
+    { "position": [1550, 260],   "text": "黑暗中，通往地牢的入口出现了" }
+  ],
+
+  "coins": [
+    { "position": [180, 310] },
+    { "position": [220, 280] },
+    { "position": [260, 270] },
+    { "position": [300, 240] },
+    { "position": [340, 230] },
+    { "position": [380, 200] },
+    { "position": [420, 190] },
+    { "position": [520, 270] },
+    { "position": [560, 240] },
+    { "position": [600, 230] },
+    { "position": [650, 200] },
+    { "position": [700, 190] },
+    { "position": [750, 160] },
+    { "position": [800, 150] },
+    { "position": [850, 220] },
+    { "position": [900, 210] },
+    { "position": [1000, 290] },
+    { "position": [1080, 250] },
+    { "position": [1000, 210] },
+    { "position": [1120, 210] },
+    { "position": [1060, 170] },
+    { "position": [1000, 130] },
+    { "position": [1120, 130] },
+    { "position": [1060, 90] },
+    { "position": [1040, 180] },
+    { "position": [1080, 140] },
+    { "position": [1200, 270] },
+    { "position": [1240, 240] },
+    { "position": [1280, 230] },
+    { "position": [1320, 200] },
+    { "position": [1360, 190] },
+    { "position": [1400, 200] },
+    { "position": [1440, 230] },
+    { "position": [1480, 240] },
+    { "position": [1520, 270] },
+    { "position": [1360, 150] },
+    { "position": [1340, 150] },
+    { "position": [1380, 150] }
+  ],
+
+  "platforms": [
+    { "position": [180, 340], "is_moving": false },
+    { "position": [260, 300], "is_moving": false },
+    { "position": [340, 260], "is_moving": false },
+    { "position": [420, 220], "is_moving": false },
+    { "position": [520, 300], "is_moving": false },
+    {
+      "position": [600, 260],
+      "is_moving": true,
+      "move_distance": 60,
+      "move_direction": "horizontal"
+    },
+    { "position": [700, 220], "is_moving": false },
+    {
+      "position": [800, 180],
+      "is_moving": true,
+      "move_distance": 60,
+      "move_direction": "horizontal"
+    },
+    { "position": [900, 240], "is_moving": false },
+    { "position": [1000, 320], "is_moving": false },
+    {
+      "position": [1080, 280],
+      "is_moving": true,
+      "move_distance": 60,
+      "move_direction": "horizontal"
+    },
+    { "position": [1000, 240], "is_moving": false },
+    { "position": [1120, 240], "is_moving": false },
+    {
+      "position": [1060, 200],
+      "is_moving": true,
+      "move_distance": 60,
+      "move_direction": "horizontal"
+    },
+    { "position": [1000, 160], "is_moving": false },
+    { "position": [1120, 160], "is_moving": false },
+    { "position": [1060, 120], "is_moving": false },
+    { "position": [1200, 300], "is_moving": false },
+    {
+      "position": [1280, 260],
+      "is_moving": true,
+      "move_distance": 60,
+      "move_direction": "horizontal"
+    },
+    { "position": [1360, 220], "is_moving": false },
+    {
+      "position": [1440, 260],
+      "is_moving": true,
+      "move_distance": 60,
+      "move_direction": "horizontal"
+    },
+    { "position": [1520, 300], "is_moving": false },
+    { "position": [1360, 180], "is_moving": false }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [260, 280], "is_purple": false },
+    { "type": "slime", "position": [420, 200], "is_purple": false },
+    { "type": "slime", "position": [700, 200], "is_purple": false },
+    { "type": "slime", "position": [900, 220], "is_purple": true },
+    { "type": "slime", "position": [1080, 260], "is_purple": false },
+    { "type": "slime", "position": [1000, 220], "is_purple": false },
+    { "type": "slime", "position": [1120, 220], "is_purple": true },
+    { "type": "slime", "position": [1060, 180], "is_purple": false },
+    { "type": "slime", "position": [1060, 100], "is_purple": true },
+    { "type": "slime", "position": [1280, 240], "is_purple": true },
+    { "type": "slime", "position": [1360, 200], "is_purple": true },
+    { "type": "slime", "position": [1440, 240], "is_purple": true }
+  ],
+
+  "checkpoints": [
+    { "position": [520, 280] },
+    { "position": [1060, 100] }
+  ],
+
+  "portal": {
+    "position": [1600, 280],
+    "destination_scene": "res://scenes/levels/lv4.tscn"
+  },
+  "ground": {
+    "color": [0.25, 0.3, 0.38],
+    "border_color": [0.35, 0.45, 0.55],
+    "segments": [
+      { "x": -200, "y": 300, "width": 800, "height": 40 },
+      { "x": -100, "y": 220, "width": 200, "height": 24 },
+      { "x": 200, "y": 160, "width": 200, "height": 24 },
+      { "x": -50, "y": 100, "width": 200, "height": 24 },
+      { "x": 250, "y": 40, "width": 200, "height": 24 },
+      { "x": 0, "y": -30, "width": 200, "height": 24 },
+      { "x": 300, "y": -100, "width": 300, "height": 24 },
+      { "x": 700, "y": 300, "width": 1000, "height": 40 }
+    ]
+  }
+}

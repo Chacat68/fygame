@@ -1,8 +1,12 @@
 {
   "level_id": 1,
-  "level_name": "关卡1",
-  "theme": "新手教程",
+  "level_name": "第一章 · 翠风草原",
+  "theme": "启程",
   "difficulty": "简单",
+  "chapter": 1,
+  "chapter_title": "翠风草原",
+  "chapter_quote": "踏出废墟的第一步，就是冒险的开始。",
+
   "player": {
     "position": [0, 0]
   },
@@ -16,6 +20,16 @@
   "killzone": {
     "y_position": 600
   },
+
+  "labels": [
+    { "position": [-60, -50],  "text": "「踏出废墟的第一步，就是冒险的开始。」" },
+    { "position": [50, -30],   "text": "← → 移动" },
+    { "position": [150, -60],  "text": "↑ 跳跃" },
+    { "position": [200, -120], "text": "收集金色碎片…" },
+    { "position": [600, -50],  "text": "小心！这些史莱姆被瘴气污染了" },
+    { "position": [1400, -100],"text": "传送门…精灵族的古老通道" }
+  ],
+
   "coins": [
     { "position": [223, -28] },
     { "position": [301, -30] },
@@ -25,11 +39,20 @@
     { "position": [-137, -90], "is_moving": false }
   ],
   "enemies": [
-    { "type": "slime", "position": [168, -12] }
+    { "type": "slime", "position": [168, -12], "is_purple": false }
   ],
   "portal": {
     "position": [1513, -87],
     "destination_scene": "res://scenes/levels/lv2.tscn"
   },
-  "tilemap_scene": "res://scenes/levels/lv1.tscn"
+  "ground": {
+    "color": [0.3, 0.5, 0.25],
+    "border_color": [0.2, 0.35, 0.15],
+    "segments": [
+      { "x": -300, "y": 120, "width": 600, "height": 40 },
+      { "x": 400, "y": 100, "width": 200, "height": 40 },
+      { "x": 700, "y": 120, "width": 400, "height": 40 },
+      { "x": 1200, "y": 100, "width": 400, "height": 40 }
+    ]
+  }
 }

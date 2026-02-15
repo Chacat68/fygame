@@ -1,0 +1,135 @@
+{
+  "level_id": 5,
+  "level_name": "终章 · 封印虚空",
+  "theme": "壮烈",
+  "difficulty": "噩梦",
+  "chapter": 5,
+  "chapter_title": "封印虚空",
+  "chapter_quote": "光芒重聚，大地新生。",
+
+  "player": { "position": [-200, 50] },
+  "camera": {
+    "position": [100, 0],
+    "zoom": [2.5, 2.5],
+    "limit_left": -300,
+    "limit_bottom": 200,
+    "smooth": true
+  },
+  "killzone": { "y_position": 400 },
+
+  "labels": [
+    { "position": [-250, -20],   "text": "「光芒重聚，大地新生。」" },
+    { "position": [-200, 80],    "text": "感受到了…虚空的核心就在前方" },
+    { "position": [50, 120],     "text": "竞技场…虚空守卫就在这里" },
+    { "position": [100, -130],   "text": "从上方踩踏它！" },
+    { "position": [350, 120],    "text": "利用弹簧跳板获得高度" }
+  ],
+
+  "coins": [
+    { "position": [-100, 30] },
+    { "position": [-50, 10] },
+    { "position": [0, -10] },
+    { "position": [50, -30] },
+    { "position": [100, -50] },
+    { "position": [150, -30] },
+    { "position": [200, -10] },
+    { "position": [250, 10] },
+    { "position": [300, 30] },
+    { "position": [100, -100] },
+    { "position": [200, -100] },
+    { "position": [300, -100] },
+    { "position": [400, -50] },
+    { "position": [100, 50] },
+    { "position": [200, 50] }
+  ],
+
+  "platforms": [
+    { "position": [-150, 80], "is_moving": false },
+    { "position": [-50, 60],  "is_moving": false },
+    { "position": [50, 80],   "is_moving": false },
+    { "position": [150, 60],  "is_moving": false },
+    { "position": [250, 60],  "is_moving": false },
+    { "position": [350, 80],  "is_moving": false },
+    { "position": [450, 60],  "is_moving": false },
+
+    { "position": [100, 0],   "is_moving": false },
+    { "position": [200, -20], "is_moving": false },
+    { "position": [300, 0],   "is_moving": false },
+
+    { "position": [0, -60],   "is_moving": true, "move_distance": 80, "move_direction": "horizontal", "move_duration": 2.5 },
+    { "position": [400, -60], "is_moving": true, "move_distance": 80, "move_direction": "horizontal", "move_duration": 2.5 }
+  ],
+
+  "hazards": [
+    {
+      "type": "spikes",
+      "position": [-250, 120],
+      "config": { "damage": 20, "damage_cooldown": 1.0 }
+    },
+    {
+      "type": "spikes",
+      "position": [550, 120],
+      "config": { "damage": 20, "damage_cooldown": 1.0 }
+    },
+
+    {
+      "type": "springboard",
+      "position": [0, 100],
+      "config": { "bounce_force": 600.0 }
+    },
+    {
+      "type": "springboard",
+      "position": [200, 100],
+      "config": { "bounce_force": 650.0 }
+    },
+    {
+      "type": "springboard",
+      "position": [400, 100],
+      "config": { "bounce_force": 600.0 }
+    },
+
+    {
+      "type": "saw_blade",
+      "position": [-100, 20],
+      "config": { "rotation_speed": 300.0, "saw_type": 2, "circular_radius": 30.0, "damage": 15 }
+    },
+    {
+      "type": "saw_blade",
+      "position": [500, 20],
+      "config": { "rotation_speed": 300.0, "saw_type": 2, "circular_radius": 30.0, "damage": 15 }
+    }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [100, 60], "is_purple": true },
+    { "type": "slime", "position": [300, 60], "is_purple": true }
+  ],
+
+  "checkpoints": [
+    { "position": [50, 60] }
+  ],
+
+  "boss": {
+    "type": "void_guardian",
+    "position": [200, 40],
+    "config": {
+      "max_health": 300.0,
+      "contact_damage": 20,
+      "move_speed": 60.0
+    }
+  },
+
+  "portal": {
+    "position": [550, 40],
+    "destination_scene": "res://scenes/ui/game_start_screen.tscn"
+  },
+  "ground": {
+    "color": [0.2, 0.1, 0.25],
+    "border_color": [0.35, 0.15, 0.4],
+    "segments": [
+      { "x": -300, "y": 120, "width": 900, "height": 40 },
+      { "x": -300, "y": -80, "width": 40, "height": 240 },
+      { "x": 560, "y": -80, "width": 40, "height": 240 }
+    ]
+  }
+}

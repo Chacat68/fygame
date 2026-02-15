@@ -1,8 +1,12 @@
 {
   "level_id": 2,
-  "level_name": "关卡2",
-  "theme": "进阶挑战",
+  "level_name": "第二章 · 幽暗深林",
+  "theme": "警觉",
   "difficulty": "中等",
+  "chapter": 2,
+  "chapter_title": "幽暗深林",
+  "chapter_quote": "树影之间，紫色的眼睛正在注视你。",
+
   "player": {
     "position": [0, 0]
   },
@@ -16,6 +20,16 @@
   "killzone": {
     "y_position": 600
   },
+
+  "labels": [
+    { "position": [-60, -50],  "text": "「树影之间，紫色的眼睛正在注视你。」" },
+    { "position": [-140, -100],"text": "森林…开始枯萎了" },
+    { "position": [400, -110], "text": "紫色的…更快了！小心！" },
+    { "position": [250, -100], "text": "脚下的平台在移动…" },
+    { "position": [700, -80],  "text": "石碑：「收集光芒，不要回头。」" },
+    { "position": [1400, -100],"text": "深林的尽头，矿洞的入口…" }
+  ],
+
   "coins": [
     { "position": [223, -28] },
     { "position": [301, -30] },
@@ -35,13 +49,28 @@
     }
   ],
   "enemies": [
-    { "type": "slime", "position": [168, -12] },
-    { "type": "slime", "position": [520, -91] },
-    { "type": "slime", "position": [664, -75] }
+    { "type": "slime", "position": [168, -12], "is_purple": false },
+    { "type": "slime", "position": [520, -91], "is_purple": true },
+    { "type": "slime", "position": [664, -75], "is_purple": true }
   ],
+
+  "checkpoints": [
+    { "position": [350, -30] }
+  ],
+
   "portal": {
     "position": [1513, -87],
     "destination_scene": "res://scenes/levels/lv3.tscn"
   },
-  "tilemap_scene": "res://scenes/levels/lv2.tscn"
+  "ground": {
+    "color": [0.18, 0.22, 0.15],
+    "border_color": [0.12, 0.15, 0.08],
+    "segments": [
+      { "x": -300, "y": 120, "width": 500, "height": 40 },
+      { "x": 300, "y": 100, "width": 150, "height": 40 },
+      { "x": 550, "y": 80, "width": 150, "height": 40 },
+      { "x": 800, "y": 120, "width": 300, "height": 40 },
+      { "x": 1200, "y": 100, "width": 400, "height": 40 }
+    ]
+  }
 }

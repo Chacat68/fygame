@@ -1,0 +1,67 @@
+{
+  "level_id": 101,
+  "level_name": "新手教学",
+  "theme": "草地",
+  "difficulty": "简单",
+  "_comment": "经典横版教学关：从左到右，逐步引入跳跃、金币、敌人、传送门",
+
+  "player": { "position": [0, 0] },
+  "camera": {
+    "position": [0, -6],
+    "zoom": [4, 4],
+    "limit_left": -50,
+    "limit_bottom": 150,
+    "smooth": true
+  },
+  "killzone": { "y_position": 400 },
+
+  "labels": [
+    { "position": [-30, -40],  "text": "← → 移动" },
+    { "position": [120, -90],  "text": "↑ 跳跃" },
+    { "position": [300, -80],  "text": "收集金币！" },
+    { "position": [550, -100], "text": "小心敌人！" },
+    { "position": [850, -60],  "text": "进入传送门 →" }
+  ],
+
+  "coins": [
+    { "position": [80, -20] },
+    { "position": [120, -40] },
+    { "position": [160, -20] },
+
+    { "position": [300, -50] },
+    { "position": [340, -50] },
+    { "position": [380, -50] },
+
+    { "position": [500, -30] },
+    { "position": [540, -60] },
+    { "position": [580, -30] },
+
+    { "position": [700, -40] },
+    { "position": [750, -70] },
+    { "position": [800, -40] }
+  ],
+
+  "platforms": [
+    { "position": [100, 20],  "is_moving": false },
+    { "position": [200, -10], "is_moving": false },
+    { "position": [320, -20], "is_moving": false },
+    { "position": [450, 0],   "is_moving": false },
+    { "position": [560, -10], "is_moving": false },
+    { "position": [680, 10],  "is_moving": false },
+    { "position": [800, 0],   "is_moving": false }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [550, -30], "is_purple": false },
+    { "type": "slime", "position": [700, -10], "is_purple": false }
+  ],
+
+  "checkpoints": [
+    { "position": [400, -20] }
+  ],
+
+  "portal": {
+    "position": [900, -20],
+    "destination_scene": "res://scenes/levels/lv2.tscn"
+  }
+}

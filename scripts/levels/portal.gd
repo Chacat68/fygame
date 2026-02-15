@@ -20,7 +20,6 @@ var particle_tween: Tween
 
 # 管理器引用
 var teleport_manager: TeleportManager
-var level_manager: LevelManager
 var game_manager: Node
 
 # 在准备好时调用
@@ -228,15 +227,9 @@ func _perform_teleport(_body):
 			_reset_teleport_state()
 		return
 	
-	# 否则使用关卡管理器进入下一关
-	if level_manager:
-		if next_level == -1:
-			level_manager.next_level()
-		else:
-			level_manager.load_level(next_level)
-	else:
-		print("警告：无法找到关卡管理器")
-		_reset_teleport_state()
+	# 回退：直接使用场景树切换
+	print("[Portal] 无目标场景且无传送管理器，重置状态")
+	_reset_teleport_state()
 
 # 重置传送状态的辅助函数
 func _reset_teleport_state():
@@ -256,11 +249,8 @@ func _initialize_managers():
 	
 	# 查找游戏管理器节点
 	game_manager = tree.get_first_node_in_group("game_manager")
-	if game_manager:
-		# 从GameManager中查找LevelManager
-		level_manager = game_manager.get_node_or_null("LevelManager")
 	
-	# 如果在组中没找到，尝试从GameManager子节点中查找（向后兼容）
+	# 如果在组中没找到，从GameManager子节点中查找
 	if not teleport_manager and game_manager:
 		teleport_manager = game_manager.get_node_or_null("TeleportManager")
 	
@@ -291,9 +281,6 @@ func _on_teleport_completed(_player: Node2D, _destination: Vector2):
 	is_teleporting = false
 	is_active = true
 	
-	# 备用查找逻辑（如果主要查找失败）
-	if not level_manager and tree:
-		level_manager = tree.get_first_node_in_group("level_manager")
 
 # 设置目标场景
 func set_destination_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZERO):
@@ -345,6 +332,5 @@ func get_portal_info() -> Dictionary:
 		"next_level": next_level,
 		"destination_scene": destination_scene,
 		"teleport_position": teleport_position,
-		"has_teleport_manager": teleport_manager != null,
-		"has_level_manager": level_manager != null
+		"has_teleport_manager": teleport_manager != null
 	}

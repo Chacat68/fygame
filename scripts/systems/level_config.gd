@@ -58,10 +58,10 @@ func get_level_scene_path(level_id: int) -> String:
 	var level = get_level_by_id(level_id)
 	return level.get("scene_path", "")
 
-# 获取关卡脚本路径
-func get_level_script_path(level_id: int) -> String:
+# 获取关卡数据路径（JSON）
+func get_level_data_path(level_id: int) -> String:
 	var level = get_level_by_id(level_id)
-	return level.get("script_path", "")
+	return level.get("data_path", "")
 
 # 获取关卡名称
 func get_level_name(level_id: int) -> String:
@@ -171,7 +171,7 @@ func remove_level(level_id: int) -> void:
 func get_next_level_id() -> int:
 	# 检查数组是否为空
 	if not levels or levels.is_empty():
-		return 1  # 如果没有关卡，返回第一个ID
+		return 1 # 如果没有关卡，返回第一个ID
 	
 	var max_id = 0
 	for level in levels:

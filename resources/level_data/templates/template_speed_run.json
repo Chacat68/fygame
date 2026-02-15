@@ -1,0 +1,122 @@
+{
+  "level_id": 104,
+  "level_name": "夺命狂奔",
+  "theme": "追逐逃脱",
+  "difficulty": "困难",
+  "_comment": "速跑关：快速从左到右通过，激光脉冲+高速锯片+限时门，节奏紧凑",
+
+  "player": { "position": [0, 0] },
+  "camera": {
+    "position": [0, -6],
+    "zoom": [3.5, 3.5],
+    "limit_left": -50,
+    "limit_bottom": 120,
+    "smooth": true
+  },
+  "killzone": { "y_position": 300 },
+
+  "labels": [
+    { "position": [-30, -60],  "text": "快跑！别停下！" },
+    { "position": [350, -90],  "text": "↑ 跳！" },
+    { "position": [700, -100], "text": "激光！高跳！" },
+    { "position": [1050, -80], "text": "限时门！冲！" }
+  ],
+
+  "coins": [
+    { "position": [60, -20] },
+    { "position": [140, -40] },
+    { "position": [220, -20] },
+    { "position": [350, -50] },
+    { "position": [450, -60] },
+    { "position": [550, -30] },
+    { "position": [700, -40] },
+    { "position": [800, -70] },
+    { "position": [900, -30] },
+    { "position": [1050, -40] },
+    { "position": [1150, -50] },
+    { "position": [1250, -30] }
+  ],
+
+  "platforms": [
+    { "position": [80, 20],   "is_moving": false },
+    { "position": [180, 0],   "is_moving": false },
+    { "position": [280, 20],  "is_moving": false },
+    { "position": [380, -10], "is_moving": true, "move_distance": 60, "move_direction": "vertical", "move_duration": 1.0 },
+    { "position": [480, 10],  "is_moving": false },
+    { "position": [580, 0],   "is_moving": false },
+    { "position": [680, 20],  "is_moving": false },
+    { "position": [780, -20], "is_moving": true, "move_distance": 80, "move_direction": "horizontal", "move_duration": 1.2 },
+    { "position": [880, 10],  "is_moving": false },
+    { "position": [980, 0],   "is_moving": false },
+    { "position": [1080, 20], "is_moving": false },
+    { "position": [1180, 0],  "is_moving": false },
+    { "position": [1280, 10], "is_moving": false }
+  ],
+
+  "hazards": [
+    {
+      "type": "saw_blade",
+      "position": [130, 0],
+      "config": { "rotation_speed": 500.0, "move_speed": 80.0, "saw_type": 1, "move_distance": 60, "damage": 15 }
+    },
+    {
+      "type": "spikes",
+      "position": [230, 60],
+      "config": { "damage": 10 }
+    },
+    {
+      "type": "saw_blade",
+      "position": [430, 0],
+      "config": { "rotation_speed": 600.0, "move_speed": 100.0, "saw_type": 1, "move_distance": 80, "damage": 20 }
+    },
+
+    {
+      "type": "laser_beam",
+      "position": [650, 10],
+      "config": { "laser_type": 1, "on_duration": 1.5, "off_duration": 1.0, "warning_time": 0.3, "damage": 15, "laser_length": 150.0 }
+    },
+    {
+      "type": "laser_beam",
+      "position": [750, -30],
+      "config": { "laser_type": 1, "on_duration": 1.0, "off_duration": 1.5, "warning_time": 0.3, "damage": 15, "laser_length": 120.0, "initial_delay": 0.5 }
+    },
+
+    {
+      "type": "spikes",
+      "position": [930, 60],
+      "config": { "damage": 15 }
+    },
+    {
+      "type": "spikes",
+      "position": [1030, 60],
+      "config": { "damage": 15 }
+    },
+
+    {
+      "type": "pressure_switch",
+      "position": [1100, 60],
+      "config": { "linked_door_ids": ["sprint_gate"], "stay_activated": false }
+    },
+    {
+      "type": "interactive_door",
+      "position": [1250, 0],
+      "config": { "door_id": "sprint_gate", "door_type": 3, "open_duration": 4.0 }
+    }
+  ],
+
+  "enemies": [
+    { "type": "slime", "position": [280, 0],  "is_purple": true },
+    { "type": "slime", "position": [580, -20], "is_purple": true },
+    { "type": "slime", "position": [980, -20], "is_purple": true }
+  ],
+
+  "checkpoints": [
+    { "position": [480, -10] },
+    { "position": [880, -10] }
+  ],
+
+  "portal": {
+    "position": [1350, -20],
+    "destination_scene": "res://scenes/ui/main_menu.tscn"
+  }
+}
