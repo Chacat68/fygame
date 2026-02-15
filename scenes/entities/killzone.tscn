@@ -6,4 +6,4 @@
 collision_mask = 2
 script = ExtResource("1_xfw36")
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+

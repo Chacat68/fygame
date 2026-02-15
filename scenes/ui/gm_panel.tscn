@@ -280,13 +280,4 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "重置关卡"
 
-[connection signal="pressed" from="VBox/TitleRow/ToggleButton" to="." method="_on_toggle_button_pressed"]
-[connection signal="value_changed" from="VBox/ContentBox/CoinRow/CoinInput" to="." method="_on_coin_input_value_changed"]
-[connection signal="value_changed" from="VBox/ContentBox/KillRow/KillInput" to="." method="_on_kill_input_value_changed"]
-[connection signal="value_changed" from="VBox/ContentBox/LevelNumRow/LevelInput" to="." method="_on_level_input_value_changed"]
-[connection signal="value_changed" from="VBox/ContentBox/SpeedRow/SpeedSlider" to="." method="_on_speed_slider_value_changed"]
-[connection signal="toggled" from="VBox/ContentBox/GodModeCheck" to="." method="_on_god_mode_check_toggled"]
-[connection signal="pressed" from="VBox/ContentBox/ButtonRow/AddCoinsButton" to="." method="_on_add_coins_button_pressed"]
-[connection signal="pressed" from="VBox/ContentBox/LevelBtnRow/PrevLevelButton" to="." method="_on_prev_level_button_pressed"]
-[connection signal="pressed" from="VBox/ContentBox/LevelBtnRow/NextLevelButton" to="." method="_on_next_level_button_pressed"]
-[connection signal="pressed" from="VBox/ContentBox/ResetLevelButton" to="." method="_on_reset_level_button_pressed"]
+

@@ -11,6 +11,9 @@ var config: GameConfig
 func _ready():
 	# 初始化配置
 	_init_config()
+	# 信号连接（从 .tscn 移到代码，避免多实例化时重复连接）
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
 
 # 初始化配置
 func _init_config():

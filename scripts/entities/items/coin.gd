@@ -20,6 +20,11 @@ func _ready():
 	_init_config()
 	# 获取 UI 节点（延迟获取以确保场景树已准备好）
 	coin_counter = _get_ui_node()
+	# 信号连接（从 .tscn 移到代码，避免多实例化时重复连接）
+	if not body_shape_entered.is_connected(_on_body_shape_entered):
+		body_shape_entered.connect(_on_body_shape_entered)
+	if animation_player and not animation_player.animation_finished.is_connected(_on_animation_player_animation_finished):
+		animation_player.animation_finished.connect(_on_animation_player_animation_finished)
 
 # 初始化配置
 func _init_config():
@@ -65,7 +70,7 @@ func _collect_coin(_body = null):
 
 # 当动画播放完成后，移除金币
 func _on_animation_player_animation_finished(_anim_name):
-	queue_free()  # 从场景中移除金币
+	queue_free() # 从场景中移除金币
 
 # 安全获取UI节点
 func _get_ui_node() -> Node:

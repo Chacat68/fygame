@@ -28,11 +28,33 @@ func _ready() -> void:
 	if GameState:
 		visible = GameState.debug_mode
 	
+	# 连接 UI 信号（从 .tscn 移到代码，避免多实例化时重复连接）
+	_safe_connect(toggle_button.pressed, _on_toggle_button_pressed)
+	_safe_connect(coin_input.value_changed, _on_coin_input_value_changed)
+	_safe_connect(kill_input.value_changed, _on_kill_input_value_changed)
+	_safe_connect(level_input.value_changed, _on_level_input_value_changed)
+	_safe_connect(speed_slider.value_changed, _on_speed_slider_value_changed)
+	_safe_connect(god_mode_check.toggled, _on_god_mode_check_toggled)
+	
+	var add_coins_btn = $VBox/ContentBox/ButtonRow/AddCoinsButton
+	var prev_btn = $VBox/ContentBox/LevelBtnRow/PrevLevelButton
+	var next_btn = $VBox/ContentBox/LevelBtnRow/NextLevelButton
+	var reset_btn = $VBox/ContentBox/ResetLevelButton
+	_safe_connect(add_coins_btn.pressed, _on_add_coins_button_pressed)
+	_safe_connect(prev_btn.pressed, _on_prev_level_button_pressed)
+	_safe_connect(next_btn.pressed, _on_next_level_button_pressed)
+	_safe_connect(reset_btn.pressed, _on_reset_level_button_pressed)
+	
 	# 记录展开高度
 	expanded_height = size.y
 	
 	# 初始化值
 	_refresh_values()
+
+## 安全连接信号（检查 is_connected 避免重复）
+func _safe_connect(sig: Signal, callable: Callable):
+	if not sig.is_connected(callable):
+		sig.connect(callable)
 
 func _on_debug_mode_changed(enabled: bool) -> void:
 	visible = enabled
