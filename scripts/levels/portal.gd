@@ -3,6 +3,8 @@ extends Area2D
 # 传送门脚本
 # 用于在关卡之间传送玩家
 
+const TAG = "Portal"
+
 # 传送门参数
 var next_level = -1 # -1表示自动进入下一关
 var is_active = true # 传送门是否激活
@@ -12,7 +14,6 @@ var teleport_position: Vector2 = Vector2.ZERO # 传送到目标场景的位置
 
 # Tween引用，用于清理
 var breathing_tween: Tween
-# var rotation_tween: Tween  # 旋转动画已禁用
 var particle_tween: Tween
 
 # 是否启用明暗呼吸效果（根据时间自动切换明暗）
@@ -108,11 +109,6 @@ func _start_idle_animation():
 		else:
 			portal_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	
-		# 旋转动画已禁用 - 根据用户要求移除旋转效果
-		# rotation_tween = create_tween()
-		# rotation_tween.set_loops()
-		# rotation_tween.tween_property(portal_sprite, "rotation", TAU, 8.0) # 8秒完成一圈
-	
 	# 粒子强度变化动画
 	var particle_system = get_node_or_null("ParticleSystem")
 	if particle_system:
@@ -133,11 +129,6 @@ func _cleanup_tweens():
 		breathing_tween.kill()
 		breathing_tween = null
 	
-	# 旋转动画已禁用，无需清理
-	# if rotation_tween and rotation_tween.is_valid():
-	#	rotation_tween.kill()
-	#	rotation_tween = null
-	
 	if particle_tween and particle_tween.is_valid():
 		particle_tween.kill()
 		particle_tween = null
@@ -155,7 +146,7 @@ func _update_particle_amount(amount: int, particles: CPUParticles2D):
 func _on_body_entered(body):
 	# 检查是否为玩家，并且传送门激活且未在传送中
 	if body.is_in_group("player") and is_active and not is_teleporting:
-		print("[Portal] 玩家进入传送门! 目标: ", destination_scene if destination_scene != "" else "下一关")
+		Logger.info(TAG, "玩家进入传送门! 目标: %s" % (destination_scene if destination_scene != "" else "下一关"))
 		# 设置传送标志，防止重复触发
 		is_teleporting = true
 		is_active = false
@@ -202,7 +193,7 @@ func _enhance_particles_for_teleport(particle_system: Node2D):
 		if tree:
 			await tree.create_timer(0.5).timeout
 		else:
-			print("[Portal] 警告：场景树无效，跳过粒子效果恢复延迟")
+			Logger.warn(TAG, "场景树无效，跳过粒子效果恢复延迟")
 		if core_particles:
 			core_particles.amount = original_amount
 			core_particles.initial_velocity_max = original_velocity_max
@@ -216,19 +207,19 @@ func _perform_teleport(_body):
 	# 传送前自动保存游戏进度
 	if SaveManager:
 		SaveManager.trigger_auto_save()
-		print("[Portal] 传送前自动保存完成")
+		Logger.info(TAG, "传送前自动保存完成")
 	
 	# 如果指定了目标场景，直接传送到该场景
 	if destination_scene != "":
 		if teleport_manager:
 			teleport_manager.teleport_to_scene(destination_scene, teleport_position)
 		else:
-			print("错误：无法找到传送管理器")
+			Logger.error(TAG, "无法找到传送管理器")
 			_reset_teleport_state()
 		return
 	
 	# 回退：直接使用场景树切换
-	print("[Portal] 无目标场景且无传送管理器，重置状态")
+	Logger.warn(TAG, "无目标场景且无传送管理器，重置状态")
 	_reset_teleport_state()
 
 # 重置传送状态的辅助函数
@@ -241,7 +232,7 @@ func _initialize_managers():
 	# 检查场景树是否有效
 	var tree = get_tree()
 	if not tree:
-		print("[Portal] 错误：场景树无效，无法初始化管理器")
+		Logger.error(TAG, "场景树无效，无法初始化管理器")
 		return
 	
 	# 优先从组中查找传送管理器（TeleportManager在UI系统中创建）
@@ -262,7 +253,7 @@ func _initialize_managers():
 func _on_teleport_completed(_player: Node2D, _destination: Vector2):
 	# 检查节点是否仍在场景树中
 	if not is_inside_tree():
-		print("[Portal] 警告：节点不在场景树中，跳过处理")
+		Logger.warn(TAG, "节点不在场景树中，跳过处理")
 		return
 	
 	# 安全获取场景树
@@ -275,7 +266,7 @@ func _on_teleport_completed(_player: Node2D, _destination: Vector2):
 		# 延迟重新激活，避免立即重复触发
 		await tree.create_timer(1.0).timeout
 	else:
-		print("[Portal] 警告：无法获取有效的场景树，跳过延迟")
+		Logger.warn(TAG, "无法获取有效的场景树，跳过延迟")
 	
 	# 重置传送标志和激活状态
 	is_teleporting = false
@@ -316,14 +307,14 @@ func set_active(active):
 func configure_for_level_teleport(target_level: int):
 	next_level = target_level
 	destination_scene = ""
-	print("传送门配置为关卡传送模式，目标关卡：", target_level)
+	Logger.debug(TAG, "配置为关卡传送模式，目标关卡：%d" % target_level)
 
 # 配置传送门为场景传送模式
 func configure_for_scene_teleport(scene_path: String, spawn_position: Vector2 = Vector2.ZERO):
 	destination_scene = scene_path
 	teleport_position = spawn_position
 	next_level = -1
-	print("传送门配置为场景传送模式，目标场景：", scene_path)
+	Logger.debug(TAG, "配置为场景传送模式，目标场景：" + scene_path)
 
 # 获取传送门状态信息
 func get_portal_info() -> Dictionary:

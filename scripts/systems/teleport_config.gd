@@ -96,15 +96,15 @@ func _apply_debug_preset():
 # 验证配置有效性
 func validate_config() -> bool:
 	if teleport_duration < 0:
-		print("[TeleportConfig] 警告：传送持续时间不能为负数")
+		Logger.warn("TeleportConfig", 警告：传送持续时间不能为负数")
 		return false
 	
 	if safety_distance < 0:
-		print("[TeleportConfig] 警告：安全距离不能为负数")
+		Logger.warn("TeleportConfig", 警告：安全距离不能为负数")
 		return false
 	
 	if max_teleport_distance <= 0:
-		print("[TeleportConfig] 警告：最大传送距离必须大于0")
+		Logger.warn("TeleportConfig", 警告：最大传送距离必须大于0")
 		return false
 	
 	return true

@@ -2,6 +2,8 @@ extends CanvasLayer
 
 # UI控制脚本，管理金币和击杀计数显示
 
+const TAG = "CoinCounter"
+
 # 引入传送管理器
 const TeleportManagerClass = preload("res://scripts/systems/teleport_manager.gd")
 
@@ -14,7 +16,7 @@ var coin_display_value: float = 0.0
 var kill_display_value: float = 0.0
 var coin_tween: Tween = null
 var kill_tween: Tween = null
-const ROLL_DURATION: float = 0.3  # 滚动动画持续时间
+const ROLL_DURATION: float = 0.3 # 滚动动画持续时间
 
 # 传送管理器实例
 var teleport_manager: TeleportManagerClass
@@ -45,7 +47,7 @@ func _ready():
 	if config:
 		teleport_manager.set_config(config)
 	else:
-		print("[CoinCounter] 警告：无法加载传送配置，使用默认设置")
+		Logger.warn(TAG, "无法加载传送配置，使用默认设置")
 	
 	# 连接传送管理器信号
 	teleport_manager.teleport_started.connect(_on_teleport_started)
@@ -62,7 +64,6 @@ func _ready():
 	# 设置UI元素的位置
 	update_position()
 	
-
 
 # 更新金币计数并发出信号（带滚动动画）
 func update_coin_count(value, animate: bool = true):
@@ -156,22 +157,21 @@ func set_margins(left: int, top: int):
 	update_position()
 
 
-
 # 传送开始回调
 func _on_teleport_started(player: Node2D, destination: Vector2):
-	print("[CoinCounter] 传送开始：玩家从 ", player.global_position, " 传送到 ", destination)
+	Logger.debug(TAG, "传送开始：玩家从 %s 传送到 %s" % [str(player.global_position), str(destination)])
 
 # 传送完成回调
 func _on_teleport_completed(_player: Node2D, destination: Vector2):
-	print("[CoinCounter] 传送完成：玩家已到达 ", destination)
+	Logger.debug(TAG, "传送完成：玩家已到达 %s" % str(destination))
 	# 这里可以添加传送完成后的UI反馈，比如显示提示信息
 
 # 传送失败回调
 func _on_teleport_failed(reason: String):
-	print("[CoinCounter] 传送失败：", reason)
+	Logger.warn(TAG, "传送失败：" + reason)
 	# 这里可以添加错误提示UI，比如显示错误消息
 
 # 传送冷却完成回调
 func _on_teleport_cooldown_finished():
-	print("[CoinCounter] 传送冷却完成，可以再次传送")
+	Logger.debug(TAG, "传送冷却完成，可以再次传送")
 	# 这里可以添加UI反馈，比如重新启用传送按钮

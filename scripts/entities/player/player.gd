@@ -15,12 +15,12 @@ var INVINCIBILITY_TIME: float
 var gravity: float
 
 # 状态变量
-var jumps_made = 0   # 已经跳跃的次数
-var current_health: int  # 当前血量
-var is_invincible = false  # 是否处于无敌状态
-var is_falling_to_death = false  # 是否正在掉落死亡
-var wall_jump_count = 0  # 连续墙跳次数
-var facing_direction = 1  # 玩家朝向 (1=右, -1=左)
+var jumps_made = 0 # 已经跳跃的次数
+var current_health: int # 当前血量
+var is_invincible = false # 是否处于无敌状态
+var is_falling_to_death = false # 是否正在掉落死亡
+var wall_jump_count = 0 # 连续墙跳次数
+var facing_direction = 1 # 玩家朝向 (1=右, -1=左)
 
 # 状态管理
 var current_state: PlayerState
@@ -57,7 +57,7 @@ func _init_config():
 
 # 信号
 signal health_changed(new_health)
-signal respawned  # 玩家重生信号
+signal respawned # 玩家重生信号
 
 # 复活效果标志 - 使用AutoLoad模式在场景重载后保持
 var should_apply_respawn_effect = false
@@ -80,7 +80,7 @@ func _ready():
 	
 	# 检查是否需要应用复活效果
 	if Engine.has_singleton("GameState") and Engine.get_singleton("GameState").player_respawning:
-		print("检测到玩家正在复活，应用复活效果")
+		Logger.debug("Player", "检测到玩家正在复活，应用复活效果")
 		_apply_respawn_effect()
 		# 重置复活标志
 		Engine.get_singleton("GameState").set_player_respawning(false)
@@ -118,7 +118,7 @@ func _change_state(new_state_name: String):
 	
 	# 检查新状态是否与当前状态相同
 	if current_state and current_state == states[new_state_name]:
-		return  # 避免重复切换到相同状态
+		return # 避免重复切换到相同状态
 	
 	# 退出当前状态
 	if current_state:

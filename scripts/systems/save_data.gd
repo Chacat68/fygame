@@ -157,26 +157,26 @@ func get_summary() -> String:
 
 # 验证存档数据
 func validate() -> bool:
-	print("[SaveData] 验证存档: slot=%d, current_level=%d, max_unlocked_level=%d, total_coins=%d" % [save_slot, current_level, max_unlocked_level, total_coins])
+	Logger.debug("SaveData", 验证存档: slot=%d, current_level=%d, max_unlocked_level=%d, total_coins=%d" % [save_slot, current_level, max_unlocked_level, total_coins])
 	
 	# 检查基础数据有效性
 	if save_slot < 0 or save_slot > 2:
-		print("[SaveData] 验证失败: 无效槽位 %d" % save_slot)
+		Logger.debug("SaveData", 验证失败: 无效槽位 %d" % save_slot)
 		return false
 	if current_level < 1:
-		print("[SaveData] 自动修复: current_level 从 %d 改为 1" % current_level)
+		Logger.debug("SaveData", 自动修复: current_level 从 %d 改为 1" % current_level)
 		current_level = 1
 	
 	# 自动修复：确保 max_unlocked_level >= current_level
 	if max_unlocked_level < current_level:
-		print("[SaveData] 自动修复: max_unlocked_level 从 %d 更新为 %d" % [max_unlocked_level, current_level])
+		Logger.debug("SaveData", 自动修复: max_unlocked_level 从 %d 更新为 %d" % [max_unlocked_level, current_level])
 		max_unlocked_level = current_level
 	
 	if total_coins < 0:
-		print("[SaveData] 自动修复: total_coins 从 %d 改为 0" % total_coins)
+		Logger.debug("SaveData", 自动修复: total_coins 从 %d 改为 0" % total_coins)
 		total_coins = 0
 	
-	print("[SaveData] 验证通过")
+	Logger.debug("SaveData", 验证通过")
 	return true
 
 # 复制存档数据

@@ -167,7 +167,7 @@ func _apply_resolution(index: int) -> void:
 		if OS.has_feature("editor"):
 			var window_flags = DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_RESIZE_DISABLED)
 			if window_flags:
-				print("[设置] 编辑器嵌入模式下无法调整窗口大小，请导出游戏或使用独立窗口测试")
+				Logger.debug("Settings", 编辑器嵌入模式下无法调整窗口大小，请导出游戏或使用独立窗口测试")
 				return
 		
 		# 检查当前窗口模式
@@ -175,7 +175,7 @@ func _apply_resolution(index: int) -> void:
 		
 		if current_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
 			# 全屏模式下不需要改变窗口大小
-			print("[设置] 全屏模式下无法更改分辨率")
+			Logger.debug("Settings", 全屏模式下无法更改分辨率")
 			return
 		
 		# 窗口模式下只改变窗口大小，不改变视口缩放
@@ -188,7 +188,7 @@ func _apply_resolution(index: int) -> void:
 		var window_pos = (screen_size - resolution) / 2
 		DisplayServer.window_set_position(window_pos)
 		
-		print("[设置] 窗口大小已设置为: %dx%d" % [resolution.x, resolution.y])
+		Logger.debug("Settings", 窗口大小已设置为: %dx%d" % [resolution.x, resolution.y])
 
 # 应用主音量
 func _apply_master_volume(volume: float) -> void:
@@ -225,7 +225,7 @@ func _apply_sfx_volume(volume: float) -> void:
 func _on_apply_pressed() -> void:
 	save_settings()
 	settings_changed.emit()
-	print("[设置] 设置已保存")
+	Logger.debug("Settings", 设置已保存")
 
 # 返回按钮点击
 func _on_back_pressed() -> void:
@@ -263,7 +263,7 @@ func load_settings() -> void:
 		# 应用加载的设置
 		_apply_all_settings()
 	else:
-		print("[设置] 未找到设置文件，使用默认设置")
+		Logger.debug("Settings", 未找到设置文件，使用默认设置")
 
 # 应用所有设置
 func _apply_all_settings() -> void:

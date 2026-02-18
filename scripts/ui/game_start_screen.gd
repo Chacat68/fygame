@@ -26,17 +26,17 @@ func set_button_focus():
 	if start_btn:
 		start_btn.grab_focus()
 	else:
-		print("警告：无法找到开始按钮节点")
+		Logger.warn("GameStartScreen", "无法找到开始按钮节点")
 
 # 更新继续冒险按钮状态
 func _update_continue_button_state():
 	var continue_button = get_node_or_null("ButtonContainer/ContinueButton")
 	if not continue_button:
-		print("[GameStartScreen] 找不到继续冒险按钮")
+		Logger.debug("GameStartScreen", 找不到继续冒险按钮")
 		return
 	
 	if not SaveManager:
-		print("[GameStartScreen] SaveManager不可用")
+		Logger.debug("GameStartScreen", SaveManager不可用")
 		continue_button.disabled = true
 		continue_button.tooltip_text = "存档系统不可用"
 		return
@@ -46,17 +46,17 @@ func _update_continue_button_state():
 	for i in range(SaveManager.MAX_SAVE_SLOTS):
 		if SaveManager.has_save(i):
 			has_any_save = true
-			print("[GameStartScreen] 找到存档，槽位: %d" % i)
+			Logger.debug("GameStartScreen", 找到存档，槽位: %d" % i)
 			break
 	
 	# 如果没有存档，禁用继续按钮
 	continue_button.disabled = not has_any_save
 	if not has_any_save:
 		continue_button.tooltip_text = "没有找到存档"
-		print("[GameStartScreen] 没有找到任何存档，禁用继续按钮")
+		Logger.debug("GameStartScreen", 没有找到任何存档，禁用继续按钮")
 	else:
 		continue_button.tooltip_text = ""
-		print("[GameStartScreen] 存档可用，启用继续按钮")
+		Logger.debug("GameStartScreen", 存档可用，启用继续按钮")
 
 # 头杆帧处理（用于调试点击超时）
 func _process(delta: float) -> void:
@@ -104,7 +104,7 @@ func _on_start_button_pressed():
 # 继续冒险按钮点击事件
 func _on_continue_button_pressed():
 	if not SaveManager:
-		print("[GameStartScreen] SaveManager不可用")
+		Logger.debug("GameStartScreen", SaveManager不可用")
 		get_tree().change_scene_to_file("res://scenes/ui/save_screen.tscn")
 		return
 	
@@ -116,7 +116,7 @@ func _on_continue_button_pressed():
 			break
 	
 	if not has_any_save:
-		print("[GameStartScreen] 没有找到存档，打开存档界面")
+		Logger.debug("GameStartScreen", 没有找到存档，打开存档界面")
 		get_tree().change_scene_to_file("res://scenes/ui/save_screen.tscn")
 		return
 	
@@ -131,7 +131,7 @@ func _on_continue_button_pressed():
 	# 如果只有一个存档，直接加载
 	if save_count == 1 and save_slot >= 0:
 		if SaveManager.load_game(save_slot):
-			print("[GameStartScreen] 自动加载唯一存档，槽位: %d" % save_slot)
+			Logger.debug("GameStartScreen", 自动加载唯一存档，槽位: %d" % save_slot)
 			# 获取当前关卡并切换场景
 			var level = GameState.current_level
 			var level_scene_path = _resolve_level_scene_path(level)

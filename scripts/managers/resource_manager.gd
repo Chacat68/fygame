@@ -5,11 +5,6 @@ extends Node
 # 用于集中管理游戏中的所有资源预加载
 # 避免在各个脚本中分散加载资源
 
-# 信号（暂时移除未使用的信号以避免警告）
-# signal resource_loaded(resource_name: String, resource_type: String)
-# signal resource_load_failed(resource_name: String, error_message: String)
-# signal cache_cleared()
-
 # 资源类型枚举
 enum ResourceType {
 	SOUND,
@@ -21,10 +16,10 @@ enum ResourceType {
 
 # 资源优先级枚举
 enum ResourcePriority {
-	CRITICAL,  # 游戏启动必需的资源
-	HIGH,      # 游戏核心功能资源
-	MEDIUM,    # 常用资源
-	LOW        # 可延迟加载的资源
+	CRITICAL, # 游戏启动必需的资源
+	HIGH, # 游戏核心功能资源
+	MEDIUM, # 常用资源
+	LOW # 可延迟加载的资源
 }
 
 # 预加载关键资源
@@ -57,7 +52,7 @@ func _ready():
 	for sprite_name in critical_sprites:
 		sprites[sprite_name] = critical_sprites[sprite_name]
 	
-	print("资源管理器初始化完成 - 已加载", sounds.size(), "个音效和", sprites.size(), "个精灵")
+	Logger.info("ResourceManager", "资源管理器初始化完成 - 已加载 %d 个音效和 %d 个精灵" % [sounds.size(), sprites.size()])
 
 # 获取音效资源
 func get_sound(sound_name: String) -> AudioStream:
@@ -70,6 +65,14 @@ func get_music(music_name: String) -> AudioStream:
 # 获取精灵资源
 func get_sprite(sprite_name: String) -> Texture2D:
 	return sprites.get(sprite_name, null)
+
+# 检查是否存在指定音效
+func has_sound(sound_name: String) -> bool:
+	return sounds.has(sound_name)
+
+# 检查是否存在指定音乐
+func has_music(music_name: String) -> bool:
+	return music.has(music_name)
 
 # 获取场景资源
 func get_scene(scene_name: String) -> PackedScene:

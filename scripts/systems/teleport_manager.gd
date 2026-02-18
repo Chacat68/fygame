@@ -4,6 +4,8 @@ extends Node
 
 class_name TeleportManager
 
+const TAG = "TeleportManager"
+
 # 传送相关信号
 signal teleport_started(player, destination)
 signal teleport_completed(player, destination)
@@ -13,7 +15,7 @@ signal teleport_cooldown_finished()
 # 传送配置
 var config: TeleportConfig
 var is_teleporting: bool = false
-var last_teleport_time: float = 0.0
+var last_teleport_time_msec: int = 0
 
 # 传送特效节点
 var tween: Tween
@@ -38,7 +40,7 @@ func _ready():
 func set_config(new_config: TeleportConfig):
 	config = new_config
 	if not config.validate_config():
-		print("[TeleportManager] 警告：配置验证失败，使用默认配置")
+		Logger.warn(TAG, "配置验证失败，使用默认配置")
 		config.reset_to_default()
 
 # 检查是否可以传送（冷却时间检查）
@@ -46,10 +48,8 @@ func can_teleport() -> bool:
 	if is_teleporting:
 		return false
 	
-	var current_time = Time.get_time_dict_from_system()
-	var time_since_last = current_time.hour * 3600 + current_time.minute * 60 + current_time.second - last_teleport_time
-	
-	return time_since_last >= config.cooldown_time
+	var elapsed_ms = Time.get_ticks_msec() - last_teleport_time_msec
+	return elapsed_ms >= int(config.cooldown_time * 1000)
 
 # 传送到指定的Portal
 func teleport_to_portal(player_node: Node2D = null) -> bool:
@@ -101,12 +101,12 @@ func _get_player() -> Node2D:
 	# 检查场景树是否有效
 	var tree = get_tree()
 	if not tree:
-		print("[TeleportManager] 错误：场景树无效，无法获取玩家节点")
+		Logger.error(TAG, "场景树无效，无法获取玩家节点")
 		return null
 	
 	var player = tree.get_first_node_in_group("player")
 	if not player:
-		print("[TeleportManager] 警告：未找到玩家节点")
+		Logger.warn(TAG, "未找到玩家节点")
 	return player
 
 # 查找Portal节点
@@ -114,7 +114,7 @@ func _find_portal() -> Node2D:
 	# 检查场景树是否有效
 	var tree = get_tree()
 	if not tree:
-		print("[TeleportManager] 错误：场景树无效，无法查找Portal节点")
+		Logger.error(TAG, "场景树无效，无法查找Portal节点")
 		return null
 	
 	# 首先尝试通过组查找
@@ -172,7 +172,7 @@ func _find_safe_position_near(original_position: Vector2) -> Vector2:
 		if _is_position_safe(test_position):
 			return test_position
 	
-	return original_position  # 如果都不安全，返回原位置
+	return original_position # 如果都不安全，返回原位置
 
 # 执行传送
 func _execute_teleport(player: Node2D, destination: Vector2) -> bool:
@@ -180,8 +180,7 @@ func _execute_teleport(player: Node2D, destination: Vector2) -> bool:
 	teleport_started.emit(player, destination)
 	
 	# 记录传送时间
-	var current_time = Time.get_time_dict_from_system()
-	last_teleport_time = current_time.hour * 3600 + current_time.minute * 60 + current_time.second
+	last_teleport_time_msec = Time.get_ticks_msec()
 	
 	# 播放传送特效（如果启用）
 	if config.enable_teleport_effects:
@@ -230,7 +229,7 @@ func _complete_teleport(player: Node2D, destination: Vector2):
 	
 	# 输出调试信息
 	if config.log_teleport_events:
-		print("[TeleportManager] 玩家已传送到：", destination)
+		Logger.info(TAG, "玩家已传送到：%s" % str(destination))
 	
 	teleport_completed.emit(player, destination)
 	
@@ -242,7 +241,7 @@ func _complete_teleport(player: Node2D, destination: Vector2):
 			await tree.create_timer(config.cooldown_time).timeout
 			teleport_cooldown_finished.emit()
 		else:
-			print("[TeleportManager] 警告：场景树无效，跳过冷却时间")
+			Logger.warn(TAG, "场景树无效，跳过冷却时间")
 			teleport_cooldown_finished.emit()
 
 # 播放传送特效
@@ -250,7 +249,7 @@ func _play_teleport_effect(from_position: Vector2, to_position: Vector2):
 	# 这里可以添加粒子效果、音效等
 	# 目前只是简单的调试输出
 	if config.log_teleport_events:
-		print("[TeleportManager] 播放传送特效：从 ", from_position, " 到 ", to_position)
+		Logger.debug(TAG, "播放传送特效：从 %s 到 %s" % [str(from_position), str(to_position)])
 
 	# 屏幕闪烁
 	if config.screen_flash_enabled:
@@ -354,21 +353,21 @@ func teleport_to_scene(scene_path: String, spawn_position: Vector2 = Vector2.ZER
 func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
 	# 检查节点是否仍然有效
 	if not is_inside_tree():
-		print("警告：TeleportManager 不在场景树中，无法执行场景切换")
+		Logger.warn(TAG, "不在场景树中，无法执行场景切换")
 		is_teleporting = false
 		return
 	
 	# 检查树是否仍然有效
 	var tree = get_tree()
 	if not tree:
-		print("错误：场景树无效，无法执行场景切换")
+		Logger.error(TAG, "场景树无效，无法执行场景切换")
 		is_teleporting = false
 		return
 
 	# 切换场景
 	var result = tree.change_scene_to_file(scene_path)
 	if result != OK:
-		print("错误：场景切换失败：" + scene_path)
+		Logger.error(TAG, "场景切换失败：" + scene_path)
 		is_teleporting = false
 		return
 
@@ -380,7 +379,7 @@ func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
 		var scene_tree = main_loop as SceneTree
 		await scene_tree.process_frame
 	else:
-		print("警告：无法获取场景树，跳过后续处理")
+		Logger.warn(TAG, "无法获取场景树，跳过后续处理")
 		is_teleporting = false
 		return
 	
@@ -413,8 +412,8 @@ func _change_scene_deferred(scene_path: String, spawn_position: Vector2):
 		if current_save:
 			current_save.current_level = scene_path
 		SaveManager.trigger_auto_save()
-		print("[TeleportManager] 进入新关卡，已自动存档")
+		Logger.info(TAG, "进入新关卡，已自动存档")
 	
 	# 输出调试信息
 	if config.log_teleport_events:
-		print("[TeleportManager] 场景传送完成：", scene_path, " 位置：", spawn_position)
+		Logger.info(TAG, "场景传送完成：%s 位置：%s" % [scene_path, str(spawn_position)])

@@ -40,7 +40,7 @@ var score_weights: Dictionary = {
 }
 
 func _ready() -> void:
-	print("[LevelTimer] 关卡计时器已初始化")
+	Logger.debug("LevelTimer", 关卡计时器已初始化")
 
 func _process(delta: float) -> void:
 	if is_running:
@@ -66,7 +66,7 @@ func start_timer(current_level_id: int = 0) -> void:
 		level_start_coins = GameState.get_coins()
 	
 	timer_started.emit()
-	print("[LevelTimer] 计时开始 - 关卡 %d" % level_id)
+	Logger.debug("LevelTimer", 计时开始 - 关卡 %d" % level_id)
 
 ## 停止计时
 func stop_timer() -> void:
@@ -80,7 +80,7 @@ func stop_timer() -> void:
 	if GameState:
 		coins_collected = GameState.get_coins() - level_start_coins
 	
-	print("[LevelTimer] 计时停止 - 用时: %.2f秒" % elapsed_time)
+	Logger.debug("LevelTimer", 计时停止 - 用时: %.2f秒" % elapsed_time)
 
 ## 暂停计时
 func pause_timer() -> void:

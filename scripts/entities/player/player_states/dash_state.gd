@@ -3,6 +3,8 @@
 class_name DashState
 extends PlayerState
 
+const TAG = "DashState"
+
 # 冲刺相关变量
 var dash_timer: float = 0.0
 var dash_direction: Vector2
@@ -50,7 +52,7 @@ func enter():
     # 发射技能使用信号
     player.skill_manager.skill_used.emit("dash")
     
-    print("开始冲刺，方向: ", dash_direction, " 速度: ", dash_speed)
+    Logger.debug(TAG, "开始冲刺，方向: %s 速度: %s" % [str(dash_direction), str(dash_speed)])
 
 func exit():
     """退出冲刺状态"""
@@ -60,7 +62,7 @@ func exit():
     # 重置速度（保持一些水平动量）
     player.velocity.x *= 0.3
     
-    print("冲刺结束")
+    Logger.debug(TAG, "冲刺结束")
 
 func physics_process(delta):
     """冲刺状态的物理处理"""
@@ -68,10 +70,10 @@ func physics_process(delta):
     
     # 检查冲刺是否结束
     if dash_timer >= dash_duration:
-        return "Fall"  # 冲刺结束后进入下落状态
+        return "Fall" # 冲刺结束后进入下落状态
     
     # 应用重力（减少重力影响）
-    player.velocity.y += player.gravity * delta * 0.3  # 冲刺时重力减少70%
+    player.velocity.y += player.gravity * delta * 0.3 # 冲刺时重力减少70%
     
     # 保持冲刺速度
     player.velocity.x = dash_direction.x * dash_speed
@@ -81,7 +83,7 @@ func physics_process(delta):
     
     # 检查是否撞墙或着地
     if player.is_on_wall():
-        return "Fall"  # 撞墙后结束冲刺
+        return "Fall" # 撞墙后结束冲刺
     
     if player.is_on_floor() and dash_timer > dash_duration * 0.5:
         # 冲刺进行一半后如果着地，可以提前结束
@@ -104,7 +106,7 @@ func _on_dash_hit_enemy(enemy):
     
     # 3级冲刺可以造成伤害
     if skill_level >= 3 and enemy.has_method("take_damage"):
-        enemy.take_damage(15)  # 冲刺伤害
+        enemy.take_damage(15) # 冲刺伤害
         
         # 播放撞击特效
         if ResourceManager.has_sound("dash_hit"):

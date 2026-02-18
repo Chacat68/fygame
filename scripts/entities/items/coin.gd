@@ -1,5 +1,7 @@
 extends Area2D
 
+const TAG = "Coin"
+
 # 游戏配置
 var config: GameConfig
 
@@ -61,12 +63,12 @@ func _collect_coin(_body = null):
 	
 	# 显示收集信息
 	if not popup_shown:
-		print("金币已收集！")
+		Logger.debug(TAG, "金币已收集！")
 		popup_shown = true
 	
 	# 输出任何错误信息
 	for message in error_messages:
-		print(message)
+		Logger.warn(TAG, message)
 
 # 当动画播放完成后，移除金币
 func _on_animation_player_animation_finished(_anim_name):

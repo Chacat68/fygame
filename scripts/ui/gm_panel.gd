@@ -128,28 +128,28 @@ func _on_god_mode_check_toggled(toggled_on: bool) -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	if player and player.has_method("set_god_mode"):
 		player.set_god_mode(toggled_on)
-	print("[GM] 神模式: %s" % ("ON" if toggled_on else "OFF"))
+	Logger.debug("GM", 神模式: %s" % ("ON" if toggled_on else "OFF"))
 
 # 游戏速度改变
 func _on_speed_slider_value_changed(value: float) -> void:
 	Engine.time_scale = value
 	_update_speed_label()
-	print("[GM] 游戏速度: %.1fx" % value)
+	Logger.debug("GM", 游戏速度: %.1fx" % value)
 
 # 传送到上一关
 func _on_prev_level_button_pressed() -> void:
 	if GameState:
 		var prev_level = GameState.current_level - 1
 		if prev_level < 1:
-			print("[GM] 已经是第一关")
+			Logger.debug("GM", 已经是第一关")
 			return
 		var level_path = "res://scenes/levels/lv%d.tscn" % prev_level
 		if ResourceLoader.exists(level_path):
 			GameState.current_level = prev_level
 			get_tree().change_scene_to_file(level_path)
-			print("[GM] 传送到关卡: %d" % prev_level)
+			Logger.debug("GM", 传送到关卡: %d" % prev_level)
 		else:
-			print("[GM] 关卡不存在: %s" % level_path)
+			Logger.debug("GM", 关卡不存在: %s" % level_path)
 
 # 传送到下一关
 func _on_next_level_button_pressed() -> void:
@@ -159,21 +159,21 @@ func _on_next_level_button_pressed() -> void:
 		if ResourceLoader.exists(level_path):
 			GameState.current_level = next_level
 			get_tree().change_scene_to_file(level_path)
-			print("[GM] 传送到关卡: %d" % next_level)
+			Logger.debug("GM", 传送到关卡: %d" % next_level)
 		else:
-			print("[GM] 关卡不存在: %s" % level_path)
+			Logger.debug("GM", 关卡不存在: %s" % level_path)
 
 # 重置当前关卡
 func _on_reset_level_button_pressed() -> void:
 	get_tree().reload_current_scene()
-	print("[GM] 重置当前关卡")
+	Logger.debug("GM", 重置当前关卡")
 
 # 添加金币按钮
 func _on_add_coins_button_pressed() -> void:
 	var ui = _get_ui_node()
 	if ui:
 		ui.add_coin(100)
-	print("[GM] 添加100金币")
+	Logger.debug("GM", 添加100金币")
 
 # 获取UI节点
 func _get_ui_node() -> Node:

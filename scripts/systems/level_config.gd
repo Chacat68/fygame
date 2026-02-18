@@ -119,7 +119,7 @@ func add_level(level_data: Dictionary) -> void:
 		levels = []
 	
 	levels.append(level_data)
-	print("关卡添加成功: ID %d, 名称: %s" % [new_id, level_data.get("name", "未知")])
+	Logger.info("LevelConfig", "关卡添加成功: ID %d, 名称: %s" % [new_id, level_data.get("name", "未知")])
 
 # 更新关卡信息
 func update_level(level_id: int, level_data: Dictionary) -> void:
@@ -141,7 +141,7 @@ func update_level(level_id: int, level_data: Dictionary) -> void:
 	for i in range(levels.size()):
 		if i < levels.size() and levels[i].get("id", 0) == level_id:
 			levels[i] = level_data
-			print("关卡更新成功: ID %d" % level_id)
+			Logger.info("LevelConfig", "关卡更新成功: ID %d" % level_id)
 			return
 	
 	push_error("未找到要更新的关卡: ID %d" % level_id)
@@ -162,7 +162,7 @@ func remove_level(level_id: int) -> void:
 	for i in range(levels.size() - 1, -1, -1):
 		if i >= 0 and i < levels.size() and levels[i].get("id", 0) == level_id:
 			levels.remove_at(i)
-			print("关卡删除成功: ID %d" % level_id)
+			Logger.info("LevelConfig", "关卡删除成功: ID %d" % level_id)
 			return
 	
 	push_error("未找到要删除的关卡: ID %d" % level_id)
@@ -185,7 +185,7 @@ func get_next_level_id() -> int:
 # 验证关卡配置
 func validate_config() -> bool:
 	if levels.is_empty():
-		print("警告：没有配置任何关卡")
+		Logger.warn("LevelConfig", "没有配置任何关卡")
 		return false
 	
 	# 检查关卡ID是否唯一
@@ -193,7 +193,7 @@ func validate_config() -> bool:
 	for level in levels:
 		var id = level.get("id", 0)
 		if id in ids:
-			print("错误：关卡ID重复: ", id)
+			Logger.error("LevelConfig", "关卡ID重复: ", id)
 			return false
 		ids.append(id)
 	
@@ -202,7 +202,7 @@ func validate_config() -> bool:
 		var required_fields = ["id", "name", "scene_path"]
 		for field in required_fields:
 			if not level.has(field) or level[field] == "":
-				print("错误：关卡缺少必要字段: ", field, " 在关卡ID: ", level.get("id", "未知"))
+				Logger.error("LevelConfig", "关卡缺少必要字段: ", field, " 在关卡ID: ", level.get("id", "未知"))
 				return false
 	
 	return true

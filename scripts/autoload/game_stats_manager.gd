@@ -68,7 +68,7 @@ var last_player_position: Vector2 = Vector2.ZERO
 var is_tracking: bool = false
 
 func _ready() -> void:
-	print("[GameStatsManager] 游戏统计管理器已初始化")
+	Logger.debug("GameStatsManager", 游戏统计管理器已初始化")
 
 func _process(delta: float) -> void:
 	if is_tracking:
@@ -79,13 +79,13 @@ func _process(delta: float) -> void:
 func start_tracking() -> void:
 	is_tracking = true
 	total_stats["games_played"] += 1
-	print("[GameStatsManager] 开始追踪统计")
+	Logger.debug("GameStatsManager", 开始追踪统计")
 
 ## 停止追踪统计
 func stop_tracking() -> void:
 	is_tracking = false
 	_merge_session_to_total()
-	print("[GameStatsManager] 停止追踪统计")
+	Logger.debug("GameStatsManager", 停止追踪统计")
 
 ## 追踪玩家移动距离
 func _track_player_distance() -> void:

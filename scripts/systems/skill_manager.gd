@@ -3,6 +3,8 @@
 class_name SkillManager
 extends Node
 
+const TAG = "SkillManager"
+
 # 技能相关信号
 signal skill_unlocked(skill_name: String)
 signal skill_upgraded(skill_name: String, level: int)
@@ -20,6 +22,7 @@ var config: GameConfig
 func _ready():
     config = GameConfig.get_config()
     _initialize_skills()
+    set_process(false) # 初始状态下禁用 _process，仅在有冷却时启用
     
     # 连接游戏状态信号
     if GameState:
@@ -69,6 +72,9 @@ func _initialize_skills():
 
 func _process(delta):
     """更新技能冷却时间"""
+    if skill_cooldowns.is_empty():
+        set_process(false)
+        return
     _update_cooldowns(delta)
 
 func _update_cooldowns(delta: float):
@@ -100,12 +106,12 @@ func unlock_skill(skill_name: String) -> bool:
         return false
     
     if skill.is_unlocked:
-        print("技能已解锁: ", skill_name)
+        Logger.debug(TAG, "技能已解锁: " + skill_name)
         return false
     
     var unlock_cost = skill.get("unlock_cost", 0)
     if player_coins < unlock_cost:
-        print("金币不足，需要: ", unlock_cost, " 当前: ", player_coins)
+        Logger.debug(TAG, "金币不足，需要: %d 当前: %d" % [unlock_cost, player_coins])
         return false
     
     # 扣除金币并解锁技能
@@ -114,7 +120,7 @@ func unlock_skill(skill_name: String) -> bool:
     skill.current_level = 1
     
     skill_unlocked.emit(skill_name)
-    print("技能已解锁: ", skill.get("name", skill_name))
+    Logger.info(TAG, "技能已解锁: " + skill.get("name", skill_name))
     return true
 
 func upgrade_skill(skill_name: String) -> bool:
@@ -132,11 +138,11 @@ func upgrade_skill(skill_name: String) -> bool:
         return false
     
     if not skill.is_unlocked:
-        print("技能未解锁: ", skill_name)
+        Logger.debug(TAG, "技能未解锁: " + skill_name)
         return false
     
     if skill.current_level >= skill.max_level:
-        print("技能已达到最高等级: ", skill_name)
+        Logger.debug(TAG, "技能已达到最高等级: " + skill_name)
         return false
     
     # 安全地获取升级费用
@@ -151,7 +157,7 @@ func upgrade_skill(skill_name: String) -> bool:
     
     var upgrade_cost = skill.upgrade_costs[cost_index]
     if player_coins < upgrade_cost:
-        print("金币不足，需要: ", upgrade_cost, " 当前: ", player_coins)
+        Logger.debug(TAG, "金币不足，需要: %d 当前: %d" % [upgrade_cost, player_coins])
         return false
     
     # 扣除金币并升级技能
@@ -159,7 +165,7 @@ func upgrade_skill(skill_name: String) -> bool:
     skill.current_level += 1
     
     skill_upgraded.emit(skill_name, skill.current_level)
-    print("技能已升级: ", skill.name, " 等级: ", skill.current_level)
+    Logger.info(TAG, "技能已升级: %s 等级: %d" % [skill.name, skill.current_level])
     return true
 
 # 技能使用检查
@@ -204,6 +210,7 @@ func use_skill(skill_name: String) -> bool:
     var cooldown_time = skill.get("cooldown_time", 0.0)
     if cooldown_time > 0:
         skill_cooldowns[skill_name] = cooldown_time
+        set_process(true) # 有冷却时启用 _process
     
     skill_used.emit(skill_name)
     return true
@@ -251,12 +258,12 @@ func get_skill_cooldown_remaining(skill_name: String) -> float:
 func get_dash_distance() -> float:
     var level = get_skill_level("dash")
     var base_distance = config.dash_distance if config else 120.0
-    return base_distance * (1.0 + (level - 1) * 0.3)  # 每级增加30%距离
+    return base_distance * (1.0 + (level - 1) * 0.3) # 每级增加30%距离
 
 func get_dash_speed() -> float:
     var level = get_skill_level("dash")
     var base_speed = config.dash_speed if config else 600.0
-    return base_speed * (1.0 + (level - 1) * 0.2)  # 每级增加20%速度
+    return base_speed * (1.0 + (level - 1) * 0.2) # 每级增加20%速度
 
 func get_dash_duration() -> float:
     return config.dash_duration if config else 0.2
@@ -267,46 +274,46 @@ func is_dash_invincible() -> bool:
 func get_dash_cooldown() -> float:
     var level = get_skill_level("dash")
     var base_cooldown = config.dash_cooldown if config else 2.0
-    return base_cooldown * (1.0 - (level - 1) * 0.2)  # 每级减少20%冷却
+    return base_cooldown * (1.0 - (level - 1) * 0.2) # 每级减少20%冷却
 
 # 墙跳技能参数
 func get_wall_jump_force() -> float:
     var level = get_skill_level("wall_jump")
     var base_force = config.wall_jump_force if config else 300.0
-    return base_force * (1.0 + (level - 1) * 0.15)  # 每级增加15%力度
+    return base_force * (1.0 + (level - 1) * 0.15) # 每级增加15%力度
 
 func get_wall_slide_speed() -> float:
     var level = get_skill_level("wall_jump")
     var base_speed = config.wall_slide_speed if config else 100.0
-    return base_speed * (1.0 - (level - 1) * 0.2)  # 每级减少20%滑行速度
+    return base_speed * (1.0 - (level - 1) * 0.2) # 每级减少20%滑行速度
 
 func get_wall_jump_horizontal() -> float:
     return config.wall_jump_horizontal if config else 200.0
 
 func get_max_wall_jumps() -> int:
     var level = get_skill_level("wall_jump")
-    return 2 + level  # 基础2次，每级+1次
+    return 2 + level # 基础2次，每级+1次
 
 # 滑铲技能参数
 func get_slide_speed() -> float:
     var level = get_skill_level("slide")
     var base_speed = config.slide_speed if config else 250.0
-    return base_speed * (1.0 + (level - 1) * 0.1)  # 每级增加10%速度
+    return base_speed * (1.0 + (level - 1) * 0.1) # 每级增加10%速度
 
 func get_slide_duration() -> float:
     var level = get_skill_level("slide")
     var base_duration = config.slide_duration if config else 0.8
-    return base_duration * (1.0 + (level - 1) * 0.2)  # 每级增加20%持续时间
+    return base_duration * (1.0 + (level - 1) * 0.2) # 每级增加20%持续时间
 
 func get_slide_damage() -> int:
     var level = get_skill_level("slide")
     var base_damage = config.slide_damage if config else 15
-    return base_damage + (level - 1) * 5  # 每级增加5点伤害
+    return base_damage + (level - 1) * 5 # 每级增加5点伤害
 
 func get_slide_cooldown() -> float:
     var level = get_skill_level("slide")
     var base_cooldown = config.slide_cooldown if config else 3.0
-    return base_cooldown * (1.0 - (level - 1) * 0.25)  # 每级减少25%冷却
+    return base_cooldown * (1.0 - (level - 1) * 0.25) # 每级减少25%冷却
 
 # 金币管理
 func _spend_coins(amount: int):

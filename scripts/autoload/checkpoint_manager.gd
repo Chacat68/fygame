@@ -18,7 +18,7 @@ var respawn_count: int = 0
 var last_respawn_time: float = 0.0
 
 func _ready() -> void:
-	print("[CheckpointManager] 检查点管理器已初始化")
+	Logger.debug("CheckpointManager", 检查点管理器已初始化")
 
 ## 注册检查点
 func register_checkpoint(checkpoint: Node) -> void:
@@ -37,7 +37,7 @@ func register_checkpoint(checkpoint: Node) -> void:
 			checkpoint.activated.connect(_on_checkpoint_activated)
 		
 		checkpoint_registered.emit(checkpoint)
-		print("[CheckpointManager] 检查点已注册: %s (总计: %d)" % [checkpoint.name, checkpoints.size()])
+		Logger.debug("CheckpointManager", 检查点已注册: %s (总计: %d)" % [checkpoint.name, checkpoints.size()])
 
 ## 取消注册检查点
 func unregister_checkpoint(checkpoint: Node) -> void:
@@ -48,18 +48,18 @@ func unregister_checkpoint(checkpoint: Node) -> void:
 		if active_checkpoint == checkpoint:
 			active_checkpoint = null
 		
-		print("[CheckpointManager] 检查点已取消注册: %s" % checkpoint.name)
+		Logger.debug("CheckpointManager", 检查点已取消注册: %s" % checkpoint.name)
 
 ## 设置初始出生位置
 func set_initial_spawn_position(position: Vector2) -> void:
 	initial_spawn_position = position
-	print("[CheckpointManager] 初始出生位置已设置: %s" % position)
+	Logger.debug("CheckpointManager", 初始出生位置已设置: %s" % position)
 
 ## 检查点激活回调
 func _on_checkpoint_activated(checkpoint: Node) -> void:
 	active_checkpoint = checkpoint
 	checkpoint_activated.emit(checkpoint)
-	print("[CheckpointManager] 检查点已激活: %s" % checkpoint.name)
+	Logger.debug("CheckpointManager", 检查点已激活: %s" % checkpoint.name)
 
 ## 获取当前重生位置
 func get_respawn_position() -> Vector2:
@@ -86,7 +86,7 @@ func respawn_player() -> void:
 		last_respawn_time = Time.get_unix_time_from_system()
 		
 		player_respawned.emit(spawn_pos)
-		print("[CheckpointManager] 玩家已重生到位置: %s (重生次数: %d)" % [spawn_pos, respawn_count])
+		Logger.debug("CheckpointManager", 玩家已重生到位置: %s (重生次数: %d)" % [spawn_pos, respawn_count])
 	else:
 		push_error("[CheckpointManager] 找不到玩家节点，无法重生")
 
@@ -97,14 +97,14 @@ func reset_all_checkpoints() -> void:
 			checkpoint.reset()
 	
 	active_checkpoint = null
-	print("[CheckpointManager] 所有检查点已重置")
+	Logger.debug("CheckpointManager", 所有检查点已重置")
 
 ## 清除所有检查点
 func clear_all_checkpoints() -> void:
 	checkpoints.clear()
 	active_checkpoint = null
 	initial_spawn_position = Vector2.ZERO
-	print("[CheckpointManager] 所有检查点已清除")
+	Logger.debug("CheckpointManager", 所有检查点已清除")
 
 ## 获取检查点数量
 func get_checkpoint_count() -> int:

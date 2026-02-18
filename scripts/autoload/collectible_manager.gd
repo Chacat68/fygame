@@ -24,7 +24,7 @@ var collection_stats: Dictionary = {}  # 收集统计
 
 func _ready() -> void:
 	_initialize_stats()
-	print("[CollectibleManager] 收集品管理器已初始化")
+	Logger.info("CollectibleManager", 收集品管理器已初始化")
 
 ## 初始化统计
 func _initialize_stats() -> void:

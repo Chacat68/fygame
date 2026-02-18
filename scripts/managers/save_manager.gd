@@ -4,6 +4,8 @@
 class_name SaveManagerClass
 extends Node
 
+const TAG = "SaveManager"
+
 # 信号
 signal save_completed(slot: int, success: bool)
 signal load_completed(slot: int, success: bool)
@@ -16,7 +18,7 @@ const SAVE_FILE_PREFIX = "save_slot_"
 const SAVE_FILE_EXTENSION = ".json"
 const MAX_SAVE_SLOTS = 3
 const AUTO_SAVE_SLOT = 0
-const AUTO_SAVE_INTERVAL = 60.0  # 自动保存间隔（秒）
+const AUTO_SAVE_INTERVAL = 60.0 # 自动保存间隔（秒）
 
 # 当前存档数据
 var current_save: SaveData = null
@@ -32,7 +34,7 @@ func _ready() -> void:
 	# 确保存档目录存在
 	_ensure_save_directory()
 	session_start_time = Time.get_unix_time_from_system()
-	print("[SaveManager] 存档管理器初始化完成")
+	Logger.info(TAG, "存档管理器初始化完成")
 
 func _process(delta: float) -> void:
 	# 自动保存逻辑
@@ -69,7 +71,7 @@ func save_game(slot: int = -1) -> bool:
 	if success:
 		current_save = save_data
 		current_slot = slot
-		print("[SaveManager] 游戏已保存到槽位 %d" % slot)
+		Logger.info(TAG, "游戏已保存到槽位 %d" % slot)
 	else:
 		push_error("[SaveManager] 保存失败，槽位: %d" % slot)
 	
@@ -86,7 +88,7 @@ func load_game(slot: int) -> bool:
 	
 	# 检查存档是否存在
 	if not has_save(slot):
-		print("[SaveManager] 槽位 %d 没有存档" % slot)
+		Logger.info(TAG, "槽位 %d 没有存档" % slot)
 		load_completed.emit(slot, false)
 		return false
 	
@@ -110,7 +112,7 @@ func load_game(slot: int) -> bool:
 		current_save = save_data
 		current_slot = slot
 		session_start_time = Time.get_unix_time_from_system()
-		print("[SaveManager] 存档已加载，槽位: %d" % slot)
+		Logger.info(TAG, "存档已加载，槽位: %d" % slot)
 	else:
 		push_error("[SaveManager] 应用存档数据失败，槽位: %d" % slot)
 	
@@ -137,7 +139,7 @@ func delete_save(slot: int) -> bool:
 		current_save = null
 		current_slot = -1
 	
-	print("[SaveManager] 存档已删除，槽位: %d" % slot)
+	Logger.info(TAG, "存档已删除，槽位: %d" % slot)
 	save_deleted.emit(slot)
 	return true
 
@@ -160,7 +162,7 @@ func create_new_save(slot: int) -> bool:
 		session_start_time = Time.get_unix_time_from_system()
 		# 应用新存档的初始状态
 		_apply_game_state(save_data)
-		print("[SaveManager] 新存档已创建，槽位: %d" % slot)
+		Logger.info(TAG, "新存档已创建，槽位: %d" % slot)
 	
 	return success
 
@@ -208,12 +210,12 @@ func _perform_auto_save() -> void:
 	
 	auto_save_triggered.emit()
 	save_game(current_slot)
-	print("[SaveManager] 自动保存完成")
+	Logger.debug(TAG, "自动保存完成")
 
 # 启用/禁用自动保存
 func set_auto_save_enabled(enabled: bool) -> void:
 	auto_save_enabled = enabled
-	print("[SaveManager] 自动保存: %s" % ("启用" if enabled else "禁用"))
+	Logger.info(TAG, "自动保存: %s" % ("启用" if enabled else "禁用"))
 
 # 手动触发自动保存
 func trigger_auto_save() -> void:
@@ -227,7 +229,7 @@ func _ensure_save_directory() -> void:
 	var dir = DirAccess.open("user://")
 	if dir and not dir.dir_exists("saves"):
 		dir.make_dir("saves")
-		print("[SaveManager] 创建存档目录: %s" % SAVE_DIR)
+		Logger.info(TAG, "创建存档目录: %s" % SAVE_DIR)
 
 # 获取存档文件路径
 func _get_save_path(slot: int) -> String:
@@ -380,4 +382,4 @@ func debug_reset_all_saves() -> void:
 	
 	current_save = null
 	current_slot = -1
-	print("[SaveManager] 所有存档已重置")
+	Logger.info(TAG, "所有存档已重置")

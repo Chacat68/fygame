@@ -1,6 +1,8 @@
 class_name Checkpoint
 extends Area2D
 
+const TAG = "Checkpoint"
+
 ## 检查点系统
 ## 玩家触碰后激活，死亡时从最近的激活检查点重生
 
@@ -8,11 +10,11 @@ extends Area2D
 signal activated(checkpoint: Node)
 
 # 导出变量
-@export var checkpoint_id: String = ""  # 检查点ID，用于识别（留空则自动生成）
-@export var checkpoint_order: int = 0  # 检查点顺序，用于排序
-@export var spawn_offset: Vector2 = Vector2(0, -16)  # 重生位置偏移
-@export var auto_activate: bool = false  # 是否自动激活（如关卡起点）
-@export var one_time_only: bool = false  # 是否只能激活一次
+@export var checkpoint_id: String = "" # 检查点ID，用于识别（留空则自动生成）
+@export var checkpoint_order: int = 0 # 检查点顺序，用于排序
+@export var spawn_offset: Vector2 = Vector2(0, -16) # 重生位置偏移
+@export var auto_activate: bool = false # 是否自动激活（如关卡起点）
+@export var one_time_only: bool = false # 是否只能激活一次
 
 # 状态
 var is_active: bool = false
@@ -75,7 +77,7 @@ func _activate_checkpoint(silent: bool = false) -> void:
 	# 发射信号（CheckpointManager 会通过信号连接接收）
 	activated.emit(self)
 	
-	print("[Checkpoint] 检查点 %s 已激活，位置: %s" % [checkpoint_id, global_position])
+	Logger.debug(TAG, "检查点 %s 已激活，位置: %s" % [checkpoint_id, str(global_position)])
 
 ## 设置激活状态的视觉效果
 func _set_active_visual() -> void:
@@ -84,7 +86,7 @@ func _set_active_visual() -> void:
 			animated_sprite.play("active")
 		else:
 			# 如果没有动画，使用颜色变化
-			animated_sprite.modulate = Color(0.5, 1.0, 0.5)  # 绿色表示激活
+			animated_sprite.modulate = Color(0.5, 1.0, 0.5) # 绿色表示激活
 
 ## 设置未激活状态的视觉效果
 func _set_inactive_visual() -> void:
@@ -93,7 +95,7 @@ func _set_inactive_visual() -> void:
 			animated_sprite.play("inactive")
 		else:
 			# 如果没有动画，使用颜色变化
-			animated_sprite.modulate = Color(0.5, 0.5, 0.5)  # 灰色表示未激活
+			animated_sprite.modulate = Color(0.5, 0.5, 0.5) # 灰色表示未激活
 
 ## 播放激活特效
 func _play_activation_effect() -> void:

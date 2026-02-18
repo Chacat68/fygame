@@ -18,7 +18,7 @@ var is_showing_notification: bool = false
 
 func _ready() -> void:
 	_initialize_achievements()
-	print("[AchievementManager] 成就管理器已初始化，共 %d 个成就" % achievements.size())
+	Logger.debug("AchievementManager", 成就管理器已初始化，共 %d 个成就" % achievements.size())
 
 ## 初始化成就定义
 func _initialize_achievements() -> void:
@@ -247,7 +247,7 @@ func _unlock_achievement(achievement_id: String) -> void:
 	if unlocked_achievements.size() >= achievements.size():
 		all_achievements_unlocked.emit()
 	
-	print("[AchievementManager] 成就解锁: %s - %s" % [achievement["name"], achievement["description"]])
+	Logger.debug("AchievementManager", 成就解锁: %s - %s" % [achievement["name"], achievement["description"]])
 
 ## 添加到通知队列
 func _queue_notification(achievement: Dictionary) -> void:
@@ -267,7 +267,7 @@ func _show_next_notification() -> void:
 	
 	# 显示成就解锁UI（通过信号让UI处理）
 	# 这里可以创建一个简单的通知
-	print("🏆 成就解锁: %s" % achievement["name"])
+	Logger.info("AchievementManager", 成就解锁: %s" % achievement["name"])
 	
 	# 延迟显示下一个
 	await get_tree().create_timer(3.0).timeout

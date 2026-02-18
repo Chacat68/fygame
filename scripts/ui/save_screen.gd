@@ -87,7 +87,7 @@ func refresh_save_list() -> void:
 
 # 槽位选择回调
 func _on_slot_selected(slot: int) -> void:
-	print("[SaveUI] 选择加载存档槽位: %d" % slot)
+	Logger.debug("SaveUI", 选择加载存档槽位: %d" % slot)
 	
 	# 加载存档
 	if SaveManager.load_game(slot):
@@ -133,7 +133,7 @@ func _on_confirm_dialog_confirmed() -> void:
 # 删除存档
 func _delete_save(slot: int) -> void:
 	if SaveManager.delete_save(slot):
-		print("[SaveUI] 存档已删除: %d" % slot)
+		Logger.debug("SaveUI", 存档已删除: %d" % slot)
 		refresh_save_list()
 	else:
 		_show_error("删除存档失败")
@@ -141,7 +141,7 @@ func _delete_save(slot: int) -> void:
 # 创建新游戏
 func _create_new_game(slot: int) -> void:
 	if SaveManager.create_new_save(slot):
-		print("[SaveUI] 新游戏已创建: %d" % slot)
+		Logger.debug("SaveUI", 新游戏已创建: %d" % slot)
 		save_created.emit(slot)
 		_start_new_game()
 	else:
@@ -158,7 +158,7 @@ func _start_game_from_save() -> void:
 func _start_new_game() -> void:
 	# 从第一关开始（根据配置或文件自动回退）
 	var level_scene_path = _resolve_level_scene_path(1)
-	print("[SaveUI] 新游戏场景路径: %s" % level_scene_path)
+	Logger.debug("SaveUI", 新游戏场景路径: %s" % level_scene_path)
 	get_tree().change_scene_to_file(level_scene_path)
 
 # 返回按钮回调

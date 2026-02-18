@@ -59,7 +59,7 @@ func _ready() -> void:
 	_setup_audio_buses()
 	_setup_fade_tween()
 	_setup_cleanup_timer()
-	print("音频管理器初始化完成")
+	Logger.info("AudioManager", "初始化完成")
 
 # 设置音频总线
 func _setup_audio_buses() -> void:
@@ -98,7 +98,7 @@ func play_sfx(sound_name: String, volume_db: float = 0.0, pitch_scale: float = 1
 	# 获取音频资源
 	var sound_resource = ResourceManager.get_sound(sound_name)
 	if not sound_resource:
-		print("警告：音效资源不存在: ", sound_name)
+		Logger.warn("AudioManager", "音效资源不存在: ", sound_name)
 		return ""
 	
 	# 生成唯一ID
@@ -131,12 +131,12 @@ func play_music(track_name: String, fade_in: bool = true, loop: bool = true) -> 
 	# 获取音乐资源
 	var music_resource = ResourceManager.get_music(track_name)
 	if not music_resource:
-		print("警告：音乐资源不存在: ", track_name)
+		Logger.warn("AudioManager", "音乐资源不存在: ", track_name)
 		return false
 	
 	# 如果已经在播放相同音乐，跳过
 	if _current_music_track == track_name and _active_music_players.has(track_name):
-		print("音乐已在播放: ", track_name)
+		Logger.debug("AudioManager", "音乐已在播放: ", track_name)
 		return true
 	
 	# 停止当前音乐
@@ -172,7 +172,7 @@ func play_music(track_name: String, fade_in: bool = true, loop: bool = true) -> 
 	# 更新统计
 	_audio_stats["total_music_played"] += 1
 	
-	print("开始播放音乐: ", track_name)
+	Logger.debug("AudioManager", "开始播放音乐: ", track_name)
 	return true
 
 # 停止音效
@@ -413,4 +413,4 @@ func cleanup_all_audio() -> void:
 			player.queue_free()
 	_music_player_pool.clear()
 	
-	print("音频管理器清理完成")
+	Logger.info("AudioManager", "清理完成")

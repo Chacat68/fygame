@@ -22,7 +22,7 @@ var active_effects: Dictionary = {}  # effect_type -> {remaining_time, strength}
 
 func _ready() -> void:
 	_initialize_item_definitions()
-	print("[ItemManager] 道具管理器已初始化，共 %d 种道具" % item_definitions.size())
+	Logger.debug("ItemManager", 道具管理器已初始化，共 %d 种道具" % item_definitions.size())
 
 func _process(delta: float) -> void:
 	_update_active_effects(delta)
@@ -273,7 +273,7 @@ func _add_timed_effect(effect_type: String, duration: float, strength: float = 1
 		"strength": strength
 	}
 	effect_applied.emit(effect_type, duration)
-	print("[ItemManager] 效果已激活: %s (%.1f秒)" % [effect_type, duration])
+	Logger.debug("ItemManager", 效果已激活: %s (%.1f秒)" % [effect_type, duration])
 
 ## 更新激活的效果
 func _update_active_effects(delta: float) -> void:
@@ -288,7 +288,7 @@ func _update_active_effects(delta: float) -> void:
 	for effect_type in expired_effects:
 		active_effects.erase(effect_type)
 		effect_expired.emit(effect_type)
-		print("[ItemManager] 效果已过期: %s" % effect_type)
+		Logger.debug("ItemManager", 效果已过期: %s" % effect_type)
 
 ## 检查效果是否激活
 func is_effect_active(effect_type: String) -> bool:
